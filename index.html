@@ -75,6 +75,10 @@
     --shadow:0 1px 3px rgba(0,0,0,.3),0 14px 40px rgba(0,0,0,.4);--shadow-lg:0 28px 66px rgba(0,0,0,.55);}
 
   *{box-sizing:border-box}
+  /* o display do navegador para [hidden] é fraco: qualquer classe com
+     display:flex/grid/block passa por cima e o elemento "escondido" aparece.
+     Como o app usa hidden em 39 lugares, a regra vai aqui, uma vez só. */
+  [hidden]{display:none!important}
   body{margin:0}
   .app{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.55;min-height:100vh;-webkit-font-smoothing:antialiased}
   ::selection{background:#BE185D;color:#fff}

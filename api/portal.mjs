@@ -43,14 +43,22 @@ export default async (req) => {
     const j = await r.json();
     if (!r.ok) {
       const m = j?.error?.message || "";
-      console.error("portal:", m);
-      /* erro clássico: o portal ainda não foi configurado no painel do Stripe */
-      const faltaConfig = /configuration|default configuration|has not been created/i.test(m);
+      const tipo = j?.error?.type || "";
+      console.error("portal:", r.status, tipo, m);
+      /* os dois tropeços possíveis aqui têm conserto diferente, então vale
+         distinguir em vez de devolver "deu erro" e deixar adivinhando */
+      const faltaConfig = /configuration|default configuration|has not been created|no configuration/i.test(m);
+      const faltaPermissao = r.status === 403 || /permission|restricted|does not have access/i.test(m);
       return Response.json({
-        erro: faltaConfig
-          ? "o portal de assinatura ainda não foi ativado no painel do Stripe"
-          : "não consegui abrir o portal",
-        ajuda: faltaConfig ? "Stripe → Configurações → Faturamento → Portal do cliente → Ativar" : null,
+        erro: faltaConfig    ? "o portal de assinatura ainda não foi ativado no painel do Stripe"
+            : faltaPermissao ? "a chave do Stripe não tem permissão para abrir o portal"
+            : "não consegui abrir o portal",
+        ajuda: faltaConfig    ? "Stripe → Configurações → Faturamento → Portal do cliente → Ativar"
+             : faltaPermissao ? "Stripe → Chaves de API → editar a chave restrita → Portal do cliente: gravar"
+             : null,
+        /* só o código, não o texto do Stripe: a mensagem dele traz pedaço da
+           chave e o id da conta, e esta rota é pública */
+        stripe: { status: r.status, tipo },
       }, { status: 502, headers: semCache });
     }
     return Response.json({ url: j.url }, { headers: semCache });

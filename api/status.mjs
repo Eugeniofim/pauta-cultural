@@ -56,13 +56,18 @@ export default async (req) => {
       return Response.json({ pro: false, encontrado: true }, { headers: semCache });
 
     const s = melhor.s;
+    /* o Stripe tirou current_period_end do topo da assinatura e passou para os
+       itens (API 2025-04-30). Lê dos dois lugares para funcionar nas duas. */
+    const fim = s.current_period_end
+      || s.items?.data?.[0]?.current_period_end
+      || null;
     return Response.json({
       pro: true,
       encontrado: true,
       situacao: s.status,
       emGraca: GRACA.has(s.status),
       cancelaNoFim: !!s.cancel_at_period_end,
-      ate: s.current_period_end ? new Date(s.current_period_end * 1000).toISOString().slice(0, 10) : null,
+      ate: fim ? new Date(fim * 1000).toISOString().slice(0, 10) : null,
       cliente: melhor.c.id,
     }, { headers: semCache });
   } catch (e) {
