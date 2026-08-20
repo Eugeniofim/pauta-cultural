@@ -711,6 +711,14 @@
   .dot-off{background:var(--muted);box-shadow:0 0 0 3px var(--line)}
   .lnk{background:none;border:0;color:var(--accent-ink);font-size:12.6px;font-weight:650;cursor:pointer;
     text-decoration:underline;padding:0;margin-left:auto}
+  /* painel da assinatura: usa --ink sobre o fundo suave, não a cor de estado,
+     senão o texto corrido fica com contraste de etiqueta */
+  .assbox{margin-top:14px;padding:15px 17px;background:var(--ok-soft);border-radius:12px;
+    text-align:left;font-size:12.9px;line-height:1.55;color:var(--ink)}
+  .assbox.aviso{background:var(--warn-soft)}
+  .assbox b{display:block;font-size:13.6px;margin-bottom:4px}
+  .assbox small{display:block;color:var(--ink-soft);font-size:12.2px}
+  .assbox .btn{margin-top:12px;width:100%;justify-content:center}
   .cfg-st{font-size:12.8px;padding:11px 13px;border-radius:10px;background:var(--surface-2);color:var(--muted);margin-top:4px;line-height:1.5}
   .cfg-st.ok{background:var(--ok-soft);color:var(--ok)}
   .cfg-st.ruim{background:var(--crit-soft);color:var(--crit-ink)}
@@ -1361,6 +1369,16 @@
             <div><b>Pagamento seguro pelo Stripe</b><small>Cartão de crédito · cancele quando quiser, sem multa</small></div>
           </div>
           <div id="apiStatus" class="apist"></div>
+          <div class="assbox" id="assinaturaBox" hidden></div>
+          <button class="cupom-abre" id="restaurarAbre">Já assinou? Restaurar acesso</button>
+          <div class="cupom" id="restaurarBox" hidden>
+            <label>E-mail usado na assinatura</label>
+            <div class="cupom-in">
+              <input type="email" id="restaurarIn" placeholder="seu@email.com" autocomplete="email">
+              <button class="btn ghost sm" id="restaurarB">Restaurar</button>
+            </div>
+            <p class="cupom-msg" id="restaurarMsg"></p>
+          </div>
           <button class="cupom-abre" id="cupomAbre">Tem um cupom?</button>
           <div class="cupom" id="cupomBox" hidden>
             <label>Código do cupom</label>
@@ -2711,9 +2729,13 @@ const CUPONS={"EUGENIOFIM2026":{tipo:"vitalicio",nome:"acesso completo"}};
 const LIVRE=0.30;   // fração das oportunidades no plano grátis
 
 function ehPro(){try{return JSON.parse(localStorage.getItem(PRO_KEY))?.ativo===true;}catch(e){return false;}}
-function ativarPro(motivo){
-  try{localStorage.setItem(PRO_KEY,JSON.stringify({ativo:true,motivo,em:Date.now()}));}catch(e){}
+function proInfo(){try{return JSON.parse(localStorage.getItem(PRO_KEY))||{};}catch(e){return {};}}
+function ativarPro(motivo,extra){
+  try{localStorage.setItem(PRO_KEY,JSON.stringify(Object.assign({ativo:true,motivo,em:Date.now()},extra||{})));}catch(e){}
 }
+/* só o Pro que veio do Stripe pode cair sozinho; cupom é decisão nossa e fica */
+function desativarPro(){try{localStorage.removeItem(PRO_KEY);}catch(e){}}
+function proPorCupom(){return /^cupom/.test(proInfo().motivo||"");}
 function aplicarCupom(codigo){
   const c=String(codigo||"").trim().toUpperCase();
   if(!c)return {ok:false,msg:"Digite um cupom."};
@@ -3051,12 +3073,14 @@ async function aplicarCupomAsync(codigo){
 async function checarRetorno(){
   const p=new URLSearchParams(location.search);
   if(p.get("assinatura")==="cancelada"){toast("Checkout cancelado. Nada foi cobrado.");limparURL();return;}
+  if(p.get("assinatura")==="voltou"){limparURL();sincronizarPro();return;}
   if(p.get("assinatura")!=="ok")return;
   const sess=p.get("sessao");
   if(apiURL()&&sess){
     try{
       const j=await apiFetch("/confirmar?sessao="+encodeURIComponent(sess));
-      if(j&&j.pro){ativarPro("stripe");marcaPro();feed();toast("Assinatura confirmada. Bem-vindo ao Pro!");}
+      if(j&&j.pro){ativarPro("stripe");marcaPro();feed();toast("Assinatura confirmada. Bem-vindo ao Pro!");
+        sincronizarPro();}
       else toast("Pagamento em processamento — assim que confirmar, o Pro libera.");
     }catch(e){toast("Não consegui confirmar agora. Recarregue em instantes.");}
   }
@@ -3070,8 +3094,55 @@ async function sincronizarPro(){
   if(!apiURL()||!c.mail)return;
   try{
     const j=await apiFetch("/status?email="+encodeURIComponent(c.mail));
-    if(j&&j.pro&&!ehPro()){ativarPro("stripe");marcaPro();feed();}
+    /* não deu para perguntar ao Stripe: mantém o que está: tirar o acesso de
+       quem pagou por causa de uma falha de rede seria pior que o contrário */
+    if(!j||j.erro)return;
+    const eraPro=ehPro();
+    if(j.pro){
+      ativarPro("stripe",{cliente:j.cliente,ate:j.ate,situacao:j.situacao,
+        cancelaNoFim:!!j.cancelaNoFim,emGraca:!!j.emGraca});
+    }else if(eraPro&&!proPorCupom()){
+      desativarPro();
+      toast("Sua assinatura não está mais ativa.");
+    }
+    if(eraPro!==ehPro()){marcaPro();feed();}
+    planoUI();
   }catch(e){}
+}
+
+/* ---- restaurar acesso em outro aparelho ---- */
+async function restaurarAcesso(email){
+  const e=String(email||"").trim().toLowerCase();
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e))return {ok:false,msg:"Digite um e-mail válido."};
+  if(!apiURL())return {ok:false,msg:"Servidor de pagamento não configurado."};
+  let j;
+  try{ j=await apiFetch("/status?email="+encodeURIComponent(e)); }
+  catch(err){ return {ok:false,msg:"Não consegui falar com o servidor agora."}; }
+  if(!j||j.erro)return {ok:false,msg:"Não consegui consultar agora. Tente de novo em instantes."};
+  if(!j.pro)return {ok:false,msg:j.encontrado
+    ? "Achei esse e-mail, mas sem assinatura ativa."
+    : "Não achei assinatura com esse e-mail."};
+  ativarPro("stripe",{cliente:j.cliente,ate:j.ate,situacao:j.situacao,
+    cancelaNoFim:!!j.cancelaNoFim,emGraca:!!j.emGraca});
+  /* guarda o e-mail na conta para a próxima sincronização achar sozinha */
+  try{const c=contaLer();if(!c.mail){c.mail=e;localStorage.setItem(CONTA_KEY,JSON.stringify(c));}}catch(err){}
+  marcaPro();feed();planoUI();
+  return {ok:true,msg:"Acesso restaurado."};
+}
+
+/* ---- cancelar / trocar cartão / ver faturas: tudo no portal do Stripe ---- */
+async function abrirPortal(btn){
+  const info=proInfo(), c=contaLer();
+  const antes=btn?btn.textContent:"";
+  if(btn){btn.disabled=true;btn.textContent="Abrindo…";}
+  try{
+    const j=await apiFetch("/portal",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({cliente:info.cliente||"",email:c.mail||""})});
+    if(j&&j.url){location.href=j.url;return;}
+    toast((j&&j.erro)?j.erro:"Não consegui abrir o portal agora.");
+    if(j&&j.ajuda)console.info("portal:",j.ajuda);
+  }catch(e){toast("Não consegui abrir o portal agora.");}
+  if(btn){btn.disabled=false;btn.textContent=antes;}
 }
 
 /* ---- painel de configuração do servidor ---- */
@@ -3121,7 +3192,48 @@ function abrirConfigAPI(){
     }
   };
 }
+const dataBR=iso=>{if(!iso)return"";const[a,m,d]=iso.split("-");return`${d}/${m}/${a}`;};
+
+/* mostra em que pé está a assinatura e dá a saída para cancelar */
+function assinaturaUI(){
+  const box=$("#assinaturaBox"),btn=$("#assinarB"),rest=$("#restaurarAbre");
+  if(!box)return;
+  const info=proInfo();
+  if(!ehPro()){
+    box.hidden=true;box.className="assbox";
+    if(btn)btn.hidden=false;
+    if(rest)rest.hidden=false;
+    return;
+  }
+  if(btn)btn.hidden=true;
+  if(rest)rest.hidden=true;
+  box.hidden=false;
+
+  if(proPorCupom()){
+    box.className="assbox";
+    box.innerHTML=`<b>Acesso completo liberado</b>
+      <small>Por cupom — não há cobrança nem assinatura para cancelar.</small>`;
+    return;
+  }
+  const ate=dataBR(info.ate);
+  let titulo="Assinatura ativa",nota="",classe="assbox";
+  if(info.emGraca){
+    classe="assbox aviso";titulo="Pagamento pendente";
+    nota="O último pagamento não passou. Atualize o cartão para não perder o acesso.";
+  }else if(info.cancelaNoFim){
+    classe="assbox aviso";titulo="Assinatura cancelada";
+    nota=ate?`Você continua com acesso completo até ${ate}.`:"Você continua com acesso até o fim do período pago.";
+  }else{
+    nota=ate?`Renova em ${ate}. Cancele quando quiser, sem multa.`:"Cancele quando quiser, sem multa.";
+  }
+  box.className=classe;
+  box.innerHTML=`<b>${titulo}</b><small>${esc(nota)}</small>
+    <button class="btn ghost" id="portalB">Gerenciar ou cancelar assinatura</button>`;
+  $("#portalB").onclick=e=>abrirPortal(e.currentTarget);
+}
+
 async function planoUI(){
+  assinaturaUI();
   const el=$("#apiStatus");if(!el)return;
   el.innerHTML=`<span class="dot-off"></span>Verificando pagamento…`;
   let pronto=false;
@@ -3807,7 +3919,7 @@ async function cupomPorLink(){
   const r=await aplicarCupomAsync(cod);
   const m=$("#cupomMsg");
   if(m){m.textContent=r.msg;m.className="cupom-msg "+(r.ok?"ok":"no");}
-  if(r.ok&&ehPro()){feed();marcaPro();toast("Acesso completo liberado");}
+  if(r.ok&&ehPro()){feed();marcaPro();toast("Acesso completo liberado");planoUI();}
   nav("plano");
   try{history.replaceState({},"",location.pathname);}catch(e){}
 }
@@ -3917,9 +4029,22 @@ $("#cupomB").onclick=async()=>{
   const r=await aplicarCupomAsync($("#cupomIn").value);
   b.disabled=false;b.textContent="Aplicar";
   m.textContent=r.msg;m.className="cupom-msg "+(r.ok?"ok":"no");
-  if(r.ok&&ehPro()){$("#cupomIn").value="";feed();marcaPro();toast("Acesso completo liberado");}
+  if(r.ok&&ehPro()){$("#cupomIn").value="";feed();marcaPro();toast("Acesso completo liberado");planoUI();}
 };
 $("#cupomIn").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();$("#cupomB").click();}};
+$("#restaurarAbre").onclick=()=>{
+  $("#restaurarBox").hidden=false;$("#restaurarAbre").hidden=true;
+  const i=$("#restaurarIn");i.value=contaLer().mail||"";i.focus();
+};
+$("#restaurarB").onclick=async()=>{
+  const b=$("#restaurarB"),m=$("#restaurarMsg");
+  b.disabled=true;b.textContent="Buscando…";
+  const r=await restaurarAcesso($("#restaurarIn").value);
+  b.disabled=false;b.textContent="Restaurar";
+  m.textContent=r.msg;m.className="cupom-msg "+(r.ok?"ok":"no");
+  if(r.ok)toast("Acesso restaurado");
+};
+$("#restaurarIn").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();$("#restaurarB").click();}};
 function marcaPro(){
   const wn=$("#wn");
   if(ehPro()&&wn&&!$(".proflag")){wn.insertAdjacentHTML("afterend",'<span class="proflag">Pro</span>');}
