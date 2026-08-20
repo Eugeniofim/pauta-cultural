@@ -95,7 +95,12 @@ async function buscar(inst, hoje) {
   } finally { clearTimeout(t); }
 }
 
-export const config = { runtime: "edge" };
+/* gru1 = São Paulo, perto dos portais estaduais que consultamos.
+   NÃO resolve a Paraíba: testado em gru1 (confirmado no x-vercel-id) e o
+   403 continua, enquanto a mesma URL responde 200 de uma conexão comum.
+   O bloqueio é por faixa de IP de datacenter, não por país — não há o que
+   fazer do nosso lado. A PB cai no acervo já conferido e o app avisa. */
+export const config = { runtime: "edge", regions: ["gru1"] };
 
 export default async () => {
   const hoje = new Date().toISOString().slice(0, 10);
