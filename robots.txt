@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://pautacultural.netlify.app/sitemap.xml

@@ -1,0 +1,17 @@
+# nunca versionar segredos
+.env
+.env.*
+!.env.example
+
+# artefatos de build e dependências
+node_modules/
+.netlify/
+dist/
+.DS_Store
+
+# dados coletados: mudam todo dia e vêm da API ao vivo
+editais.json
+festivais.json
+novidades.json
+alertas.json
+assinantes.json
