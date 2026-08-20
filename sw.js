@@ -15,12 +15,12 @@
  *    cancelou continuar com o Pro, e /api/assinar devolveria um link de
  *    checkout já usado. Essas rotas passam direto, sempre.
  */
-const VERSAO = "pauta-v1";
+const VERSAO = "pauta-v2";
 const CASCA  = VERSAO + "-casca";
 const DADOS  = VERSAO + "-dados";
 
 /* o essencial para a tela abrir sem rede */
-const ESSENCIAL = ["/", "/manifest.webmanifest", "/icone.svg", "/icone-192.png", "/icone-512.png"];
+const ESSENCIAL = ["/", "/manifest.webmanifest", "/icone.svg", "/icone-192.png", "/icone-512.png", "/icone-maskable-512.png"];
 
 /* rotas que jamais podem sair do cache: dizem respeito a dinheiro e acesso */
 const NUNCA_GUARDAR = /\/api\/(status|portal|assinar|confirmar|cupom)/;
