@@ -24,6 +24,10 @@
 <link rel="icon" href="/icone.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/icone-180.png">
 <link rel="manifest" href="/manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Pauta">
+<meta name="mobile-web-app-capable" content="yes">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"WebApplication","name":"Pauta Cultural",
  "inLanguage":"pt-BR","url":"https://pauta-cultural.vercel.app/","applicationCategory":"BusinessApplication",
@@ -2707,18 +2711,22 @@ function syncInfo(){
   const base=ultimaColeta?new Date(ultimaColeta):new Date(COLETA+"T12:00:00");
   const horas=Math.floor((Date.now()-base)/36e5);
   const dias=Math.floor(horas/24);
+  const semRede = fonteDados==="sem rede";
   const quando = fonteDados==="ao vivo"
     ? (horas<1?"agora há pouco":horas<24?`há ${horas} ${horas===1?"hora":"horas"}`:`há ${dias} ${dias===1?"dia":"dias"}`)
     : (dias<=0?"hoje":dias===1?"ontem":`há ${dias} dias`);
   const st=$("#sySub");
   if(st){
     const falhou = ufsFalharam.length ? ` · ${ufsFalharam.join(", ")} não respondeu agora, mostrando a última lista conferida` : "";
-    st.textContent=`${ED.filter(e=>e.id>=9000).length} editais de fonte oficial · ${FESTIVAIS_TODOS.length} festivais · consultado ${quando}${falhou}`;
+    st.textContent = semRede
+      ? `${ED.filter(e=>e.id>=9000).length} editais guardados no aparelho · confira os prazos quando voltar a ter internet`
+      : `${ED.filter(e=>e.id>=9000).length} editais de fonte oficial · ${FESTIVAIS_TODOS.length} festivais · consultado ${quando}${falhou}`;
   }
   const dot=$("#syDot");
-  if(dot)dot.className="dot2"+(fonteDados==="ao vivo"?"":fonteDados==="parcial"?" busy":(dias>10?" off":""));
+  if(dot)dot.className="dot2"+(semRede?" off":fonteDados==="ao vivo"?"":fonteDados==="parcial"?" busy":(dias>10?" off":""));
   const tt=$("#syTitle");
-  if(tt)tt.textContent = fonteDados==="ao vivo" ? "Editais buscados na fonte agora"
+  if(tt)tt.textContent = semRede ? "Sem internet — mostrando o que estava guardado"
+    : fonteDados==="ao vivo" ? "Editais buscados na fonte agora"
     : fonteDados==="parcial" ? "Editais atualizados, com uma fonte fora do ar"
     : (dias>10?"Pode haver novidades":"Tudo em dia");
 }
@@ -3989,7 +3997,10 @@ async function carregarAoVivo(){
     ED.length=0;
     ED.push(...permanentes,...embutidosMantidos,...novos);
 
-    fonteDados = vivas.size>=4 ? "ao vivo" : vivas.size ? "parcial" : "embutida";
+    /* o service worker marca a resposta quando ela saiu do cache por falta de
+       rede. Sem isto o app mostraria prazo antigo como se fosse ao vivo. */
+    fonteDados = j.doCache ? "sem rede"
+      : vivas.size>=4 ? "ao vivo" : vivas.size ? "parcial" : "embutida";
     ufsAoVivo=[...vivas];
     ufsFalharam=Object.entries(j.fontes||{}).filter(([,v])=>typeof v!=="number").map(([uf])=>uf);
     ultimaColeta=j.gerado_em||null;
@@ -4080,7 +4091,52 @@ function marcaPro(){
   const wn=$("#wn");
   if(ehPro()&&wn&&!$(".proflag")){wn.insertAdjacentHTML("afterend",'<span class="proflag">Pro</span>');}
 }
-polir();carregarAoVivo();
+/* ================= INSTALAR NO CELULAR ================= */
+/* O service worker existe para o app abrir sem rede. O registro fica no fim,
+   depois do app já ter carregado, para não disputar banda no primeiro acesso. */
+let convite=null;
+function pwaInit(){
+  if(!("serviceWorker" in navigator)||location.protocol!=="https:")return;
+  window.addEventListener("load",()=>{
+    navigator.serviceWorker.register("/sw.js").catch(e=>console.info("sw:",e.message));
+  });
+  /* Android avisa quando o app pode ser instalado; iOS não avisa, por isso
+     lá o caminho é o menu Compartilhar do Safari e nós só explicamos. */
+  window.addEventListener("beforeinstallprompt",e=>{
+    e.preventDefault(); convite=e; mostrarInstalar();
+  });
+  window.addEventListener("appinstalled",()=>{convite=null;esconderInstalar();});
+}
+function jaInstalado(){
+  return window.matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
+}
+function mostrarInstalar(){
+  if(jaInstalado()||$("#instalarB"))return;
+  const alvo=$(".acct")||$("header");if(!alvo)return;
+  const b=document.createElement("button");
+  b.id="instalarB";b.className="btn ghost sm";b.textContent="Instalar";
+  b.title="Instalar o Pauta Cultural no aparelho";
+  b.onclick=async()=>{
+    if(!convite)return;
+    convite.prompt();
+    const r=await convite.userChoice.catch(()=>null);
+    if(r&&r.outcome==="accepted")toast("Instalando…");
+    convite=null;esconderInstalar();
+  };
+  alvo.insertAdjacentElement("beforebegin",b);
+}
+function esconderInstalar(){const b=$("#instalarB");if(b)b.remove();}
+
+/* desliga o service worker de dentro do app, se um dia ele atrapalhar */
+window.pautaDesligarSW=async()=>{
+  if(!navigator.serviceWorker)return "sem suporte";
+  const rs=await navigator.serviceWorker.getRegistrations();
+  rs.forEach(r=>{if(r.active)r.active.postMessage("desligar");r.unregister();});
+  if(window.caches)(await caches.keys()).forEach(n=>caches.delete(n));
+  return "desligado — recarregue a página";
+};
+
+polir();carregarAoVivo();pwaInit();
 if($("#brandB"))$("#brandB").onclick=verLanding;cupomPorLink();chatInit();marcaPro();planoUI();checarRetorno();sincronizarPro();
 $("#acSair").onclick=()=>{
   if(!confirm("Isso apaga seu perfil, rascunhos e prazos acompanhados neste navegador. Continuar?"))return;
