@@ -3148,7 +3148,13 @@ async function restaurarAcesso(email){
   return {ok:true,msg:"Acesso restaurado."};
 }
 
-/* ---- cancelar / trocar cartão / ver faturas: tudo no portal do Stripe ---- */
+/* ---- cancelar / trocar cartão / ver faturas: tudo no portal do Stripe ----
+   Dois caminhos para o mesmo lugar. O primeiro leva direto, já identificado,
+   mas exige que a chave tenha permissão de gravação no portal. O segundo é a
+   página pública do Stripe: a pessoa digita o e-mail e recebe um link. Mais
+   passos, porém não depende de permissão nenhuma e o Stripe é quem confere
+   quem é o dono — por isso vale como reserva permanente, não como remendo. */
+const PORTAL_LOGIN="https://billing.stripe.com/p/login/4gMaEZeAH1n0avd3XWfAc00";
 async function abrirPortal(btn){
   const info=proInfo(), c=contaLer();
   const antes=btn?btn.textContent:"";
@@ -3157,10 +3163,10 @@ async function abrirPortal(btn){
     const j=await apiFetch("/portal",{method:"POST",headers:{"Content-Type":"application/json"},
       body:JSON.stringify({cliente:info.cliente||"",email:c.mail||""})});
     if(j&&j.url){location.href=j.url;return;}
-    toast((j&&j.erro)?j.erro:"Não consegui abrir o portal agora.");
     if(j&&j.ajuda)console.info("portal:",j.ajuda);
-  }catch(e){toast("Não consegui abrir o portal agora.");}
-  if(btn){btn.disabled=false;btn.textContent=antes;}
+  }catch(e){/* sem servidor: vai pela página pública */}
+  toast("Confirme seu e-mail na página do Stripe para gerenciar a assinatura.");
+  location.href=PORTAL_LOGIN;
 }
 
 /* ---- painel de configuração do servidor ---- */
@@ -3246,7 +3252,8 @@ function assinaturaUI(){
   }
   box.className=classe;
   box.innerHTML=`<b>${titulo}</b><small>${esc(nota)}</small>
-    <button class="btn ghost" id="portalB">Gerenciar ou cancelar assinatura</button>`;
+    <button class="btn ghost" id="portalB">Gerenciar ou cancelar assinatura</button>
+    <small style="margin-top:8px">Abre a página segura do Stripe. Lá dá para cancelar, trocar o cartão e baixar as faturas.</small>`;
   $("#portalB").onclick=e=>abrirPortal(e.currentTarget);
 }
 
