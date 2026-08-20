@@ -1,6 +1,6 @@
-/** Abre o checkout do Stripe. A chave vem do ambiente do Netlify, nunca do navegador. */
+/** Abre o checkout do Stripe. A chave vem do ambiente do servidor, nunca do navegador. */
 const PRICE = process.env.STRIPE_PRICE_ID || "price_1U2t3HRtBz2fFckWz9s2QyZp";
-const SITE  = process.env.URL_SITE || "https://pautacultural.netlify.app";
+const SITE  = process.env.URL_SITE || "https://pauta-cultural.vercel.app";
 const form = o => new URLSearchParams(o).toString();
 
 export const config = { runtime: "edge" };
@@ -8,7 +8,7 @@ export const config = { runtime: "edge" };
 export default async (req) => {
   const chave = process.env.STRIPE_SECRET_KEY;
   if (!chave) return Response.json(
-    { erro: "pagamento ainda não configurado", detalhe: "falta STRIPE_SECRET_KEY no Netlify" }, { status: 503 });
+    { erro: "pagamento ainda não configurado", detalhe: "falta STRIPE_SECRET_KEY no servidor" }, { status: 503 });
   if (req.method !== "POST") return Response.json({ erro: "use POST" }, { status: 405 });
 
   let email = "";

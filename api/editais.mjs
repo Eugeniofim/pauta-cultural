@@ -56,7 +56,7 @@ async function buscar(inst, hoje) {
   const t = setTimeout(() => ctrl.abort(), 6500);
   try {
     const r = await fetch(url, { signal: ctrl.signal,
-      headers: { Accept: "application/json", "User-Agent": "PautaCultural/1.0 (+https://pautacultural.netlify.app)" } });
+      headers: { Accept: "application/json", "User-Agent": "PautaCultural/1.0 (+https://pauta-cultural.vercel.app)" } });
     if (!r.ok) return { uf: inst.uf, erro: `HTTP ${r.status}`, itens: [] };
     const dados = await r.json();
     if (!Array.isArray(dados)) return { uf: inst.uf, erro: "formato inesperado", itens: [] };
@@ -126,6 +126,10 @@ export default async () => {
   }), { status: 200, headers: {
       "Content-Type": "application/json; charset=utf-8",
       "Cache-Control": "public, max-age=600",
+      /* a borda guarda por 6h e serve o antigo enquanto rebusca — se um portal
+         estadual cair, ninguém vê tela vazia. CDN-Cache-Control é o nome que a
+         Vercel entende; o da Netlify fica para o caso de voltarmos pra lá. */
+      "CDN-Cache-Control": "public, s-maxage=21600, stale-while-revalidate=86400",
       "Netlify-CDN-Cache-Control": "public, s-maxage=21600, stale-while-revalidate=86400",
       "Access-Control-Allow-Origin": "*",
   }});
