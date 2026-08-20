@@ -721,6 +721,20 @@
     text-decoration:underline;padding:0;margin-left:auto}
   /* painel da assinatura: usa --ink sobre o fundo suave, não a cor de estado,
      senão o texto corrido fica com contraste de etiqueta */
+  /* cadeado do Pro */
+  .trava{max-width:640px;margin:0 auto;text-align:center}
+  .trava .cad{width:62px;height:62px;border-radius:20px;background:var(--accent-soft);
+    display:grid;place-items:center;font-size:28px;margin:0 auto 18px}
+  .trava h2{font-size:26px;letter-spacing:-.02em;margin:0 0 10px}
+  .trava .sub{color:var(--ink-soft);font-size:14.5px;line-height:1.6;margin:0 0 24px}
+  .trava-campos{background:var(--surface-2);border-radius:14px;padding:17px 19px;text-align:left;margin-bottom:22px}
+  .trava-campos b{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:11px}
+  .trava-campos ol{margin:0;padding-left:19px;font-size:13.4px;line-height:1.75;color:var(--ink-soft)}
+  .trava-acoes{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+  .trava .pnota{font-size:12.5px;color:var(--muted);margin-top:16px;line-height:1.55}
+  .pk{position:relative}
+  .pk .cadmini{position:absolute;top:12px;right:12px;font-size:15px;opacity:.75}
   .assbox{margin-top:14px;padding:15px 17px;background:var(--ok-soft);border-radius:12px;
     text-align:left;font-size:12.9px;line-height:1.55;color:var(--ink)}
   .assbox.aviso{background:var(--warn-soft)}
@@ -1454,6 +1468,8 @@
         </div>
       </div>
 
+      <div id="e-trava" class="trava" style="display:none"></div>
+
       <div id="e-quiz" style="display:none">
         <div class="grid2">
           <div class="ask card" id="ask"></div>
@@ -2013,6 +2029,9 @@ const artA=f=>prodTxt(f);
 const artO=f=>prodTxt(f);
 
 function startMode(m,ed){
+  /* trava aqui, e não no clique, porque há duas portas de entrada: os cartões
+     desta tela e o botão "escrever" de dentro de um edital. */
+  if(!ehPro()){mostrarTrava(m);return;}
   MODE=m;Q=m==="rouanet"?QR:QE;C=m==="rouanet"?CR:CE;ORD=Object.keys(C);
   A={};EDT={};qi=0;fin=false;ctx=ed||null;
   if(ed){A.nome=A.nome||"";}
@@ -2021,6 +2040,43 @@ function startMode(m,ed){
   novoDraft();
   $("#e-pick").style.display="none";$("#e-final").style.display="none";$("#e-quiz").style.display="";
   renderQ();
+}
+/* O cadeado mostra a estrutura oficial dos campos de propósito: o plano
+   grátis promete "estrutura dos formulários oficiais", e esconder isso aqui
+   transformaria a promessa em mentira. Trava-se a escrita, não a informação. */
+function mostrarTrava(m){
+  const R=m==="rouanet";
+  const campos=Object.values(R?CR:CE).map(c=>c.n);
+  const el=$("#e-trava");if(!el)return;
+  el.innerHTML=`
+    <div class="cad">🔒</div>
+    <div class="eyebrow">Recurso do Pauta Pro</div>
+    <h2>Escrever projeto é do Pro</h2>
+    <p class="sub">${R
+      ? "O assistente conduz você pelos 8 campos de texto do SALIC, respeitando os limites da IN MinC nº 29/2026 — teto de captação, administrativo, acessibilidade e distribuição gratuita."
+      : "O assistente monta os campos que as secretarias estaduais e municipais costumam pedir, com contagem de caracteres e alertas de coerência."}</p>
+    <div class="trava-campos">
+      <b>Os ${campos.length} campos que você vai preencher</b>
+      <ol>${campos.map(c=>`<li>${esc(c)}</li>`).join("")}</ol>
+    </div>
+    <div class="trava-acoes">
+      <button class="btn pri" id="travaPlano">Ver o Pauta Pro — R$ 9,90/mês</button>
+      <button class="btn ghost" id="travaVoltar">Voltar</button>
+    </div>
+    <p class="pnota">Cancele quando quiser, sem multa. Tem um cupom? Aplique na tela do plano.</p>`;
+  $("#e-pick").style.display="none";$("#e-quiz").style.display="none";$("#e-final").style.display="none";
+  el.style.display="";
+  $("#travaPlano").onclick=()=>nav("plano");
+  $("#travaVoltar").onclick=()=>{el.style.display="none";$("#e-pick").style.display="";};
+}
+/* cadeado nos cartões, para a trava não ser surpresa depois do clique */
+function marcarCartoesTrava(){
+  $$(".pk").forEach(b=>{
+    const tem=b.querySelector(".cadmini");
+    if(ehPro()){if(tem)tem.remove();}
+    else if(!tem){const s=document.createElement("span");s.className="cadmini";s.textContent="🔒";
+      s.title="Recurso do Pauta Pro";b.appendChild(s);}
+  });
 }
 $$(".pk").forEach(b=>b.onclick=()=>startMode(b.dataset.mode));
 $("#exitQ").onclick=()=>{$("#e-quiz").style.display="none";$("#e-final").style.display="none";$("#e-pick").style.display="";};
@@ -4088,6 +4144,7 @@ $("#restaurarB").onclick=async()=>{
 };
 $("#restaurarIn").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();$("#restaurarB").click();}};
 function marcaPro(){
+  marcarCartoesTrava();
   const wn=$("#wn");
   if(ehPro()&&wn&&!$(".proflag")){wn.insertAdjacentHTML("afterend",'<span class="proflag">Pro</span>');}
 }
