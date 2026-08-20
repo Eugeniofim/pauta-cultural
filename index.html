@@ -1102,7 +1102,7 @@
         <div class="lp-h-txt">
           <div class="lp-selo">Editais reais, conferidos na fonte</div>
           <h1>Artista, cansado de prospectar<br>em vinte abas abertas?</h1>
-          <p>Edital num grupo de WhatsApp. Festival num story. Prazo que você descobre no dia. A Pauta junta tudo num lugar só — <b>editais do Brasil inteiro e festivais daqui e da Europa, com o contato de quem organiza</b> — e ainda escreve o projeto com você.</p>
+          <p><b>Editais do Brasil todo com prazo real</b>, festivais daqui, das Américas e da Europa com o contato de quem organiza, e um assistente que escreve seu projeto da Lei Rouanet com você.</p>
           <div class="lp-cta">
             <button class="btn pri lp-big" id="lpComecar">Começar de graça</button>
             <span class="lp-nota">Sem cartão. Leva 40 segundos.</span>
@@ -1110,10 +1110,10 @@
           <div class="lp-nums" id="lpNums"></div>
         </div>
         <div class="lp-h-vis">
-          <div class="lp-card lp-c1">
-            <div class="lp-k">Edital · Secretaria de Cultura</div>
-            <div class="lp-t">Fomento aos Pontos de Cultura</div>
-            <div class="lp-pz"><span></span>Até 06/08 · faltam 2 dias</div>
+          <div class="lp-card lp-c1" id="lpEdital">
+            <div class="lp-k">Edital</div>
+            <div class="lp-t">Carregando editais…</div>
+            <div class="lp-pz"><span></span>buscando na fonte oficial</div>
           </div>
           <div class="lp-card lp-c2">
             <div class="lp-k">Detalhes técnicos › Sinopse da obra</div>
@@ -1129,28 +1129,28 @@
       </section>
 
       <section class="lp-dores">
-        <h2>Três coisas que tomam o seu tempo</h2>
+        <h2>Três coisas que tomam seu tempo</h2>
         <div class="lp-dgrid">
           <div class="lp-dor">
             <div class="lp-di">🗂️</div>
             <div class="lp-antes">Hoje</div>
-            <p class="lp-p">Edital espalhado em site de prefeitura, grupo de WhatsApp e story que some em 24 horas.</p>
+            <p class="lp-p">Espalhado entre site de prefeitura, grupo de WhatsApp e story que some.</p>
             <div class="lp-depois">Com a Pauta</div>
-            <p class="lp-d2"><b>Editais do Brasil todo centralizados</b> — federais, estaduais e municipais, com prazo real e link oficial. Filtra por sua área, seu estado, sua cidade.</p>
+            <p class="lp-d2"><b>Tudo num lugar, com prazo real e link oficial.</b> Filtra por área, estado e cidade.</p>
           </div>
           <div class="lp-dor">
             <div class="lp-di">🎪</div>
             <div class="lp-antes">Hoje</div>
-            <p class="lp-p">Você não sabe quais festivais existem pro seu estilo, nem com quem falar para se apresentar — muito menos os de fora do país.</p>
+            <p class="lp-p">Você não sabe quais existem pro seu estilo, nem com quem falar.</p>
             <div class="lp-depois">Com a Pauta</div>
-            <p class="lp-d2"><b>Festivais do Brasil inteiro e da Europa, prontos para você mandar material</b> — com e-mail, site ou Instagram de quem organiza. A Pauta escreve o e-mail de apresentação e abre no seu Gmail, já no idioma do país.</p>
+            <p class="lp-d2"><b>Brasil, Américas e Europa, com o contato de quem organiza.</b> A Pauta escreve o e-mail de apresentação no idioma do país e abre no seu Gmail.</p>
           </div>
           <div class="lp-dor destaque">
             <div class="lp-di">📝</div>
             <div class="lp-antes">Hoje</div>
             <p class="lp-p">Você abre o SALIC, vê oito campos em branco de 8.000 caracteres e fecha a aba.</p>
             <div class="lp-depois">Com a Pauta</div>
-            <p class="lp-d2"><b>Assistente de escrita nos moldes do SALIC</b> — a estrutura real da Lei Rouanet, campo por campo, com os limites da norma calculados enquanto você responde.</p>
+            <p class="lp-d2"><b>A estrutura real do SALIC, campo por campo</b>, com os limites da norma calculados enquanto você responde.</p>
           </div>
         </div>
       </section>
@@ -2081,6 +2081,30 @@ function mostrarTrava(m){
   $("#travaPlano").onclick=()=>nav("plano");
   $("#travaVoltar").onclick=()=>{el.style.display="none";$("#e-pick").style.display="";};
 }
+function travaChat(){
+  const inp=$("#chIn");if(inp)inp.value="";
+  const m=$("#chMsgs");
+  if(m){
+    m.insertAdjacentHTML("beforeend",
+      `<div class="ch-msg assistant"><div class="ch-av">P</div><div class="ch-bal">
+       <b>🔒 Conversar é do Pauta Pro</b><br>
+       O assistente responde sobre a Lei Rouanet, editais e o seu projeto, com os limites da
+       norma conferidos. Suas conversas anteriores continuam aqui.
+       <br><br><button class="btn pri sm" id="chTravaB">Ver o Pauta Pro</button></div></div>`);
+    const bt=$("#chTravaB");if(bt)bt.onclick=()=>nav("plano");
+    m.scrollTop=m.scrollHeight;
+  } else { toast("Conversar é do Pauta Pro."); nav("plano"); }
+}
+/* cadeado nas abas que dependem do Pro, para a trava não ser surpresa */
+function marcarAbasTrava(){
+  const pro=ehPro();
+  $$(".nv").forEach(b=>{
+    const trava=["escrever","chat"].includes(b.dataset.s);
+    const tem=/🔒/.test(b.textContent);
+    if(trava&&!pro&&!tem)b.textContent=b.textContent.trim()+" 🔒";
+    if((pro||!trava)&&tem)b.textContent=b.textContent.replace(/\s*🔒/,"");
+  });
+}
 /* cadeado nos cartões, para a trava não ser surpresa depois do clique */
 function marcarCartoesTrava(){
   $$(".pk").forEach(b=>{
@@ -2738,6 +2762,7 @@ function fInit(){
   $("#fredo").onclick=()=>{fQuiz={feito:false,uf:"",ling:"",contato:""};fPasso=0;
     $("#fqs").value="";$("#fuf").value="";$("#fct").value="";$("#flg").value="";fQuizRender();};
   $("#fexp").onclick=()=>{
+    if(!ehPro()){toast("Exportar a lista de contatos é do Pauta Pro.");nav("plano");return;}
     const l=FESTIVAIS_TODOS.filter(fMatch);
     const csv=["nome;estado;organizador;email;telefone;site;ficha"].concat(
       l.map(f=>[f.n,UF[f.uf]||f.uf,f.org||"",f.mail||"",f.tel||"",f.site||"",f.link].map(x=>String(x).replace(/;/g,",")).join(";"))).join("\n");
@@ -3653,13 +3678,31 @@ function lpNumeros(){
   const el=$("#lpNums");if(!el)return;
   const ab=ED.filter(e=>e.pz!=null).length;
   const nac=FESTIVAIS_TODOS.filter(f=>f.porte!=="internacional").length;
-  const eur=FESTIVAIS_TODOS.filter(f=>f.porte==="internacional"&&EUROPA.has(f.pais)).length;
+  const fora=FESTIVAIS_TODOS.filter(f=>f.porte==="internacional").length;
   const com=FESTIVAIS_TODOS.filter(f=>f.mail||f.site||f.insta).length;
   el.innerHTML=`
     <div><b>${ab}</b><span>editais abertos</span></div>
     <div><b>${nac}</b><span>festivais no Brasil</span></div>
-    <div><b>${eur}</b><span>festivais na Europa</span></div>
+    <div><b>${fora}</b><span>festivais no exterior</span></div>
     <div><b>${com}</b><span>com contato para enviar material</span></div>`;
+  lpEditalReal();
+}
+
+/* O cartão do topo mostrava uma data escrita à mão, que venceu e ficou
+   mentindo na vitrine. Agora traz o edital aberto mais urgente do acervo,
+   com a contagem calculada contra o relógio — se não houver nenhum, some. */
+function lpEditalReal(){
+  const c=$("#lpEdital");if(!c)return;
+  const abertos=ED.filter(e=>e.pz!=null&&e.ate).sort((a,b)=>new Date(a.ate)-new Date(b.ate));
+  if(!abertos.length){c.style.display="none";return;}
+  const e=abertos[0];
+  const d=e.pz===0?"encerra hoje":e.pz===1?"falta 1 dia":`faltam ${e.pz} dias`;
+  const [A,M,D]=e.ate.split("-");
+  c.style.display="";
+  c.innerHTML=`
+    <div class="lp-k">${esc(e.tp||"Edital")} · ${esc((e.o||"").slice(0,34))}</div>
+    <div class="lp-t">${esc(e.t.length>52?e.t.slice(0,49)+"…":e.t)}</div>
+    <div class="lp-pz"><span></span>Até ${D}/${M} · ${d}</div>`;
 }
 function abrirCadastro(){
   $("#onbMask").classList.add("on");
@@ -3903,6 +3946,9 @@ async function chatEnviar(){
   if(chatOcupado)return;
   const inp=$("#chIn"), txt=(inp.value||"").trim();
   if(!txt)return;
+  /* trava no envio, e não na tela inteira: quem já conversou antes de o Pro
+     acabar continua lendo o próprio histórico, que é dado dela. */
+  if(!ehPro()){travaChat();return;}
   let conv=chatAtual?convPega(chatAtual):null;
   if(!conv)conv=convNova();
   conv.msgs.push({role:"user",content:txt});
@@ -4172,7 +4218,7 @@ $("#restaurarB").onclick=async()=>{
 };
 $("#restaurarIn").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();$("#restaurarB").click();}};
 function marcaPro(){
-  marcarCartoesTrava();
+  marcarCartoesTrava();marcarAbasTrava();
   const wn=$("#wn");
   if(ehPro()&&wn&&!$(".proflag")){wn.insertAdjacentHTML("afterend",'<span class="proflag">Pro</span>');}
 }
