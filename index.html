@@ -1432,7 +1432,7 @@
     <section class="scr" id="s-festivais">
       <div class="eyebrow" id="feyeb">Festivais do Brasil</div>
       <h1 id="fttl">Festivais do Brasil</h1>
-      <p class="lead" id="flead"><b>São fichas de festivais registrados</b>, não chamadas com inscrição aberta — servem para você encontrar o festival e falar com quem organiza. Coletadas dos Mapas Culturais de CE, PE, SE, PA e PB; os demais estados entram assim que a fonte oficial for confirmada. Onde o organizador é instituição e publicou contato, ele aparece aqui; contato de pessoa física é omitido por privacidade.</p>
+      <p class="lead" id="flead"><b>Fichas de festivais, não chamadas abertas.</b> Para achar o festival e falar com quem organiza. Contato só quando a instituição publicou.</p>
 
       <div class="subtabs" id="fsub">
         <button class="stb on" data-esc="nac">🇧🇷 Nacionais<span id="cNac"></span></button>
@@ -1468,7 +1468,7 @@
       <div id="e-pick">
         <div class="eyebrow">Escrever projeto</div>
         <h1>Para onde é o projeto?</h1>
-        <p class="lead">Cada sistema pede uma estrutura diferente. Escolha e a Pauta monta os campos certos.</p>
+        <p class="lead">Escolha o sistema. A Pauta monta os campos certos.</p>
         <div class="pick">
           <button class="pk" data-mode="rouanet">
             <div class="ic">🏛️</div><h3>Lei Rouanet — SALIC</h3>
@@ -1578,14 +1578,14 @@ const REAIS=[
  {id:171,t:"Outras Palavras — Apoio a Publicações Independentes (Chamamento 014/2026)",o:"Secretaria de Estado da Cultura do Paraná",sis:"SIC.Cultura PR",cid:null,tp:"Fomento",cat:"Literatura",reg:"PR",esf:"Estadual",fo:"pub",ex:"ambos",ate:"2026-08-28",
   link:"https://www.cultura.pr.gov.br/Pagina/Edital-Acessivel-Edital-de-Apoio-Publicacoes-Independentes-Outras-Palavras",
   link2:{u:"https://www.sic.cultura.pr.gov.br/","n":"SIC.Cultura — onde se inscreve"},
-  v:1000000,
-  d:"R$ 1 milhão para publicações independentes, em quatro categorias: zines (R$ 8.000 por projeto), histórias em quadrinhos (R$ 40.000), revistas independentes (R$ 48.000) e publicações coletivas (R$ 40.000). Inscrição pelo sistema SIC.Cultura. Conferido no edital oficial em 21/08/2026: inscrições de 18h de 28/07/2026 até 28/08/2026 às 18h00min59seg, horário de Brasília.",
+  v:48000,vnota:"maior teto por projeto — R$ 1 milhão no total do edital",
+  d:"Zine R$ 8 mil · HQ R$ 40 mil · Revista R$ 48 mil · Coletiva R$ 40 mil. Inscrição pelo SIC.Cultura.",
   r:["Cadastro no SIC.Cultura do Paraná","Requisitos definidos no edital"],
   c:["Zines: R$ 8.000","Histórias em quadrinhos: R$ 40.000","Revistas independentes: R$ 48.000","Publicações coletivas: R$ 40.000"]},
  {id:170,t:"ARTESESC 2027 — Seleção de exposições em artes visuais",o:"Sesc Paraná",sis:"Sesc Paraná",cid:null,tp:"Fomento",cat:"Artes Visuais",reg:"BR",esf:"Sistema S",fo:"priv",ex:"ambos",ate:"2026-09-28",
   link:"https://www.sescpr.com.br/edital/edital-de-selecao-artesesc-2027/",
   link2:{u:"https://www.sescpr.com.br/","n":"Sesc Paraná"},
-  d:"Seleção de exposições de artes visuais para circular pelas unidades do Sesc Paraná em 2027. Aberto a Pessoa Física, Empresário Individual e Pessoa Jurídica, sem restrição de estado — artista de qualquer lugar do Brasil pode inscrever. Inscrição por formulário eletrônico; dúvidas em eventos.culturais@sescpr.com.br. Conferido na página oficial em 21/08/2026: inscrições de 18/08/2026 até 28/09/2026 às 23h59.",
+  d:"Exposições de artes visuais para circular pelas unidades do Sesc Paraná em 2027. PF, Empresário Individual ou PJ, de qualquer estado. Inscrição por formulário. Dúvidas: eventos.culturais@sescpr.com.br",
   r:["Inscrição pelo formulário eletrônico do edital","Aberto a PF, Empresário Individual e PJ","Sem restrição de estado"],
   c:["Definidas no edital"]},
  {id:150,t:"ProAC — Programa de Ação Cultural do Estado de São Paulo",o:"Secretaria de Cultura e Economia Criativa de SP",sis:"Sistema ProAC",cid:null,tp:"Fomento",cat:"Todas",reg:"SP",esf:"Estadual",fo:"pub",ex:"ambos",janela:"Editais ao longo do ano — consulte o calendário",
@@ -1722,17 +1722,17 @@ const regiaoDe=f=>f.regiao||PAIS_REGIAO[f.pais||""]||null;
    Só leva contato quem teve o e-mail conferido em página de domínio oficial. */
 const SESC=[
  {n:"Sesc Nacional",uf:"BR",site:"https://www.sesc.com.br/encontre-uma-unidade/",mail:null,rot:null,ed:0,
-  d:"O Sesc Nacional não recebe projeto: quem programa é o Departamento Regional de cada estado. Comece por aqui só para achar o regional certo.",
-  verif:"Orientação conferida no FAQ oficial do Sesc Nacional: as solicitações vão para os Departamentos Regionais."},
+  d:"Não recebe projeto. Serve para achar o regional do seu estado.",
+  verif:"FAQ oficial: as solicitações vão para os regionais."},
  {n:"Sesc Paraná",uf:"PR",site:"https://www.sescpr.com.br/editais/",mail:"eventos.culturais@sescpr.com.br",rot:"eventos culturais",ed:36,
-  d:"O mais aberto a artista de fora: seção própria de editais, inscrição por formulário e chamadas ao longo do ano (ARTESESC, Artes da Cena, Arte Móvel, Arte na Estação). Aceita proposta de qualquer estado.",
-  verif:"Página de editais e e-mail conferidos no edital ARTESESC 2027, em 21/08/2026. A home cita editais 36 vezes, o maior índice dos 26 regionais. Segundo e-mail, do Arte Móvel: eventos.acaosocial@sescpr.com.br"},
+  d:"O mais aberto a artista de fora. Editais o ano todo, inscrição por formulário, aceita proposta de qualquer estado.",
+  verif:"No edital ARTESESC 2027. Arte Móvel tem e-mail próprio: eventos.acaosocial@sescpr.com.br"},
  {n:"Sesc Distrito Federal",uf:"DF",site:"https://sescdf.com.br/cultura/",mail:"projetosculturais@sescdf.com.br",rot:"projetos culturais",ed:0,
-  d:"Único regional, além de PR e SP, que publica e-mail dedicado a projetos culturais — não ouvidoria nem SAC.",
-  verif:"E-mail conferido na própria página de cultura em 21/08/2026. O nome do endereço diz a que veio: projetos culturais."},
+  d:"Único, além de PR e SP, com e-mail só de projetos culturais.",
+  verif:"Na página de cultura."},
  {n:"Sesc São Paulo",uf:"SP",site:"https://www.sescsp.org.br/cadastro/",mail:"cursoseoficinas@sescsp.org.br",rot:"cursos e oficinas",ed:1,
-  d:"A porta de entrada é o Cadastro de Fornecedores e Profissionais Culturais. Propostas de curso, oficina e aula aberta vão por e-mail com sinopse, formato, duração, equipe e estimativa de custo.",
-  verif:"E-mail conferido em 21/08/2026 na página oficial que detalha o que a proposta precisa ter. É o canal de cursos e oficinas — para pauta de espetáculo, use o Cadastro."},
+  d:"Entra pelo Cadastro de Fornecedores. Curso e oficina vão por e-mail, com sinopse, duração, equipe e custo.",
+  verif:"Na página oficial. É o canal de cursos e oficinas — para espetáculo, use o Cadastro."},
  {n:"Sesc Amazonas",uf:"AM",site:"https://www.sesc-am.com.br/cultura/",mail:"sesc.informacao@sesc-am.com.br",rot:"informação geral",ed:1,
   d:"Página de cultura própria, com e-mail publicado nela.",
   verif:"E-mail conferido na página de cultura em 21/08/2026. É o canal de informação geral, não de curadoria — pergunte por ele a quem falar sobre pauta."},
@@ -1752,57 +1752,57 @@ const SESC=[
   d:"Segundo maior índice de menções a edital entre os regionais.",
   verif:"Página de cultura conferida em 21/08/2026. E-mail de programação não publicado."},
  {n:"Sesc Tocantins",uf:"TO",site:"https://sescto.com.br/",mail:null,rot:null,ed:7,
-  d:"Página de cultura própria, conferida. A home cita editais 7 vezes.",
-  verif:"Domínio e página conferidos em 21/08/2026: identifica-se como Sesc Tocantins. Nenhum e-mail de programação publicado."},
+  d:"Página de cultura própria. Cita editais 7 vezes.",
+  verif:"Domínio confere. Sem e-mail de programação publicado."},
  {n:"Sesc Alagoas",uf:"AL",site:"https://www.sescalagoas.com.br/cultura",mail:null,rot:null,ed:7,
-  d:"Página de cultura própria, conferida. A home cita editais 7 vezes.",
-  verif:"Domínio e página conferidos em 21/08/2026: identifica-se como Sesc Alagoas. Nenhum e-mail de programação publicado."},
+  d:"Página de cultura própria. Cita editais 7 vezes.",
+  verif:"Domínio confere. Sem e-mail de programação publicado."},
  {n:"Sesc Espírito Santo",uf:"ES",site:"https://sesc-es.com.br/cultura/",mail:null,rot:null,ed:5,
-  d:"Página de cultura própria, conferida. A home cita editais 5 vezes.",
-  verif:"Domínio e página conferidos em 21/08/2026: identifica-se como Sesc Espírito Santo. Nenhum e-mail de programação publicado."},
+  d:"Página de cultura própria. Cita editais 5 vezes.",
+  verif:"Domínio confere. Sem e-mail de programação publicado."},
  {n:"Sesc Roraima",uf:"RR",site:"https://sescrr.com.br/cultura/",mail:null,rot:null,ed:4,
-  d:"Página de cultura própria, conferida. A home cita editais 4 vezes.",
-  verif:"Domínio e página conferidos em 21/08/2026: identifica-se como Sesc Roraima. Nenhum e-mail de programação publicado."},
+  d:"Página de cultura própria. Cita editais 4 vezes.",
+  verif:"Domínio confere. Sem e-mail de programação publicado."},
  {n:"Sesc Maranhão",uf:"MA",site:"https://www.sescma.com.br/cultura/",mail:null,rot:null,ed:3,
-  d:"Página de cultura própria, conferida. A home cita editais 3 vezes.",
-  verif:"Domínio e página conferidos em 21/08/2026: identifica-se como Sesc Maranhão. Nenhum e-mail de programação publicado."},
+  d:"Página de cultura própria. Cita editais 3 vezes.",
+  verif:"Domínio confere. Sem e-mail de programação publicado."},
  {n:"Sesc Sergipe",uf:"SE",site:"https://sesc-se.com.br/cultura/",mail:null,rot:null,ed:2,
-  d:"Página de cultura própria, conferida. A home cita editais 2 vezes.",
-  verif:"Domínio e página conferidos em 21/08/2026: identifica-se como Sesc Sergipe. Nenhum e-mail de programação publicado."},
+  d:"Página de cultura própria. Cita editais 2 vezes.",
+  verif:"Domínio confere. Sem e-mail de programação publicado."},
  {n:"Sesc Santa Catarina",uf:"SC",site:"https://www.sesc-sc.com.br/cultura/",mail:null,rot:null,ed:1,
-  d:"Página de cultura própria, conferida. A home cita editais 1 vez.",
-  verif:"Domínio e página conferidos em 21/08/2026: identifica-se como Sesc Santa Catarina. Nenhum e-mail de programação publicado."},
+  d:"Página de cultura própria. Cita editais 1 vez.",
+  verif:"Domínio confere. Sem e-mail de programação publicado."},
  {n:"Sesc Minas Gerais",uf:"MG",site:"https://sescmg.com.br/cultura/",mail:null,rot:null,ed:0,
-  d:"Página de cultura própria, conferida. E-mail de programação não publicado.",
-  verif:"Domínio e página conferidos em 21/08/2026: identifica-se como Sesc Minas Gerais. Nenhum e-mail de programação publicado."},
+  d:"Página de cultura própria. Sem e-mail de programação.",
+  verif:"Domínio confere. Sem e-mail de programação publicado."},
  {n:"Sesc Rio de Janeiro",uf:"RJ",site:"https://www.sescrio.org.br/cultura/",mail:null,rot:null,ed:0,
-  d:"Página de cultura própria, conferida. E-mail de programação não publicado.",
-  verif:"Domínio e página conferidos em 21/08/2026: identifica-se como Sesc Rio de Janeiro. Nenhum e-mail de programação publicado."},
+  d:"Página de cultura própria. Sem e-mail de programação.",
+  verif:"Domínio confere. Sem e-mail de programação publicado."},
  {n:"Sesc Pernambuco",uf:"PE",site:"https://sescpe.org.br/cultura/",mail:null,rot:null,ed:0,
-  d:"Página de cultura própria, conferida. E-mail de programação não publicado.",
-  verif:"Domínio e página conferidos em 21/08/2026: identifica-se como Sesc Pernambuco. Nenhum e-mail de programação publicado."},
+  d:"Página de cultura própria. Sem e-mail de programação.",
+  verif:"Domínio confere. Sem e-mail de programação publicado."},
  {n:"Sesc Rondônia",uf:"RO",site:"https://sescro.com.br/cultura/",mail:null,rot:null,ed:0,
-  d:"Página de cultura própria, conferida. E-mail de programação não publicado.",
-  verif:"Domínio e página conferidos em 21/08/2026: identifica-se como Sesc Rondônia. Nenhum e-mail de programação publicado."},
+  d:"Página de cultura própria. Sem e-mail de programação.",
+  verif:"Domínio confere. Sem e-mail de programação publicado."},
  {n:"Sesc Rio Grande do Sul",uf:"RS",site:"https://www.sesc-rs.com.br/cultura/",mail:null,rot:null,ed:0,
-  d:"Página de cultura própria, conferida. E-mail de programação não publicado.",
-  verif:"Domínio e página conferidos em 21/08/2026: identifica-se como Sesc Rio Grande do Sul. Nenhum e-mail de programação publicado."},
+  d:"Página de cultura própria. Sem e-mail de programação.",
+  verif:"Domínio confere. Sem e-mail de programação publicado."},
  {n:"Sesc Goiás",uf:"GO",site:"https://sescgo.com.br/",mail:null,rot:null,ed:2,
-  d:"A página de cultura publica um e-mail, mas ele é do Senac, não do Sesc — por isso não entra aqui.",
-  verif:"Site conferido em 21/08/2026. O único e-mail achado na seção de cultura era @go.senac.br, de outra instituição."},
+  d:"O único e-mail na página de cultura é do Senac, não do Sesc.",
+  verif:"O e-mail publicado é @go.senac.br, de outra instituição."},
  {n:"Sesc Acre",uf:"AC",site:"https://sescacre.com.br/",mail:null,rot:null,ed:0,
-  d:"Página de cultura própria, conferida. E-mail de programação não publicado.",
-  verif:"Domínio e página conferidos em 21/08/2026: identifica-se como Sesc Acre. Nenhum e-mail de programação publicado."},
+  d:"Página de cultura própria. Sem e-mail de programação.",
+  verif:"Domínio confere. Sem e-mail de programação publicado."},
  {n:"Sesc Amapá",uf:"AP",site:"https://sescamapa.com.br/",mail:null,rot:null,ed:2,
-  d:"Página de cultura própria, conferida. A home cita editais 2 vezes.",
-  verif:"Domínio e página conferidos em 21/08/2026: identifica-se como Sesc Amapá. Nenhum e-mail de programação publicado."},
+  d:"Página de cultura própria. Cita editais 2 vezes.",
+  verif:"Domínio confere. Sem e-mail de programação publicado."},
  {n:"Sesc Mato Grosso do Sul",uf:"MS",site:"https://sescms.com.br/",mail:null,rot:null,ed:0,
-  d:"Página de cultura própria, conferida. E-mail de programação não publicado.",
-  verif:"Domínio e página conferidos em 21/08/2026: identifica-se como Sesc Mato Grosso do Sul. Nenhum e-mail de programação publicado."},
+  d:"Página de cultura própria. Sem e-mail de programação.",
+  verif:"Domínio confere. Sem e-mail de programação publicado."},
  {n:"Sesc Ceará",uf:"CE",site:null,mail:null,rot:null,ed:0,
-  d:"Em breve. Testei seis endereços possíveis e nenhum respondeu como site oficial do Sesc Ceará.",verif:null},
+  d:"Em breve. Seis endereços testados, nenhum é o site oficial.",verif:null},
  {n:"Sesc Paraíba",uf:"PB",site:null,mail:null,rot:null,ed:0,
-  d:"Em breve. O domínio sescpb.com.br leva a um portal de processos seletivos de emprego, não ao site institucional.",verif:null},
+  d:"Em breve. O domínio leva a um portal de vagas, não ao site institucional.",verif:null},
 ];
 const FESTAMERICAS=[{"n": "Cosquín Rock", "uf": "INT", "pais": "Argentina", "org": "", "tipo": "Internacional", "mail": null, "tel": null, "site": "https://www.cosquinrock.net/", "link": "https://www.cosquinrock.net/", "sis": "Catálogo Pauta", "ed": 1, "porte": "internacional", "regiao": "americas", "cidade": "Córdoba, Argentina", "quando": null, "gen": "Rock", "d": "Um dos maiores festivais de rock da América Latina, realizado em Córdoba."}, {"n": "Lollapalooza Argentina", "uf": "INT", "pais": "Argentina", "org": "", "tipo": "Internacional", "mail": null, "tel": null, "site": "https://www.lollapaloozaar.com/", "link": "https://www.lollapaloozaar.com/", "sis": "Catálogo Pauta", "ed": 1, "porte": "internacional", "regiao": "americas", "cidade": "Buenos Aires, Argentina", "quando": null, "gen": "Rock, Pop, Indie, Hip-hop", "d": "Edição argentina do festival, no Hipódromo de San Isidro."}, {"n": "Lollapalooza Chile", "uf": "INT", "pais": "Chile", "org": "", "tipo": "Internacional", "mail": null, "tel": null, "site": "https://www.lollapaloozacl.com/", "link": "https://www.lollapaloozacl.com/", "sis": "Catálogo Pauta", "ed": 1, "porte": "internacional", "regiao": "americas", "cidade": "Santiago, Chile", "quando": null, "gen": "Rock, Pop, Indie, Hip-hop", "d": "Edição chilena do festival, no Parque Cerrillos."}, {"n": "Festival Internacional Teatro a Mil", "uf": "INT", "pais": "Chile", "org": "", "tipo": "Internacional", "mail": null, "tel": null, "site": "https://www.teatroamil.cl/", "link": "https://www.teatroamil.cl/", "sis": "Catálogo Pauta", "ed": 1, "porte": "internacional", "regiao": "americas", "cidade": "Santiago, Chile", "quando": null, "gen": "Teatro, Dança, Artes Cênicas", "d": "Um dos maiores festivais de artes cênicas da América Latina, organizado pela Fundación Teatro a Mil.", "verif": "Site oficial confirma postulações abertas para a edição de 2027, por formulário próprio. O e-mail publicado na página é comercial (ventas@), não de curadoria — use o formulário.", "verifEm": "20/08/2026", "aberto": true}, {"n": "Festival Estéreo Picnic", "uf": "INT", "pais": "Colômbia", "org": "", "tipo": "Internacional", "mail": null, "tel": null, "site": "https://www.festivalestereopicnic.com/", "link": "https://www.festivalestereopicnic.com/", "sis": "Catálogo Pauta", "ed": 1, "porte": "internacional", "regiao": "americas", "cidade": "Bogotá, Colômbia", "quando": null, "gen": "Rock, Pop, Indie, Eletrônica", "d": "Maior festival de música contemporânea da Colômbia."}, {"n": "Rock al Parque", "uf": "INT", "pais": "Colômbia", "org": "", "tipo": "Internacional", "mail": null, "tel": null, "site": "https://www.rockalparque.gov.co/", "link": "https://www.rockalparque.gov.co/", "sis": "Catálogo Pauta", "ed": 1, "porte": "internacional", "regiao": "americas", "cidade": "Bogotá, Colômbia", "quando": "10 a 12 de outubro", "gen": "Rock, Metal, Punk, Ska", "d": "Maior festival de rock gratuito da América Latina, no Parque Simón Bolívar. Organizado pelo IDARTES, do poder público de Bogotá.", "verif": "Datas (10 a 12 de outubro), local (Parque Simón Bolívar) e organizador (IDARTES) confirmados no site oficial do governo. A convocatória aberta na data da conferência era para imprensa e audiovisual, não para bandas.", "verifEm": "20/08/2026"}, {"n": "Vive Latino", "uf": "INT", "pais": "México", "org": "", "tipo": "Internacional", "mail": null, "tel": null, "site": "https://vivelatino.com.mx/", "link": "https://vivelatino.com.mx/", "sis": "Catálogo Pauta", "ed": 1, "porte": "internacional", "regiao": "americas", "cidade": "Cidade do México, México", "quando": null, "gen": "Rock, Pop Latino, Alternativo", "d": "Maior festival de rock ibero-americano, no Foro Sol."}, {"n": "Festival Internacional Cervantino", "uf": "INT", "pais": "México", "org": "", "tipo": "Internacional", "mail": "contacto.fic@cultura.gob.mx", "tel": null, "site": "https://festivalcervantino.gob.mx/", "link": "https://festivalcervantino.gob.mx/", "sis": "Catálogo Pauta", "ed": 1, "porte": "internacional", "regiao": "americas", "cidade": "Guanajuato, México", "quando": null, "gen": "Artes Cênicas, Música, Dança, Teatro", "d": "O maior festival multidisciplinar de artes da América Latina, promovido pelo governo federal mexicano.", "verif": "E-mail com domínio oficial do governo (cultura.gob.mx), confirmado no rodapé do site. A página tem seção de Postulações para artistas. Edição de 2026 é a 54ª, com a França como país convidado.", "verifEm": "20/08/2026"}, {"n": "Festival International de Jazz de Montréal", "uf": "INT", "pais": "Canadá", "org": "", "tipo": "Internacional", "mail": null, "tel": null, "site": "https://www.montrealjazzfest.com/", "link": "https://www.montrealjazzfest.com/", "sis": "Catálogo Pauta", "ed": 1, "porte": "internacional", "regiao": "americas", "cidade": "Montreal, Canadá", "quando": null, "gen": "Jazz, Blues, World Music", "d": "Maior festival de jazz do mundo pelo Guinness, com forte presença de música brasileira."}, {"n": "Toronto International Film Festival (TIFF)", "uf": "INT", "pais": "Canadá", "org": "", "tipo": "Internacional", "mail": null, "tel": null, "site": "https://www.tiff.net/", "link": "https://www.tiff.net/", "sis": "Catálogo Pauta", "ed": 1, "porte": "internacional", "regiao": "americas", "cidade": "Toronto, Canadá", "quando": null, "gen": "Cinema", "d": "Um dos principais festivais de cinema do mundo, com submissão aberta de filmes."}, {"n": "Just for Laughs", "uf": "INT", "pais": "Canadá", "org": "", "tipo": "Internacional", "mail": null, "tel": null, "site": "https://www.hahaha.com/", "link": "https://www.hahaha.com/", "sis": "Catálogo Pauta", "ed": 1, "porte": "internacional", "regiao": "americas", "cidade": "Montreal, Canadá", "quando": null, "gen": "Comédia, Humor, Circo", "d": "Maior festival de comédia do mundo."}];
 /* Trava de contato. O app promete contato institucional conferido, e o
@@ -1959,7 +1959,7 @@ function feed(){
         <div class="fato ${pc?"pz-"+pc:""}"><small>Prazo</small><b>${e.pz!=null?fd(lim):(e.janela||"consultar portal")}</b>
           <i>${e.pz==null?"sem data fixa":hojeMesmo(e)?"encerra hoje":e.pz<=1?"encerra amanhã":"faltam "+e.pz+" dias"}</i></div>
         <div class="fato"><small>Valor</small><b>${e.v?money(e.v):"no regulamento"}</b>
-          <i>${e.v?(e.vnota||"teto por projeto"):"a Pauta não estima valor"}</i></div>
+          <i>${e.v?(e.vnota||"valor no regulamento"):"a Pauta não estima valor"}</i></div>
         <div class="fato"><small>Modalidade</small><b>${e.tp}</b><i>${e.esf.toLowerCase()}</i></div>
       </div>
       <div class="tg"><span class="pl ${e.fo==="priv"?"pv":""}">${e.esf}</span>
@@ -2188,8 +2188,8 @@ function mostrarTrava(m){
     <div class="eyebrow">Recurso do Pauta Pro</div>
     <h2>Escrever projeto é do Pro</h2>
     <p class="sub">${R
-      ? "O assistente conduz você pelos 8 campos de texto do SALIC, respeitando os limites da IN MinC nº 29/2026 — teto de captação, administrativo, acessibilidade e distribuição gratuita."
-      : "O assistente monta os campos que as secretarias estaduais e municipais costumam pedir, com contagem de caracteres e alertas de coerência."}</p>
+      ? "Os 8 campos do SALIC, com os limites da norma calculados enquanto você responde."
+      : "Os campos que as secretarias pedem, com contagem e alertas de coerência."}</p>
     <div class="trava-campos">
       <b>Os ${campos.length} campos que você vai preencher</b>
       <ol>${campos.map(c=>`<li>${esc(c)}</li>`).join("")}</ol>
@@ -2211,8 +2211,7 @@ function travaChat(){
     m.insertAdjacentHTML("beforeend",
       `<div class="ch-msg assistant"><div class="ch-av">P</div><div class="ch-bal">
        <b>🔒 Conversar é do Pauta Pro</b><br>
-       O assistente responde sobre a Lei Rouanet, editais e o seu projeto, com os limites da
-       norma conferidos. Suas conversas anteriores continuam aqui.
+       Tira dúvida de Rouanet, edital e do seu projeto. Suas conversas continuam aqui.
        <br><br><button class="btn pri sm" id="chTravaB">Ver o Pauta Pro</button></div></div>`);
     const bt=$("#chTravaB");if(bt)bt.onclick=()=>nav("plano");
     m.scrollTop=m.scrollHeight;
@@ -3580,7 +3579,7 @@ function assinaturaUI(){
   box.className=classe;
   box.innerHTML=`<b>${titulo}</b><small>${esc(nota)}</small>
     <button class="btn ghost" id="portalB">Gerenciar ou cancelar assinatura</button>
-    <small style="margin-top:8px">Abre a página segura do Stripe. Lá dá para cancelar, trocar o cartão e baixar as faturas.</small>`;
+    <small style="margin-top:8px">Cancelar, trocar cartão e baixar faturas, na página do Stripe.</small>`;
   $("#portalB").onclick=e=>abrirPortal(e.currentTarget);
 }
 
@@ -3814,9 +3813,9 @@ function fTitulo(){
   if(!l)return;
   if(!l.dataset.orig)l.dataset.orig=l.innerHTML;
   l.innerHTML = escopoFest==="sesc"
-    ? '<b>O Sesc não recebe projeto por um lugar só.</b> A orientação oficial do Sesc Nacional é procurar o Departamento Regional do seu estado. Aqui está o caminho de cada um: quem tem canal de envio publicado aparece com ✓ e o e-mail conferido no domínio oficial; os demais trazem só o site, porque contato não conferido a Pauta não publica.'
+    ? '<b>Cada estado tem seu Sesc, e cada um decide sozinho.</b> Aqui está a porta de cada um. ✓ = contato conferido na página oficial.'
     : escopoFest==="ame"
-    ? '<b>Festivais da América do Sul, Central e do Norte</b>, fora do Brasil. Todos os sites oficiais foram testados; os marcados com ✓ tiveram data, contato ou inscrição conferidos na própria página oficial. Os demais trazem só o site — confirme antes de enviar. A Pauta escreve o e-mail de apresentação em espanhol, inglês ou francês, conforme o país.'
+    ? '<b>América do Sul, Central e do Norte.</b> Site oficial testado um a um. ✓ = data ou contato conferidos na página. A Pauta escreve o e-mail no idioma do país.'
     : escopoFest==="int"
     ? '<b>São fichas de festivais internacionais</b>, não chamadas com inscrição aberta. A Pauta escreve o e-mail de apresentação no idioma provável do país — confira sempre no site oficial antes de enviar.'
     : l.dataset.orig;
