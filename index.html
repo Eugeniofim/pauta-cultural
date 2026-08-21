@@ -1436,6 +1436,7 @@
         <button class="stb on" data-esc="nac">🇧🇷 Nacionais<span id="cNac"></span></button>
         <button class="stb" data-esc="int">🌎 Internacionais<span id="cInt"></span></button>
         <button class="stb" data-esc="ame">🌎 Américas<span id="cAme"></span></button>
+        <button class="stb" data-esc="sesc">🏛️ Sesc<span id="cSesc"></span></button>
         <button class="stb" data-esc="tudo">Todos</button>
       </div>
       <div class="quizbox" id="fquiz">
@@ -1572,6 +1573,12 @@ const P={tipo:"pf",nome:"",area:"Música",uf:"SP",estilos:[],objetivos:[],moment
 /* ---- programas reais, com portal oficial verificado ---- */
 const VERIF="09/08/2026";
 const REAIS=[
+ {id:170,t:"ARTESESC 2027 — Seleção de exposições em artes visuais",o:"Sesc Paraná",sis:"Sesc Paraná",cid:null,tp:"Fomento",cat:"Artes Visuais",reg:"BR",esf:"Sistema S",fo:"priv",ex:"ambos",ate:"2026-09-28",
+  link:"https://www.sescpr.com.br/edital/edital-de-selecao-artesesc-2027/",
+  link2:{u:"https://www.sescpr.com.br/","n":"Sesc Paraná"},
+  d:"Seleção de exposições de artes visuais para circular pelas unidades do Sesc Paraná em 2027. Aberto a Pessoa Física, Empresário Individual e Pessoa Jurídica, sem restrição de estado — artista de qualquer lugar do Brasil pode inscrever. Inscrição por formulário eletrônico; dúvidas em eventos.culturais@sescpr.com.br. Conferido na página oficial em 21/08/2026: inscrições de 18/08/2026 até 28/09/2026 às 23h59.",
+  r:["Inscrição pelo formulário eletrônico do edital","Aberto a PF, Empresário Individual e PJ","Sem restrição de estado"],
+  c:["Definidas no edital"]},
  {id:150,t:"ProAC — Programa de Ação Cultural do Estado de São Paulo",o:"Secretaria de Cultura e Economia Criativa de SP",sis:"Sistema ProAC",cid:null,tp:"Fomento",cat:"Todas",reg:"SP",esf:"Estadual",fo:"pub",ex:"ambos",janela:"Editais ao longo do ano — consulte o calendário",
   link:"https://www.sistemaproac.sp.gov.br/",
   link2:{u:"https://www.cultura.sp.gov.br/",n:"Secretaria de Cultura de SP"},
@@ -1700,6 +1707,34 @@ const PAIS_REGIAO={
   "Suíça":"europa","Áustria":"europa","Polônia":"europa","Suécia":"europa","Noruega":"europa",
   "Dinamarca":"europa","Irlanda":"europa","Grécia":"europa","Hungria":"europa","Croácia":"europa"};
 const regiaoDe=f=>f.regiao||PAIS_REGIAO[f.pais||""]||null;
+/* SESC: não funciona por edital como as secretarias. A própria orientação do
+   Sesc Nacional é procurar o Departamento Regional do seu estado — por isso
+   aqui é diretório de canal permanente, não lista de chamada com prazo.
+   Só leva contato quem teve o e-mail conferido em página de domínio oficial. */
+const SESC=[
+ {n:"Sesc Paraná",uf:"PR",site:"https://www.sescpr.com.br/edital/",
+  mail:"eventos.culturais@sescpr.com.br",
+  d:"O regional mais organizado para artista de fora: mantém seção própria de editais, com formulário eletrônico e chamadas ao longo do ano (ARTESESC, Artes da Cena, Arte Móvel, Arte na Estação). Aceita inscrição de qualquer estado.",
+  verif:"Seção de editais e e-mail conferidos no site oficial. Segundo e-mail, para o Sesc Arte Móvel: eventos.acaosocial@sescpr.com.br"},
+ {n:"Sesc São Paulo",uf:"SP",site:"https://www.sescsp.org.br/cadastro/",
+  mail:"cursoseoficinas@sescsp.org.br",
+  d:"O caminho é o Cadastro de Fornecedores e Profissionais Culturais. Propostas de curso, oficina e aula aberta vão por e-mail, com sinopse, formato, duração, equipe e estimativa de custo.",
+  verif:"E-mail e exigências da proposta conferidos em página do domínio oficial sescsp.org.br."},
+ {n:"Sesc Nacional",uf:"BR",site:"https://www.sesc.com.br/encontre-uma-unidade/",
+  mail:null,
+  d:"O Sesc Nacional não recebe projeto: quem programa é o Departamento Regional de cada estado. Use esta página para achar o regional certo antes de enviar qualquer coisa.",
+  verif:"Orientação conferida no FAQ oficial do Sesc Nacional: as solicitações vão para os Departamentos Regionais."},
+ {n:"Sesc Rio de Janeiro",uf:"RJ",site:"https://www.sescrio.org.br/",mail:null,
+  d:"Programação cultural do regional fluminense.",verif:null},
+ {n:"Sesc Minas Gerais",uf:"MG",site:"https://www.sescmg.com.br/",mail:null,
+  d:"Programação cultural do regional mineiro.",verif:null},
+ {n:"Sesc Rio Grande do Sul",uf:"RS",site:"https://www.sesc-rs.com.br/",mail:null,
+  d:"Programação cultural do regional gaúcho.",verif:null},
+ {n:"Sesc Bahia",uf:"BA",site:"https://www.sescbahia.com.br/",mail:null,
+  d:"Programação cultural do regional baiano.",verif:null},
+ {n:"Sesc Pernambuco",uf:"PE",site:"https://www.sescpe.org.br/",mail:null,
+  d:"Programação cultural do regional pernambucano.",verif:null},
+];
 const FESTAMERICAS=[{"n": "Cosquín Rock", "uf": "INT", "pais": "Argentina", "org": "", "tipo": "Internacional", "mail": null, "tel": null, "site": "https://www.cosquinrock.net/", "link": "https://www.cosquinrock.net/", "sis": "Catálogo Pauta", "ed": 1, "porte": "internacional", "regiao": "americas", "cidade": "Córdoba, Argentina", "quando": null, "gen": "Rock", "d": "Um dos maiores festivais de rock da América Latina, realizado em Córdoba."}, {"n": "Lollapalooza Argentina", "uf": "INT", "pais": "Argentina", "org": "", "tipo": "Internacional", "mail": null, "tel": null, "site": "https://www.lollapaloozaar.com/", "link": "https://www.lollapaloozaar.com/", "sis": "Catálogo Pauta", "ed": 1, "porte": "internacional", "regiao": "americas", "cidade": "Buenos Aires, Argentina", "quando": null, "gen": "Rock, Pop, Indie, Hip-hop", "d": "Edição argentina do festival, no Hipódromo de San Isidro."}, {"n": "Lollapalooza Chile", "uf": "INT", "pais": "Chile", "org": "", "tipo": "Internacional", "mail": null, "tel": null, "site": "https://www.lollapaloozacl.com/", "link": "https://www.lollapaloozacl.com/", "sis": "Catálogo Pauta", "ed": 1, "porte": "internacional", "regiao": "americas", "cidade": "Santiago, Chile", "quando": null, "gen": "Rock, Pop, Indie, Hip-hop", "d": "Edição chilena do festival, no Parque Cerrillos."}, {"n": "Festival Internacional Teatro a Mil", "uf": "INT", "pais": "Chile", "org": "", "tipo": "Internacional", "mail": null, "tel": null, "site": "https://www.teatroamil.cl/", "link": "https://www.teatroamil.cl/", "sis": "Catálogo Pauta", "ed": 1, "porte": "internacional", "regiao": "americas", "cidade": "Santiago, Chile", "quando": null, "gen": "Teatro, Dança, Artes Cênicas", "d": "Um dos maiores festivais de artes cênicas da América Latina, organizado pela Fundación Teatro a Mil.", "verif": "Site oficial confirma postulações abertas para a edição de 2027, por formulário próprio. O e-mail publicado na página é comercial (ventas@), não de curadoria — use o formulário.", "verifEm": "20/08/2026", "aberto": true}, {"n": "Festival Estéreo Picnic", "uf": "INT", "pais": "Colômbia", "org": "", "tipo": "Internacional", "mail": null, "tel": null, "site": "https://www.festivalestereopicnic.com/", "link": "https://www.festivalestereopicnic.com/", "sis": "Catálogo Pauta", "ed": 1, "porte": "internacional", "regiao": "americas", "cidade": "Bogotá, Colômbia", "quando": null, "gen": "Rock, Pop, Indie, Eletrônica", "d": "Maior festival de música contemporânea da Colômbia."}, {"n": "Rock al Parque", "uf": "INT", "pais": "Colômbia", "org": "", "tipo": "Internacional", "mail": null, "tel": null, "site": "https://www.rockalparque.gov.co/", "link": "https://www.rockalparque.gov.co/", "sis": "Catálogo Pauta", "ed": 1, "porte": "internacional", "regiao": "americas", "cidade": "Bogotá, Colômbia", "quando": "10 a 12 de outubro", "gen": "Rock, Metal, Punk, Ska", "d": "Maior festival de rock gratuito da América Latina, no Parque Simón Bolívar. Organizado pelo IDARTES, do poder público de Bogotá.", "verif": "Datas (10 a 12 de outubro), local (Parque Simón Bolívar) e organizador (IDARTES) confirmados no site oficial do governo. A convocatória aberta na data da conferência era para imprensa e audiovisual, não para bandas.", "verifEm": "20/08/2026"}, {"n": "Vive Latino", "uf": "INT", "pais": "México", "org": "", "tipo": "Internacional", "mail": null, "tel": null, "site": "https://vivelatino.com.mx/", "link": "https://vivelatino.com.mx/", "sis": "Catálogo Pauta", "ed": 1, "porte": "internacional", "regiao": "americas", "cidade": "Cidade do México, México", "quando": null, "gen": "Rock, Pop Latino, Alternativo", "d": "Maior festival de rock ibero-americano, no Foro Sol."}, {"n": "Festival Internacional Cervantino", "uf": "INT", "pais": "México", "org": "", "tipo": "Internacional", "mail": "contacto.fic@cultura.gob.mx", "tel": null, "site": "https://festivalcervantino.gob.mx/", "link": "https://festivalcervantino.gob.mx/", "sis": "Catálogo Pauta", "ed": 1, "porte": "internacional", "regiao": "americas", "cidade": "Guanajuato, México", "quando": null, "gen": "Artes Cênicas, Música, Dança, Teatro", "d": "O maior festival multidisciplinar de artes da América Latina, promovido pelo governo federal mexicano.", "verif": "E-mail com domínio oficial do governo (cultura.gob.mx), confirmado no rodapé do site. A página tem seção de Postulações para artistas. Edição de 2026 é a 54ª, com a França como país convidado.", "verifEm": "20/08/2026"}, {"n": "Festival International de Jazz de Montréal", "uf": "INT", "pais": "Canadá", "org": "", "tipo": "Internacional", "mail": null, "tel": null, "site": "https://www.montrealjazzfest.com/", "link": "https://www.montrealjazzfest.com/", "sis": "Catálogo Pauta", "ed": 1, "porte": "internacional", "regiao": "americas", "cidade": "Montreal, Canadá", "quando": null, "gen": "Jazz, Blues, World Music", "d": "Maior festival de jazz do mundo pelo Guinness, com forte presença de música brasileira."}, {"n": "Toronto International Film Festival (TIFF)", "uf": "INT", "pais": "Canadá", "org": "", "tipo": "Internacional", "mail": null, "tel": null, "site": "https://www.tiff.net/", "link": "https://www.tiff.net/", "sis": "Catálogo Pauta", "ed": 1, "porte": "internacional", "regiao": "americas", "cidade": "Toronto, Canadá", "quando": null, "gen": "Cinema", "d": "Um dos principais festivais de cinema do mundo, com submissão aberta de filmes."}, {"n": "Just for Laughs", "uf": "INT", "pais": "Canadá", "org": "", "tipo": "Internacional", "mail": null, "tel": null, "site": "https://www.hahaha.com/", "link": "https://www.hahaha.com/", "sis": "Catálogo Pauta", "ed": 1, "porte": "internacional", "regiao": "americas", "cidade": "Montreal, Canadá", "quando": null, "gen": "Comédia, Humor, Circo", "d": "Maior festival de comédia do mundo."}];
 const FESTIVAIS_TODOS=FESTBR.concat(FESTNOVOS).concat(FESTINT).concat(FESTAMERICAS).map(f=>Object.assign({},f,{origem:"catalogo",
   d:ehIngles(f.d)?"":f.d}))
@@ -1720,7 +1755,11 @@ const diasAte=iso=>{
   if(!(d>AGORA))return null;
   return Math.max(0,Math.ceil((d-AGORA)/864e5));
 };
-const ED=REAIS.map(r=>Object.assign({tg:[],dc:["Documentos definidos no regulamento do programa"],v:null,pz:null},r))
+/* Os permanentes nasciam com pz fixo em null. Quando um deles passou a ter
+   data real (ARTESESC), o filtro do fim — que exige pz para quem tem ate —
+   o derrubava calado. Agora a contagem sai da data, como nos ao vivo. */
+const ED=REAIS.map(r=>Object.assign({tg:[],dc:["Documentos definidos no regulamento do programa"],v:null,pz:null},r,
+   {pz:r.ate?diasAte(r.ate):null}))
  .concat(OPS.map(o=>Object.assign({tg:[],dc:["Documentação exigida no edital"],v:null},o,
    {pz:o.ate?diasAte(o.ate):null})))
  /* data já vencida vira pz null com ate preenchido — cai fora aqui */
@@ -2707,6 +2746,7 @@ function fMatch(f){
   return true;
 }
 function fRender(){
+  if(escopoFest==="sesc"){return sescRender();}
   const todos=FESTIVAIS_TODOS.filter(fMatch);
   const cort=limitar(todos);
   const lista=cort.lista;
@@ -2745,6 +2785,30 @@ function fRender(){
   $$("#ffeed [data-go]").forEach(b=>b.onclick=()=>nav(b.dataset.go));
   $$("#ffeed [data-escr]").forEach(b=>b.onclick=()=>abrirContato(b.dataset.escr));
 }
+/* O Sesc não tem prazo para listar: o valor aqui é o canal de envio. Por isso
+   cada ficha diz o que foi conferido e o que não foi, em vez de fingir que
+   todas têm o mesmo grau de certeza. */
+function sescRender(){
+  const q=($("#fqs").value||"").trim().toLowerCase();
+  const lista=SESC.filter(x=>!q||(x.n+" "+x.d).toLowerCase().includes(q));
+  $("#fcnt").textContent=lista.length;
+  $("#fttl").textContent="Sesc — onde e como enviar seu material";
+  const fl=$("#fcntL");if(fl)fl.textContent=lista.length===1?"regional":"regionais";
+  const el=$("#ffeed");
+  el.innerHTML=lista.map(x=>`
+    <article class="ec card fcard">
+      <div><h3>${esc(x.n)}${x.verif?'<span class="vok" title="conferido na fonte oficial">✓ conferido</span>':""}</h3>
+        <div class="fo">${esc(UF[x.uf]||x.uf)}</div></div>
+      <p class="fd">${esc(x.d)}</p>
+      ${x.verif?`<p class="fverif"><b>Conferido em 21/08/2026</b> — ${esc(x.verif)}</p>`
+               :`<p class="fhist">Site oficial no ar, mas o canal de envio não está publicado de forma clara. Procure a programação cultural pelo site antes de mandar material.</p>`}
+      <div class="ct">
+        ${x.mail?`<a href="mailto:${x.mail}"><span class="ic2">✉</span>${x.mail}</a>`
+                :`<span class="nocontact">Sem e-mail publicado — a Pauta não inventa contato.</span>`}
+        <a href="${x.site}" target="_blank" rel="noopener"><span class="ic2">↗</span>${x.site.replace(/^https?:\/\//,"").replace(/\/$/,"").slice(0,44)}</a>
+      </div>
+    </article>`).join("");
+}
 function fInit(){
   const comD=new Set(fUFs());
   $("#fuf").innerHTML='<option value="">Todos os estados</option>'+Object.keys(UF).sort((a,b)=>UF[a].localeCompare(UF[b],"pt-BR"))
@@ -2756,6 +2820,9 @@ function fInit(){
     fEscopo();
     $("#fuf").value="";$("#fqs").value="";
     const box=$("#fuf").closest(".fg");if(box)box.style.display=(escopoFest==="int"||escopoFest==="ame")?"none":"";
+    /* porte, linguagem e contato não se aplicam a instituição */
+    ["#fpt","#flg","#fct"].forEach(x=>{const g=$(x)&&$(x).closest(".fg");if(g)g.style.display=escopoFest==="sesc"?"none":"";});
+    if(escopoFest==="sesc"&&box)box.style.display="none";
     fQuiz.feito=true;fQuizRender();
   });
   fEscopo();
@@ -3593,6 +3660,7 @@ function fTitulo(){
   const t={nac:["Festivais do Brasil","Festivais do Brasil"],
            int:["Festivais internacionais","Festivais fora do Brasil"],
            ame:["Festivais das Américas","Festivais das Américas"],
+           sesc:["Sesc","Sesc — onde e como enviar seu material"],
            tudo:["Festivais","Festivais do Brasil e do exterior"]}[escopoFest]||["Festivais do Brasil","Festivais do Brasil"];
   const a=$("#feyeb"),b=$("#fttl");
   if(a)a.textContent=t[0];
@@ -3600,7 +3668,9 @@ function fTitulo(){
   const l=$("#flead");
   if(!l)return;
   if(!l.dataset.orig)l.dataset.orig=l.innerHTML;
-  l.innerHTML = escopoFest==="ame"
+  l.innerHTML = escopoFest==="sesc"
+    ? '<b>O Sesc não recebe projeto por um lugar só.</b> A orientação oficial do Sesc Nacional é procurar o Departamento Regional do seu estado. Aqui está o caminho de cada um: quem tem canal de envio publicado aparece com ✓ e o e-mail conferido no domínio oficial; os demais trazem só o site, porque contato não conferido a Pauta não publica.'
+    : escopoFest==="ame"
     ? '<b>Festivais da América do Sul, Central e do Norte</b>, fora do Brasil. Todos os sites oficiais foram testados; os marcados com ✓ tiveram data, contato ou inscrição conferidos na própria página oficial. Os demais trazem só o site — confirme antes de enviar. A Pauta escreve o e-mail de apresentação em espanhol, inglês ou francês, conforme o país.'
     : escopoFest==="int"
     ? '<b>São fichas de festivais internacionais</b>, não chamadas com inscrição aberta. A Pauta escreve o e-mail de apresentação no idioma provável do país — confira sempre no site oficial antes de enviar.'
@@ -3611,8 +3681,9 @@ function fEscopo(){
   const nac=FESTIVAIS_TODOS.filter(f=>f.porte!=="internacional").length;
   const int=FESTIVAIS_TODOS.filter(f=>f.porte==="internacional").length;
   const ame=FESTIVAIS_TODOS.filter(f=>f.porte==="internacional"&&regiaoDe(f)==="americas").length;
-  const a=$("#cNac"),b=$("#cInt"),c=$("#cAme");
+  const a=$("#cNac"),b=$("#cInt"),c=$("#cAme"),d=$("#cSesc");
   if(a)a.textContent=nac;if(b)b.textContent=int;if(c)c.textContent=ame;
+  if(d)d.textContent=SESC.length;
   $$("#fsub .stb").forEach(x=>x.classList.toggle("on",x.dataset.esc===escopoFest));
 }
 
