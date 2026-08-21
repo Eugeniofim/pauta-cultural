@@ -1573,6 +1573,13 @@ const P={tipo:"pf",nome:"",area:"Música",uf:"SP",estilos:[],objetivos:[],moment
 /* ---- programas reais, com portal oficial verificado ---- */
 const VERIF="09/08/2026";
 const REAIS=[
+ {id:171,t:"Outras Palavras — Apoio a Publicações Independentes (Chamamento 014/2026)",o:"Secretaria de Estado da Cultura do Paraná",sis:"SIC.Cultura PR",cid:null,tp:"Fomento",cat:"Literatura",reg:"PR",esf:"Estadual",fo:"pub",ex:"ambos",ate:"2026-08-28",
+  link:"https://www.cultura.pr.gov.br/Pagina/Edital-Acessivel-Edital-de-Apoio-Publicacoes-Independentes-Outras-Palavras",
+  link2:{u:"https://www.sic.cultura.pr.gov.br/","n":"SIC.Cultura — onde se inscreve"},
+  v:1000000,
+  d:"R$ 1 milhão para publicações independentes, em quatro categorias: zines (R$ 8.000 por projeto), histórias em quadrinhos (R$ 40.000), revistas independentes (R$ 48.000) e publicações coletivas (R$ 40.000). Inscrição pelo sistema SIC.Cultura. Conferido no edital oficial em 21/08/2026: inscrições de 18h de 28/07/2026 até 28/08/2026 às 18h00min59seg, horário de Brasília.",
+  r:["Cadastro no SIC.Cultura do Paraná","Requisitos definidos no edital"],
+  c:["Zines: R$ 8.000","Histórias em quadrinhos: R$ 40.000","Revistas independentes: R$ 48.000","Publicações coletivas: R$ 40.000"]},
  {id:170,t:"ARTESESC 2027 — Seleção de exposições em artes visuais",o:"Sesc Paraná",sis:"Sesc Paraná",cid:null,tp:"Fomento",cat:"Artes Visuais",reg:"BR",esf:"Sistema S",fo:"priv",ex:"ambos",ate:"2026-09-28",
   link:"https://www.sescpr.com.br/edital/edital-de-selecao-artesesc-2027/",
   link2:{u:"https://www.sescpr.com.br/","n":"Sesc Paraná"},
@@ -1712,28 +1719,90 @@ const regiaoDe=f=>f.regiao||PAIS_REGIAO[f.pais||""]||null;
    aqui é diretório de canal permanente, não lista de chamada com prazo.
    Só leva contato quem teve o e-mail conferido em página de domínio oficial. */
 const SESC=[
- {n:"Sesc Paraná",uf:"PR",site:"https://www.sescpr.com.br/edital/",
-  mail:"eventos.culturais@sescpr.com.br",
-  d:"O regional mais organizado para artista de fora: mantém seção própria de editais, com formulário eletrônico e chamadas ao longo do ano (ARTESESC, Artes da Cena, Arte Móvel, Arte na Estação). Aceita inscrição de qualquer estado.",
-  verif:"Seção de editais e e-mail conferidos no site oficial. Segundo e-mail, para o Sesc Arte Móvel: eventos.acaosocial@sescpr.com.br"},
- {n:"Sesc São Paulo",uf:"SP",site:"https://www.sescsp.org.br/cadastro/",
-  mail:"cursoseoficinas@sescsp.org.br",
-  d:"O caminho é o Cadastro de Fornecedores e Profissionais Culturais. Propostas de curso, oficina e aula aberta vão por e-mail, com sinopse, formato, duração, equipe e estimativa de custo.",
-  verif:"E-mail e exigências da proposta conferidos em página do domínio oficial sescsp.org.br."},
- {n:"Sesc Nacional",uf:"BR",site:"https://www.sesc.com.br/encontre-uma-unidade/",
-  mail:null,
-  d:"O Sesc Nacional não recebe projeto: quem programa é o Departamento Regional de cada estado. Use esta página para achar o regional certo antes de enviar qualquer coisa.",
+ {n:"Sesc Nacional",uf:"BR",site:"https://www.sesc.com.br/encontre-uma-unidade/",mail:null,ed:0,
+  d:"O Sesc Nacional não recebe projeto: quem programa é o Departamento Regional de cada estado. Comece por aqui só para achar o regional certo.",
   verif:"Orientação conferida no FAQ oficial do Sesc Nacional: as solicitações vão para os Departamentos Regionais."},
- {n:"Sesc Rio de Janeiro",uf:"RJ",site:"https://www.sescrio.org.br/",mail:null,
-  d:"Programação cultural do regional fluminense.",verif:null},
- {n:"Sesc Minas Gerais",uf:"MG",site:"https://www.sescmg.com.br/",mail:null,
-  d:"Programação cultural do regional mineiro.",verif:null},
- {n:"Sesc Rio Grande do Sul",uf:"RS",site:"https://www.sesc-rs.com.br/",mail:null,
-  d:"Programação cultural do regional gaúcho.",verif:null},
- {n:"Sesc Bahia",uf:"BA",site:"https://www.sescbahia.com.br/",mail:null,
-  d:"Programação cultural do regional baiano.",verif:null},
- {n:"Sesc Pernambuco",uf:"PE",site:"https://www.sescpe.org.br/",mail:null,
-  d:"Programação cultural do regional pernambucano.",verif:null},
+ {n:"Sesc Paraná",uf:"PR",site:"https://www.sescpr.com.br/edital/",mail:"eventos.culturais@sescpr.com.br",ed:36,
+  d:"O mais aberto a artista de fora: seção própria de editais, inscrição por formulário e chamadas ao longo do ano (ARTESESC, Artes da Cena, Arte Móvel, Arte na Estação). Aceita proposta de qualquer estado.",
+  verif:"Site e e-mail conferidos na fonte oficial. A home cita editais 36 vezes, o maior índice entre os 26 regionais. Segundo e-mail, do Arte Móvel: eventos.acaosocial@sescpr.com.br"},
+ {n:"Sesc São Paulo",uf:"SP",site:"https://www.sescsp.org.br/cadastro/",mail:"cursoseoficinas@sescsp.org.br",ed:1,
+  d:"A porta de entrada é o Cadastro de Fornecedores e Profissionais Culturais. Propostas de curso, oficina e aula aberta vão por e-mail com sinopse, formato, duração, equipe e estimativa de custo.",
+  verif:"E-mail e exigências da proposta conferidos em página do domínio oficial sescsp.org.br."},
+ {n:"Sesc Rio Grande do Norte",uf:"RN",site:"https://sescrn.com.br/",mail:null,ed:13,
+  d:"Segundo maior índice de menções a edital entre os regionais, com forte presença de música e artes na home.",
+  verif:"Domínio conferido em 21/08/2026: a página se identifica como Sesc Rio Grande do Norte. Canal de envio para artista não está publicado de forma clara."},
+ {n:"Sesc Tocantins",uf:"TO",site:"https://sescto.com.br/",mail:null,ed:7,
+  d:"Departamento Regional do Sesc. A home cita editais 7 vezes — sinal de que publica chamadas.",
+  verif:"Domínio conferido em 21/08/2026: a página se identifica como Sesc Tocantins. Canal de envio para artista não está publicado de forma clara."},
+ {n:"Sesc Alagoas",uf:"AL",site:"https://sescalagoas.com.br/",mail:null,ed:7,
+  d:"Departamento Regional do Sesc. A home cita editais 7 vezes — sinal de que publica chamadas.",
+  verif:"Domínio conferido em 21/08/2026: a página se identifica como Sesc Alagoas. Canal de envio para artista não está publicado de forma clara."},
+ {n:"Sesc Espírito Santo",uf:"ES",site:"https://sesc-es.com.br/",mail:null,ed:5,
+  d:"Departamento Regional do Sesc. A home cita editais 5 vezes — sinal de que publica chamadas.",
+  verif:"Domínio conferido em 21/08/2026: a página se identifica como Sesc Espírito Santo. Canal de envio para artista não está publicado de forma clara."},
+ {n:"Sesc Pará",uf:"PA",site:"https://sesc-pa.com.br/",mail:null,ed:5,
+  d:"Departamento Regional do Sesc. A home cita editais 5 vezes — sinal de que publica chamadas.",
+  verif:"Domínio conferido em 21/08/2026: a página se identifica como Sesc Pará. Canal de envio para artista não está publicado de forma clara."},
+ {n:"Sesc Roraima",uf:"RR",site:"https://sescrr.com.br/",mail:null,ed:4,
+  d:"Departamento Regional do Sesc. A home cita editais 4 vezes — sinal de que publica chamadas.",
+  verif:"Domínio conferido em 21/08/2026: a página se identifica como Sesc Roraima. Canal de envio para artista não está publicado de forma clara."},
+ {n:"Sesc Maranhão",uf:"MA",site:"https://sescma.com.br/",mail:null,ed:3,
+  d:"Departamento Regional do Sesc. A home cita editais 3 vezes — sinal de que publica chamadas.",
+  verif:"Domínio conferido em 21/08/2026: a página se identifica como Sesc Maranhão. Canal de envio para artista não está publicado de forma clara."},
+ {n:"Sesc Mato Grosso",uf:"MT",site:"https://sescmatogrosso.com.br/",mail:null,ed:3,
+  d:"Departamento Regional do Sesc. A home cita editais 3 vezes — sinal de que publica chamadas.",
+  verif:"Domínio conferido em 21/08/2026: a página se identifica como Sesc Mato Grosso. Canal de envio para artista não está publicado de forma clara."},
+ {n:"Sesc Goiás",uf:"GO",site:"https://sescgo.com.br/",mail:null,ed:2,
+  d:"Departamento Regional do Sesc. A home cita editais 2 vezes — sinal de que publica chamadas.",
+  verif:"Domínio conferido em 21/08/2026: a página se identifica como Sesc Goiás. Canal de envio para artista não está publicado de forma clara."},
+ {n:"Sesc Piauí",uf:"PI",site:"https://sescpiaui.com.br/",mail:null,ed:2,
+  d:"Departamento Regional do Sesc. A home cita editais 2 vezes — sinal de que publica chamadas.",
+  verif:"Domínio conferido em 21/08/2026: a página se identifica como Sesc Piauí. Canal de envio para artista não está publicado de forma clara."},
+ {n:"Sesc Amapá",uf:"AP",site:"https://sescamapa.com.br/",mail:null,ed:2,
+  d:"Departamento Regional do Sesc. A home cita editais 2 vezes — sinal de que publica chamadas.",
+  verif:"Domínio conferido em 21/08/2026: a página se identifica como Sesc Amapá. Canal de envio para artista não está publicado de forma clara."},
+ {n:"Sesc Sergipe",uf:"SE",site:"https://sesc-se.com.br/",mail:null,ed:2,
+  d:"Departamento Regional do Sesc. A home cita editais 2 vezes — sinal de que publica chamadas.",
+  verif:"Domínio conferido em 21/08/2026: a página se identifica como Sesc Sergipe. Canal de envio para artista não está publicado de forma clara."},
+ {n:"Sesc Santa Catarina",uf:"SC",site:"https://www.sesc-sc.com.br/",mail:null,ed:1,
+  d:"Departamento Regional do Sesc. A home cita editais 1 vez — sinal de que publica chamadas.",
+  verif:"Domínio conferido em 21/08/2026: a página se identifica como Sesc Santa Catarina. Canal de envio para artista não está publicado de forma clara."},
+ {n:"Sesc Amazonas",uf:"AM",site:"https://sesc-am.com.br/",mail:null,ed:1,
+  d:"Departamento Regional do Sesc. A home cita editais 1 vez — sinal de que publica chamadas.",
+  verif:"Domínio conferido em 21/08/2026: a página se identifica como Sesc Amazonas. Canal de envio para artista não está publicado de forma clara."},
+ {n:"Sesc Minas Gerais",uf:"MG",site:"https://sescmg.com.br/",mail:null,ed:0,
+  d:"Departamento Regional do Sesc. Não achei seção de editais na home, mas o site pode ser montado por JavaScript, que a conferência não enxerga — procure a programação cultural por lá.",
+  verif:"Domínio conferido em 21/08/2026: a página se identifica como Sesc Minas Gerais. Canal de envio para artista não está publicado de forma clara."},
+ {n:"Sesc Rio de Janeiro",uf:"RJ",site:"https://www.sescrio.org.br/",mail:null,ed:0,
+  d:"Departamento Regional do Sesc. Não achei seção de editais na home, mas o site pode ser montado por JavaScript, que a conferência não enxerga — procure a programação cultural por lá.",
+  verif:"Domínio conferido em 21/08/2026: a página se identifica como Sesc Rio de Janeiro. Canal de envio para artista não está publicado de forma clara."},
+ {n:"Sesc Rio Grande do Sul",uf:"RS",site:"https://www.sesc-rs.com.br/",mail:null,ed:0,
+  d:"Departamento Regional do Sesc. Não achei seção de editais na home, mas o site pode ser montado por JavaScript, que a conferência não enxerga — procure a programação cultural por lá.",
+  verif:"Domínio conferido em 21/08/2026: a página se identifica como Sesc Rio Grande do Sul. Canal de envio para artista não está publicado de forma clara."},
+ {n:"Sesc Pernambuco",uf:"PE",site:"https://sescpe.org.br/",mail:null,ed:0,
+  d:"Departamento Regional do Sesc. Não achei seção de editais na home, mas o site pode ser montado por JavaScript, que a conferência não enxerga — procure a programação cultural por lá.",
+  verif:"Domínio conferido em 21/08/2026: a página se identifica como Sesc Pernambuco. Canal de envio para artista não está publicado de forma clara."},
+ {n:"Sesc Rondônia",uf:"RO",site:"https://sescro.com.br/",mail:null,ed:0,
+  d:"Departamento Regional do Sesc. Não achei seção de editais na home, mas o site pode ser montado por JavaScript, que a conferência não enxerga — procure a programação cultural por lá.",
+  verif:"Domínio conferido em 21/08/2026: a página se identifica como Sesc Rondônia. Canal de envio para artista não está publicado de forma clara."},
+ {n:"Sesc Mato Grosso do Sul",uf:"MS",site:"https://sescms.com.br/",mail:null,ed:0,
+  d:"Departamento Regional do Sesc. Não achei seção de editais na home, mas o site pode ser montado por JavaScript, que a conferência não enxerga — procure a programação cultural por lá.",
+  verif:"Domínio conferido em 21/08/2026: a página se identifica como Sesc Mato Grosso do Sul. Canal de envio para artista não está publicado de forma clara."},
+ {n:"Sesc Bahia",uf:"BA",site:"https://sescbahia.com.br/",mail:null,ed:0,
+  d:"Departamento Regional do Sesc. Não achei seção de editais na home, mas o site pode ser montado por JavaScript, que a conferência não enxerga — procure a programação cultural por lá.",
+  verif:"Domínio conferido em 21/08/2026: a página se identifica como Sesc Bahia. Canal de envio para artista não está publicado de forma clara."},
+ {n:"Sesc Distrito Federal",uf:"DF",site:"https://sescdf.com.br/",mail:null,ed:0,
+  d:"Departamento Regional do Sesc. Não achei seção de editais na home, mas o site pode ser montado por JavaScript, que a conferência não enxerga — procure a programação cultural por lá.",
+  verif:"Domínio conferido em 21/08/2026: a página se identifica como Sesc Distrito Federal. Canal de envio para artista não está publicado de forma clara."},
+ {n:"Sesc Acre",uf:"AC",site:"https://sescacre.com.br/",mail:null,ed:0,
+  d:"Departamento Regional do Sesc. Não achei seção de editais na home, mas o site pode ser montado por JavaScript, que a conferência não enxerga — procure a programação cultural por lá.",
+  verif:"Domínio conferido em 21/08/2026: a página se identifica como Sesc Acre. Canal de envio para artista não está publicado de forma clara."},
+ {n:"Sesc Ceará",uf:"CE",site:null,mail:null,ed:0,
+  d:"Em breve. Testei seis endereços possíveis e nenhum respondeu como site oficial do Sesc Ceará.",
+  verif:null},
+ {n:"Sesc Paraíba",uf:"PB",site:null,mail:null,ed:0,
+  d:"Em breve. O domínio sescpb.com.br redireciona para um portal de processos seletivos de emprego, não para o site institucional.",
+  verif:null},
 ];
 const FESTAMERICAS=[{"n": "Cosquín Rock", "uf": "INT", "pais": "Argentina", "org": "", "tipo": "Internacional", "mail": null, "tel": null, "site": "https://www.cosquinrock.net/", "link": "https://www.cosquinrock.net/", "sis": "Catálogo Pauta", "ed": 1, "porte": "internacional", "regiao": "americas", "cidade": "Córdoba, Argentina", "quando": null, "gen": "Rock", "d": "Um dos maiores festivais de rock da América Latina, realizado em Córdoba."}, {"n": "Lollapalooza Argentina", "uf": "INT", "pais": "Argentina", "org": "", "tipo": "Internacional", "mail": null, "tel": null, "site": "https://www.lollapaloozaar.com/", "link": "https://www.lollapaloozaar.com/", "sis": "Catálogo Pauta", "ed": 1, "porte": "internacional", "regiao": "americas", "cidade": "Buenos Aires, Argentina", "quando": null, "gen": "Rock, Pop, Indie, Hip-hop", "d": "Edição argentina do festival, no Hipódromo de San Isidro."}, {"n": "Lollapalooza Chile", "uf": "INT", "pais": "Chile", "org": "", "tipo": "Internacional", "mail": null, "tel": null, "site": "https://www.lollapaloozacl.com/", "link": "https://www.lollapaloozacl.com/", "sis": "Catálogo Pauta", "ed": 1, "porte": "internacional", "regiao": "americas", "cidade": "Santiago, Chile", "quando": null, "gen": "Rock, Pop, Indie, Hip-hop", "d": "Edição chilena do festival, no Parque Cerrillos."}, {"n": "Festival Internacional Teatro a Mil", "uf": "INT", "pais": "Chile", "org": "", "tipo": "Internacional", "mail": null, "tel": null, "site": "https://www.teatroamil.cl/", "link": "https://www.teatroamil.cl/", "sis": "Catálogo Pauta", "ed": 1, "porte": "internacional", "regiao": "americas", "cidade": "Santiago, Chile", "quando": null, "gen": "Teatro, Dança, Artes Cênicas", "d": "Um dos maiores festivais de artes cênicas da América Latina, organizado pela Fundación Teatro a Mil.", "verif": "Site oficial confirma postulações abertas para a edição de 2027, por formulário próprio. O e-mail publicado na página é comercial (ventas@), não de curadoria — use o formulário.", "verifEm": "20/08/2026", "aberto": true}, {"n": "Festival Estéreo Picnic", "uf": "INT", "pais": "Colômbia", "org": "", "tipo": "Internacional", "mail": null, "tel": null, "site": "https://www.festivalestereopicnic.com/", "link": "https://www.festivalestereopicnic.com/", "sis": "Catálogo Pauta", "ed": 1, "porte": "internacional", "regiao": "americas", "cidade": "Bogotá, Colômbia", "quando": null, "gen": "Rock, Pop, Indie, Eletrônica", "d": "Maior festival de música contemporânea da Colômbia."}, {"n": "Rock al Parque", "uf": "INT", "pais": "Colômbia", "org": "", "tipo": "Internacional", "mail": null, "tel": null, "site": "https://www.rockalparque.gov.co/", "link": "https://www.rockalparque.gov.co/", "sis": "Catálogo Pauta", "ed": 1, "porte": "internacional", "regiao": "americas", "cidade": "Bogotá, Colômbia", "quando": "10 a 12 de outubro", "gen": "Rock, Metal, Punk, Ska", "d": "Maior festival de rock gratuito da América Latina, no Parque Simón Bolívar. Organizado pelo IDARTES, do poder público de Bogotá.", "verif": "Datas (10 a 12 de outubro), local (Parque Simón Bolívar) e organizador (IDARTES) confirmados no site oficial do governo. A convocatória aberta na data da conferência era para imprensa e audiovisual, não para bandas.", "verifEm": "20/08/2026"}, {"n": "Vive Latino", "uf": "INT", "pais": "México", "org": "", "tipo": "Internacional", "mail": null, "tel": null, "site": "https://vivelatino.com.mx/", "link": "https://vivelatino.com.mx/", "sis": "Catálogo Pauta", "ed": 1, "porte": "internacional", "regiao": "americas", "cidade": "Cidade do México, México", "quando": null, "gen": "Rock, Pop Latino, Alternativo", "d": "Maior festival de rock ibero-americano, no Foro Sol."}, {"n": "Festival Internacional Cervantino", "uf": "INT", "pais": "México", "org": "", "tipo": "Internacional", "mail": "contacto.fic@cultura.gob.mx", "tel": null, "site": "https://festivalcervantino.gob.mx/", "link": "https://festivalcervantino.gob.mx/", "sis": "Catálogo Pauta", "ed": 1, "porte": "internacional", "regiao": "americas", "cidade": "Guanajuato, México", "quando": null, "gen": "Artes Cênicas, Música, Dança, Teatro", "d": "O maior festival multidisciplinar de artes da América Latina, promovido pelo governo federal mexicano.", "verif": "E-mail com domínio oficial do governo (cultura.gob.mx), confirmado no rodapé do site. A página tem seção de Postulações para artistas. Edição de 2026 é a 54ª, com a França como país convidado.", "verifEm": "20/08/2026"}, {"n": "Festival International de Jazz de Montréal", "uf": "INT", "pais": "Canadá", "org": "", "tipo": "Internacional", "mail": null, "tel": null, "site": "https://www.montrealjazzfest.com/", "link": "https://www.montrealjazzfest.com/", "sis": "Catálogo Pauta", "ed": 1, "porte": "internacional", "regiao": "americas", "cidade": "Montreal, Canadá", "quando": null, "gen": "Jazz, Blues, World Music", "d": "Maior festival de jazz do mundo pelo Guinness, com forte presença de música brasileira."}, {"n": "Toronto International Film Festival (TIFF)", "uf": "INT", "pais": "Canadá", "org": "", "tipo": "Internacional", "mail": null, "tel": null, "site": "https://www.tiff.net/", "link": "https://www.tiff.net/", "sis": "Catálogo Pauta", "ed": 1, "porte": "internacional", "regiao": "americas", "cidade": "Toronto, Canadá", "quando": null, "gen": "Cinema", "d": "Um dos principais festivais de cinema do mundo, com submissão aberta de filmes."}, {"n": "Just for Laughs", "uf": "INT", "pais": "Canadá", "org": "", "tipo": "Internacional", "mail": null, "tel": null, "site": "https://www.hahaha.com/", "link": "https://www.hahaha.com/", "sis": "Catálogo Pauta", "ed": 1, "porte": "internacional", "regiao": "americas", "cidade": "Montreal, Canadá", "quando": null, "gen": "Comédia, Humor, Circo", "d": "Maior festival de comédia do mundo."}];
 const FESTIVAIS_TODOS=FESTBR.concat(FESTNOVOS).concat(FESTINT).concat(FESTAMERICAS).map(f=>Object.assign({},f,{origem:"catalogo",
@@ -2790,7 +2859,10 @@ function fRender(){
    todas têm o mesmo grau de certeza. */
 function sescRender(){
   const q=($("#fqs").value||"").trim().toLowerCase();
-  const lista=SESC.filter(x=>!q||(x.n+" "+x.d).toLowerCase().includes(q));
+  /* ordem por utilidade para quem quer enviar material: e-mail conferido
+     primeiro, depois quem mais publica edital, e por último os sem site. */
+  const lista=SESC.filter(x=>!q||(x.n+" "+x.d).toLowerCase().includes(q))
+    .slice().sort((a,b)=>(b.mail?1:0)-(a.mail?1:0)||(b.ed||0)-(a.ed||0)||(b.site?1:0)-(a.site?1:0));
   $("#fcnt").textContent=lista.length;
   $("#fttl").textContent="Sesc — onde e como enviar seu material";
   const fl=$("#fcntL");if(fl)fl.textContent=lista.length===1?"regional":"regionais";
@@ -2801,11 +2873,11 @@ function sescRender(){
         <div class="fo">${esc(UF[x.uf]||x.uf)}</div></div>
       <p class="fd">${esc(x.d)}</p>
       ${x.verif?`<p class="fverif"><b>Conferido em 21/08/2026</b> — ${esc(x.verif)}</p>`
-               :`<p class="fhist">Site oficial no ar, mas o canal de envio não está publicado de forma clara. Procure a programação cultural pelo site antes de mandar material.</p>`}
+               :`<p class="fhist">Site oficial não confirmado — por isso não há link aqui. A Pauta não publica endereço que não conferiu.</p>`}
       <div class="ct">
         ${x.mail?`<a href="mailto:${x.mail}"><span class="ic2">✉</span>${x.mail}</a>`
                 :`<span class="nocontact">Sem e-mail publicado — a Pauta não inventa contato.</span>`}
-        <a href="${x.site}" target="_blank" rel="noopener"><span class="ic2">↗</span>${x.site.replace(/^https?:\/\//,"").replace(/\/$/,"").slice(0,44)}</a>
+        ${x.site?`<a href="${x.site}" target="_blank" rel="noopener"><span class="ic2">↗</span>${x.site.replace(/^https?:\/\//,"").replace(/\/$/,"").slice(0,44)}</a>`:""}
       </div>
     </article>`).join("");
 }
