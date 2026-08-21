@@ -3351,9 +3351,12 @@ async function googleVolta(resp){
     onbDados.mail=j.email;
     if(j.nome&&!onbDados.nome)onbDados.nome=j.nome;
     toast("Entrou como "+j.email);
-    /* o e-mail já veio confirmado: pula a pergunta de e-mail do quiz */
-    const iMail=ONB.findIndex(q=>q.k==="mail");
-    onbI=(iMail>=0&&onbI<=iMail)?iMail+1:onbI;
+    /* Vai para a primeira pergunta que o Google NÃO respondeu. Antes eu
+       saltava para depois da pergunta de e-mail — e como o e-mail é a
+       ÚLTIMA do quiz, isso encerrava tudo: quem entrava pelo Google nunca
+       era perguntado sobre área, estado nem PF/PJ, e o app não tinha como
+       filtrar edital nenhum para ele. */
+    onbI=onbPrimeiroVazio(0);
     if(onbI>=ONB.length)onbFim();else onbRender();
   }catch(e){ googleFalhou("Não consegui falar com o servidor."); }
   if(b){b.disabled=false;b.textContent=b.dataset.txt||"Entrar com Google";}
@@ -3366,6 +3369,18 @@ function googleFalhou(msg){
 }
 function segLista(){try{return JSON.parse(localStorage.getItem(SEG_KEY))||[];}catch(e){return [];}}
 function segue(id){return segLista().includes(id);}
+/* Depois do login, algumas respostas já vêm prontas (e-mail sempre, nome
+   quando o Google informa). O quiz não pode nem repetir o que já sabe nem
+   pular o que ainda não sabe — áreas, estado e PF/PJ são justamente o que
+   personaliza os editais, e o Google não tem como saber. */
+function onbPrimeiroVazio(de){
+  for(let i=Math.max(0,de);i<ONB.length;i++){
+    const q=ONB[i], v=onbDados[q.k];
+    const vazio=Array.isArray(v)?v.length<(q.min||1):(v===undefined||v==="");
+    if(vazio)return i;
+  }
+  return ONB.length;
+}
 function onbAvancar(){
   const q=ONB[onbI];
   const v=onbDados[q.k];
@@ -3376,7 +3391,7 @@ function onbAvancar(){
     if(inp){inp.style.borderColor="var(--crit)";setTimeout(()=>inp.style.borderColor="",1200);}
     return;
   }
-  onbI++;
+  onbI=onbPrimeiroVazio(onbI+1);
   onbI>=ONB.length?onbFim():onbRender();
 }
 function onbFim(){
