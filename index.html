@@ -1273,6 +1273,8 @@
         <input type="text" id="kOuvintes" placeholder="ouvintes mensais ou visualizações">
         <input type="text" id="kShows" placeholder="shows no último ano e principais cidades">
         <input type="text" id="kImprensa" placeholder="imprensa: veículo e link">
+        <button class="btn ghost sm" id="kitCopiar" style="width:100%;justify-content:center;margin-top:12px">Copiar meu kit</button>
+        <p class="kitnota" style="margin:8px 0 0">Cola em formulário de festival, direct ou WhatsApp. Salve antes de copiar.</p>
       </details>
       <div class="ap-avisos">
         <div class="apav"><span>📡</span><div><b>Editais e links reais</b><small id="apFonte">—</small></div></div>
@@ -3183,6 +3185,33 @@ function kitPreencher(){
   {const el=$("#kShows");if(el)el.value=k.shows||"";}
   {const el=$("#kImprensa");if(el)el.value=k.imprensa||"";}
 }
+/* Bloco de texto do kit, para colar onde não há e-mail: formulário de
+   festival, direct, WhatsApp. Nove dos regionais do Sesc só têm formulário
+   — sem isto a pessoa reescreve tudo à mão em cada um.
+   Linha vazia não entra: kit com "Rider: " em branco passa desleixo. */
+function kitTexto(){
+  const c=contaLer(), k=c.kit||{};
+  const L=[];
+  const add=(r,v)=>{if(v&&String(v).trim())L.push(`${r}: ${String(v).trim()}`);};
+  const cab=[c.nome||P.nome, (P.area||"").toLowerCase(), UF[c.uf||P.uf]||""]
+    .filter(Boolean).join(" — ");
+  if(cab)L.push(cab);
+  if(P.estilos&&P.estilos.length)L.push(P.estilos.join(", "));
+  if(L.length)L.push("");
+  add("Vídeo ao vivo",k.video);
+  add("Streaming",k.stream);
+  add("Release e fotos",k.release);
+  add("Rider técnico",k.rider);
+  add("Site",k.site);
+  add("Instagram",k.insta);
+  const fmt=[k.dur&&`${k.dur}`,k.pessoas&&`${k.pessoas} em palco`].filter(Boolean).join(" · ");
+  if(fmt)L.push("Formato: "+fmt);
+  const num=[k.ouvintes,k.shows,k.imprensa].filter(Boolean);
+  if(num.length){L.push("");num.forEach(x=>L.push(x));}
+  const ct=[c.mail,k.tel].filter(Boolean).join(" · ");
+  if(ct){L.push("");L.push(ct);}
+  return L.join("\n").trim();
+}
 function contaAbrir(){
   const c=contaLer();
   kitPreencher();
@@ -4613,6 +4642,11 @@ $("#temaB").onclick=()=>temaAplicar(document.documentElement.getAttribute("data-
 $("#acctBtn").onclick=()=>{$("#acctPop").classList.contains("on")?$("#acctPop").classList.remove("on"):contaAbrir();};
 $("#apX").onclick=()=>$("#acctPop").classList.remove("on");
 $("#acSalvar").onclick=contaSalvar;
+$("#kitCopiar").onclick=()=>{
+  const t=kitTexto();
+  if(!t||t.length<12){toast("Preencha o kit acima e salve primeiro.");return;}
+  copy(t,"Kit");
+};
 $("#assinarB").onclick=assinar;
 $$("#ciclo button").forEach(b=>b.onclick=()=>{cicloPlano=b.dataset.ciclo;cicloUI();});
 cicloUI();
