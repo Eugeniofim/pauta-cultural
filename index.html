@@ -745,6 +745,14 @@
   .pk .cadmini{position:absolute;top:12px;right:12px;font-size:15px;opacity:.75}
   .fdata.passada,.fdata.incerta{color:var(--muted);font-style:italic}
   .fdata.futura{color:var(--ink-soft);font-weight:600}
+  .kitbox{border:1px solid var(--line-strong);border-radius:12px;padding:0 13px;margin:14px 0 4px}
+  .kitbox summary{cursor:pointer;padding:12px 0;font-weight:650;font-size:13.4px;list-style:none}
+  .kitbox summary::-webkit-details-marker{display:none}
+  .kitbox summary::before{content:"＋ ";color:var(--muted)}
+  .kitbox[open] summary::before{content:"− "}
+  .kitbox[open]{padding-bottom:13px}
+  .kitnota{font-size:12.2px;color:var(--ink-soft);line-height:1.5;margin:0 0 12px}
+  .kit2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
   .assbox{margin-top:14px;padding:15px 17px;background:var(--ok-soft);border-radius:12px;
     text-align:left;font-size:12.9px;line-height:1.55;color:var(--ink)}
   .assbox.aviso{background:var(--warn-soft)}
@@ -1248,6 +1256,24 @@
       <div class="seg" id="acTipo"><button type="button" data-t="pf">Pessoa Física</button><button type="button" data-t="pj">Jurídica</button><button type="button" data-t="ambos">As duas</button></div>
       <label>Estado</label><select id="acUf"></select>
       <label>Área principal</label><select id="acArea"></select>
+      <details class="kitbox" id="kitBox">
+        <summary>Kit de mídia — entra sozinho nos e-mails</summary>
+        <p class="kitnota">São <b>links</b>, não arquivos. O material continua onde já está — Drive, YouTube, seu site — e você troca lá sem mexer aqui.</p>
+        <label>Vídeo ao vivo</label><input type="text" id="kVideo" placeholder="youtube.com/... ou drive.google.com/...">
+        <label>Streaming</label><input type="text" id="kStream" placeholder="Spotify, Bandcamp, SoundCloud">
+        <label>Release e fotos</label><input type="text" id="kRelease" placeholder="pasta no Drive, Dropbox ou site">
+        <label>Rider técnico</label><input type="text" id="kRider" placeholder="PDF no Drive ou no seu site">
+        <label>Seu site ou portfólio</label><input type="text" id="kSite" placeholder="seusite.com.br">
+        <label>Instagram</label><input type="text" id="kInsta" placeholder="@seuperfil">
+        <label>Telefone / WhatsApp</label><input type="text" id="kTel" placeholder="(41) 90000-0000">
+        <label>Formato do show</label>
+        <div class="kit2"><input type="text" id="kDur" placeholder="duração — ex: 60 min">
+        <input type="text" id="kPessoas" placeholder="pessoas em palco — ex: 4"></div>
+        <label>Números para festival grande</label>
+        <input type="text" id="kOuvintes" placeholder="ouvintes mensais ou visualizações">
+        <input type="text" id="kShows" placeholder="shows no último ano e principais cidades">
+        <input type="text" id="kImprensa" placeholder="imprensa: veículo e link">
+      </details>
       <div class="ap-avisos">
         <div class="apav"><span>📡</span><div><b>Editais e links reais</b><small id="apFonte">—</small></div></div>
         <div class="apav"><span>🔒</span><div><b>Seus dados ficam neste navegador</b><small>A Pauta ainda não guarda nada em servidor.</small></div></div>
@@ -3142,8 +3168,24 @@ function contaAplicar(){
 }
 const minhasAreas=()=>(P.areas&&P.areas.length)?P.areas:(P.area?[P.area]:[]);
 const daMinhaArea=cat=>cat==="Todas"||minhasAreas().includes(cat);
+function kitPreencher(){
+  const k=(contaLer().kit)||{};
+  {const el=$("#kVideo");if(el)el.value=k.video||"";}
+  {const el=$("#kStream");if(el)el.value=k.stream||"";}
+  {const el=$("#kRelease");if(el)el.value=k.release||"";}
+  {const el=$("#kRider");if(el)el.value=k.rider||"";}
+  {const el=$("#kSite");if(el)el.value=k.site||"";}
+  {const el=$("#kInsta");if(el)el.value=k.insta||"";}
+  {const el=$("#kTel");if(el)el.value=k.tel||"";}
+  {const el=$("#kDur");if(el)el.value=k.dur||"";}
+  {const el=$("#kPessoas");if(el)el.value=k.pessoas||"";}
+  {const el=$("#kOuvintes");if(el)el.value=k.ouvintes||"";}
+  {const el=$("#kShows");if(el)el.value=k.shows||"";}
+  {const el=$("#kImprensa");if(el)el.value=k.imprensa||"";}
+}
 function contaAbrir(){
   const c=contaLer();
+  kitPreencher();
   $("#acNome").value=c.nome||P.nome||"";
   $("#acMail").value=c.mail||"";
   $("#acUf").innerHTML=Object.keys(UF).sort((a,b)=>UF[a].localeCompare(UF[b],"pt-BR"))
@@ -3160,6 +3202,20 @@ function contaSalvar(){
   const tipo=sel?sel.dataset.t:P.tipo;
   const c=Object.assign(contaLer(),{nome:$("#acNome").value.trim(),mail:$("#acMail").value.trim(),
     uf:$("#acUf").value,area:$("#acArea").value,tipo});
+  /* kit de mídia: guardado junto da conta, no mesmo navegador */
+  c.kit=c.kit||{};
+  {const el=$("#kVideo");if(el)c.kit.video=el.value.trim();}
+  {const el=$("#kStream");if(el)c.kit.stream=el.value.trim();}
+  {const el=$("#kRelease");if(el)c.kit.release=el.value.trim();}
+  {const el=$("#kRider");if(el)c.kit.rider=el.value.trim();}
+  {const el=$("#kSite");if(el)c.kit.site=el.value.trim();}
+  {const el=$("#kInsta");if(el)c.kit.insta=el.value.trim();}
+  {const el=$("#kTel");if(el)c.kit.tel=el.value.trim();}
+  {const el=$("#kDur");if(el)c.kit.dur=el.value.trim();}
+  {const el=$("#kPessoas");if(el)c.kit.pessoas=el.value.trim();}
+  {const el=$("#kOuvintes");if(el)c.kit.ouvintes=el.value.trim();}
+  {const el=$("#kShows");if(el)c.kit.shows=el.value.trim();}
+  {const el=$("#kImprensa");if(el)c.kit.imprensa=el.value.trim();}
   try{localStorage.setItem(CONTA_KEY,JSON.stringify(c));}catch(e){}
   contaAplicar();
   if($("#fn"))$("#fn").value=P.nome;
@@ -3803,6 +3859,11 @@ function perfilDestino(f){
 }
 function gerarEmail(f){
   const c=contaLer(), nome=c.nome||P.nome||"[seu nome]";
+  /* O que estiver no kit entra pronto; o que faltar continua como colchete,
+     para a pessoa ver o que ainda precisa preencher em vez de mandar um
+     e-mail com buraco silencioso. */
+  const k=c.kit||{};
+  const kv=(campo,rotulo)=>k[campo]?k[campo]:`[${rotulo}]`;
   const area=(P.area||"música").toLowerCase();
   const estilos=(P.estilos&&P.estilos.length)?P.estilos.join(", "):"[seu estilo]";
   const cidade=UF[P.uf]||P.uf||"[sua cidade]";
@@ -3810,8 +3871,12 @@ function gerarEmail(f){
   const D=dataFestival(f&&f.quando);
   /* só menciona a data quando ela é futura e confirmada */
   const quando=(D&&D.tipo==="futura")?` para a edição de ${D.txt}`:"";
-  const assina=`\n\nUm abraço,\n${nome}\n${c.mail||"[seu e-mail]"}\n[seu telefone] · [seu Instagram]`;
-  const material=`MATERIAL\n• Vídeo ao vivo: [link]\n• Streaming: [link]\n• Release e fotos: [link]\n• Rider técnico: [link]`;
+  const assina=`\n\nUm abraço,\n${nome}\n${c.mail||"[seu e-mail]"}\n${kv("tel","seu telefone")} · ${kv("insta","seu Instagram")}`;
+  const linhas=[["Vídeo ao vivo","video"],["Streaming","stream"],["Release e fotos","release"],
+                ["Rider técnico","rider"],["Site","site"]]
+    .filter(([,c])=>k[c]||c!=="site")           /* site só aparece se existir */
+    .map(([r,c])=>`• ${r}: ${kv(c,"link")}`).join("\n");
+  const material=`MATERIAL\n${linhas}`;
   const tipo=perfilDestino(f);
 
   if(tipo==="sesc"){
@@ -3819,21 +3884,21 @@ function gerarEmail(f){
        está no estatuto dele. Por isso contrapartida e público vêm antes
        do release. */
     return {assunto:`Proposta de pauta — ${nome} (${area})`,
-      corpo:`Olá, equipe do ${f.n}.\n\nMeu nome é ${nome}, sou artista de ${area} de ${cidade}, com trabalho em ${estilos}. Escrevo para apresentar uma proposta de pauta e saber qual o caminho certo de inscrição.\n\nA PROPOSTA\n[Descreva em 3 linhas o show ou a atividade.]\n\nCONTRAPARTIDA\n[O que você oferece além do show: oficina, bate-papo com o público, ensaio aberto, aula. O Sesc valoriza a dimensão formativa.]\n\nPÚBLICO\n[Para quem é: faixa etária, se é livre, se funciona em praça ou teatro.]\n\nFORMATO\nApresentação de [duração] com [número] pessoas em palco.${pj?"\nPosso emitir nota como pessoa jurídica.":""}\n\n${material}\n\nSe houver edital ou cadastro de proponentes em aberto, agradeço a orientação sobre como me inscrever.${assina}`};
+      corpo:`Olá, equipe do ${f.n}.\n\nMeu nome é ${nome}, sou artista de ${area} de ${cidade}, com trabalho em ${estilos}. Escrevo para apresentar uma proposta de pauta e saber qual o caminho certo de inscrição.\n\nA PROPOSTA\n[Descreva em 3 linhas o show ou a atividade.]\n\nCONTRAPARTIDA\n[O que você oferece além do show: oficina, bate-papo com o público, ensaio aberto, aula. O Sesc valoriza a dimensão formativa.]\n\nPÚBLICO\n[Para quem é: faixa etária, se é livre, se funciona em praça ou teatro.]\n\nFORMATO\nApresentação de ${kv("dur","duração")} com ${kv("pessoas","número")} pessoas em palco.${pj?"\nPosso emitir nota como pessoa jurídica.":""}\n\n${material}\n\nSe houver edital ou cadastro de proponentes em aberto, agradeço a orientação sobre como me inscrever.${assina}`};
   }
   if(tipo==="grande"){
     /* festival grande recebe centenas de propostas: número e prova social
        primeiro, senão nem chega no release */
     return {assunto:`${nome} — proposta para o ${f.n}`,
-      corpo:`Olá, equipe do ${f.n}.\n\nSou ${nome}, artista de ${area} de ${cidade}, trabalhando com ${estilos}. Escrevo para apresentar meu show${quando}.\n\nEM NÚMEROS\n• [ouvintes mensais / visualizações]\n• [shows no último ano e principais cidades]\n• [imprensa: veículo e link]\n\nO SHOW\n[Duas linhas sobre o que o público vê no palco e por que conversa com a curadoria de vocês.]\n\n${material}\n\nFORMATO\nShow de [duração] com [número] músicos. Disponibilidade em [meses].\n\nFico à disposição.${assina}`};
+      corpo:`Olá, equipe do ${f.n}.\n\nSou ${nome}, artista de ${area} de ${cidade}, trabalhando com ${estilos}. Escrevo para apresentar meu show${quando}.\n\nEM NÚMEROS\n• ${kv("ouvintes","ouvintes mensais / visualizações")}\n• ${kv("shows","shows no último ano e principais cidades")}\n• ${kv("imprensa","imprensa: veículo e link")}\n\nO SHOW\n[Duas linhas sobre o que o público vê no palco e por que conversa com a curadoria de vocês.]\n\n${material}\n\nFORMATO\nShow de ${kv("dur","duração")} com ${kv("pessoas","número")} músicos. Disponibilidade em [meses].\n\nFico à disposição.${assina}`};
   }
   if(tipo==="internacional"){
     return {assunto:`${nome} — artist proposal / proposta artística`,
-      corpo:`Olá, equipe do ${f.n}.\n\nSou ${nome}, artista de ${area} do Brasil (${cidade}), com trabalho em ${estilos}. Escrevo para apresentar meu trabalho${quando}.\n\nO TRABALHO\n[Três linhas: o que você faz e o que torna o show relevante fora do Brasil.]\n\n${material}\n\nLOGÍSTICA\nGrupo de [número] pessoas. Passaporte válido e disponibilidade para [período].\n\nUse o botão de tradução desta tela para enviar no idioma do país.${assina}`};
+      corpo:`Olá, equipe do ${f.n}.\n\nSou ${nome}, artista de ${area} do Brasil (${cidade}), com trabalho em ${estilos}. Escrevo para apresentar meu trabalho${quando}.\n\nO TRABALHO\n[Três linhas: o que você faz e o que torna o show relevante fora do Brasil.]\n\n${material}\n\nLOGÍSTICA\nGrupo de ${kv("pessoas","número")} pessoas. Passaporte válido e disponibilidade para [período].\n\nUse o botão de tradução desta tela para enviar no idioma do país.${assina}`};
   }
   /* pequeno e médio porte: quem lê acumula funções e decide rápido */
   return {assunto:`Proposta de show — ${nome}`,
-    corpo:`Olá, equipe do ${f.n}.\n\nSou ${nome}, artista de ${area} de ${cidade}, com trabalho em ${estilos}. Gostaria de me apresentar${quando}.\n\nO SHOW\n[Duas ou três linhas: o que você toca e para quem funciona.]\n\n${material}\n\nFORMATO\nShow de [duração] com [número] pessoas em palco. Tenho flexibilidade de formato e cachê conforme a estrutura de vocês.${pj?"\nPosso emitir nota como pessoa jurídica.":""}\n\nSe não for o momento, agradeço se puder me indicar quando abre a próxima seleção.${assina}`};
+    corpo:`Olá, equipe do ${f.n}.\n\nSou ${nome}, artista de ${area} de ${cidade}, com trabalho em ${estilos}. Gostaria de me apresentar${quando}.\n\nO SHOW\n[Duas ou três linhas: o que você toca e para quem funciona.]\n\n${material}\n\nFORMATO\nShow de ${kv("dur","duração")} com ${kv("pessoas","número")} pessoas em palco. Tenho flexibilidade de formato e cachê conforme a estrutura de vocês.${pj?"\nPosso emitir nota como pessoa jurídica.":""}\n\nSe não for o momento, agradeço se puder me indicar quando abre a próxima seleção.${assina}`};
 }
 
 let mailAtual=null;
