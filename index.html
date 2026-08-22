@@ -743,6 +743,9 @@
   .trava .pnota{font-size:12.5px;color:var(--muted);margin-top:16px;line-height:1.55}
   .pk{position:relative}
   .pk .cadmini{position:absolute;top:12px;right:12px;font-size:15px;opacity:.75}
+  .afsel{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--ok-ink);background:var(--ok-soft);
+    padding:3px 9px;border-radius:999px;margin-bottom:9px;cursor:help}
   .fdata.passada,.fdata.incerta{color:var(--muted);font-style:italic}
   .fdata.futura{color:var(--ink-soft);font-weight:600}
   .kitbox{border:1px solid var(--line-strong);border-radius:12px;padding:0 13px;margin:14px 0 4px}
@@ -2915,9 +2918,59 @@ function dataFestival(q){
     ? {txt:`última edição: ${txt}`,tipo:"passada"}
     : {txt,tipo:"futura"};
 }
+/* ─── afinidade de festival ───
+   Os editais já tinham score; os festivais saíam na ordem do array, então o
+   Rock in Rio aparecia antes de um festival de MPB no interior do Paraná
+   para uma cantora de MPB do Paraná. Aqui o que pesa é o que o artista tem
+   chance real de conseguir, não o tamanho do nome. */
+const PARAR=new Set(["para","com","que","dos","das","uma","dum","por","como","mais","seu","sua",
+ "meu","minha","nos","nas","este","esta","isso","pelo","pela","onde","quando","ainda","entre",
+ "sobre","festival","musica","música","show","brasil","edicao","edição","artista","cultural"]);
+function palavras(t){
+  return (t||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .split(/[^a-z0-9]+/)
+    /* número fora: "2026" no nome do festival batendo com "2026" do release
+       não é afinidade, é coincidência de calendário — e inflava todo mundo */
+    .filter(w=>w.length>3&&!/^\d+$/.test(w)&&!PARAR.has(w));
+}
+/* O número sozinho não convence ninguém: diz por que subiu. */
+function fPorque(f){
+  const c=contaLer(), k=c.kit||{}, r=[];
+  const meu=new Set(palavras([k.estilo,k.pitch,(P.estilos||[]).join(" "),minhasAreas().join(" ")].join(" ")));
+  const dele=new Set(palavras([f.gen,f.d,f.n].join(" ")));
+  const iguais=[...meu].filter(w=>dele.has(w)).slice(0,3);
+  if(iguais.length)r.push("combina com "+iguais.join(", "));
+  if(f.uf===P.uf)r.push("no seu estado");
+  if(f.aberto)r.push("inscrições abertas");
+  if(f.mail)r.push("tem e-mail de contato");
+  if(f.verif)r.push("conferido na fonte");
+  return r.length?r.join(" · "):"pelos seus filtros";
+}
+function fScore(f){
+  const c=contaLer(), k=c.kit||{};
+  let s=42;
+  /* o que você diz que faz contra o que o festival diz que programa */
+  const meu=new Set(palavras([k.estilo,k.pitch,(P.estilos||[]).join(" "),minhasAreas().join(" ")].join(" ")));
+  const dele=new Set(palavras([f.gen,f.d,f.n].join(" ")));
+  let batem=0; meu.forEach(w=>{if(dele.has(w))batem++;});
+  s+=Math.min(28,batem*9);
+  /* perto de casa o show acontece: custo de deslocamento decide pauta pequena */
+  if(f.uf===P.uf)s+=(f.porte==="grande"?6:15);
+  /* o que dá para acionar hoje vale mais que o que só dá para admirar */
+  if(f.mail)s+=12; else if(f.insta||f.site)s+=5; else s-=8;
+  if(f.verif)s+=8;
+  if(f.aberto)s+=12;
+  const D=dataFestival(f.quando);
+  if(D&&D.tipo==="futura")s+=7; else if(D&&D.tipo==="passada")s-=10;
+  /* porte grande sem nenhum encaixe de estilo é loteria, e loteria não é pauta */
+  if(f.porte==="grande"&&!batem)s-=10;
+  return Math.max(5,Math.min(98,Math.round(s)));
+}
 function fRender(){
   if(escopoFest==="sesc"){return sescRender();}
-  const todos=FESTIVAIS_TODOS.filter(fMatch);
+  const todos=FESTIVAIS_TODOS.filter(fMatch)
+    .map(f=>Object.assign({},f,{_af:fScore(f)}))
+    .sort((a,b)=>b._af-a._af);
   const cort=limitar(todos);
   const lista=cort.lista;
   $("#fcnt").textContent=ehPro()?todos.length:(lista.length<todos.length?`${lista.length} de ${todos.length}`:String(todos.length));
@@ -2934,6 +2987,7 @@ function fRender(){
   el.innerHTML=lista.map(f=>{
     const temCt=f.mail||f.tel||f.site||f.insta;
     return `<article class="ec card fcard">
+      ${f._af>=70?`<div class="afsel" title="${esc(fPorque(f))}">▲ ${f._af}% de afinidade</div>`:""}
       <div><h3>${esc(f.n)}${f.aberto?'<span class="vabr">inscrições abertas</span>':""}${f.verif?'<span class="vok" title="conferido na fonte oficial">✓ conferido</span>':f.porte==="grande"?'<span class="gport">grande porte</span>':""}</h3>
         <div class="fo">${f.pais&&f.porte==="internacional"?`<span class="fpais">${esc(f.pais)}</span> · `:""}${f.cidade?esc(f.cidade):(f.org?esc(f.org):"organizador não informado")}${(()=>{const D=dataFestival(f.quando);return D?` · <span class="fdata ${D.tipo}">${esc(D.txt)}</span>`:"";})()}${f.ed>1?" · "+f.ed+" edições":""}</div>
         ${f.gen?`<div class="fgen">${esc(f.gen)}</div>`:""}</div>
