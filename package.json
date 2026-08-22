@@ -1,0 +1,9 @@
+{
+  "name": "pauta-cultural",
+  "private": true,
+  "type": "module",
+  "description": "Sem etapa de build: o site é um HTML único. Este arquivo existe só para a Vercel instalar o SDK do assistente. Não adicione script de build — a Vercel rodaria e não há o que construir.",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.120.0"
+  }
+}

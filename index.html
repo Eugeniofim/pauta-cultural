@@ -4232,7 +4232,13 @@ const CHAT_KEY="pauta.conversas.v1";
 const CHATAPI_KEY="pauta.chatapi.v1";
 let chatAtual=null, chatOcupado=false;
 
-const chatURL=()=>{try{return (localStorage.getItem(CHATAPI_KEY)||"").replace(/\/+$/,"");}catch(e){return "";}}
+/* o assistente mora no mesmo servidor do app; o campo manual continua
+   valendo para quem quiser apontar para outro lugar */
+const chatURL=()=>{try{
+  const manual=(localStorage.getItem(CHATAPI_KEY)||"").replace(/\/+$/,"");
+  if(manual)return manual;
+}catch(e){}
+  return apiURL();};
 function chatSetURL(u){try{localStorage.setItem(CHATAPI_KEY,(u||"").trim().replace(/\/+$/,""));}catch(e){}}
 
 function convLer(){try{return JSON.parse(localStorage.getItem(CHAT_KEY))||[];}catch(e){return [];}}
@@ -4459,6 +4465,22 @@ function chatConfig(){
 }
 
 /* ---- envio ---- */
+/* O que o assistente precisa saber para responder no contexto do artista.
+   Vai só o que ele mesmo escreveu sobre o trabalho. E-mail, telefone e
+   links do kit ficam de fora: não ajudam a responder nada e não há motivo
+   para trafegar contato a cada mensagem. */
+function perfilParaIA(){
+  const c=contaLer(), k=c.kit||{};
+  return {
+    nome:c.nome||P.nome||"", uf:c.uf||P.uf||"", tipo:c.tipo||P.tipo||"",
+    areas:minhasAreas(),
+    kit:{estilo:k.estilo||"", pitch:k.pitch||"", reltxt:k.reltxt||"",
+         dur:k.dur||"", pessoas:k.pessoas||"",
+         /* só a existência do material, não o endereço dele */
+         video:k.video?"sim":"", stream:k.stream?"sim":"",
+         release:k.release?"sim":"", rider:k.rider?"sim":"", site:k.site?"sim":""}
+  };
+}
 async function chatEnviar(){
   if(chatOcupado)return;
   const inp=$("#chIn"), txt=(inp.value||"").trim();
@@ -4494,7 +4516,8 @@ async function chatEnviar(){
   try{
     const r=await fetch(url+"/conversar",{
       method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({mensagens:conv.msgs.map(x=>({role:x.role,content:x.content})),projeto:projetoAtual()})
+      body:JSON.stringify({mensagens:conv.msgs.map(x=>({role:x.role,content:x.content})),
+        projeto:projetoAtual(),perfil:perfilParaIA()})
     });
     if(!r.ok||!r.body)throw new Error("sem resposta");
     const rd=r.body.getReader(), dec=new TextDecoder();
