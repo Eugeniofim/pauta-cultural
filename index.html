@@ -2957,7 +2957,9 @@ function sescRender(){
         ${x.insta?`<a href="https://instagram.com/${esc(x.insta.replace("@",""))}" target="_blank" rel="noopener"><span class="ic2">◎</span>${esc(x.insta)}</a>`:""}
         ${x.site?`<a href="${x.site}" target="_blank" rel="noopener"><span class="ic2">↗</span>${x.site.replace(/^https?:\/\//,"").replace(/\/$/,"").slice(0,44)}</a>`:""}
       </div>
+      ${(x.mail||x.form||x.wa)?`<button class="btn pri sm escrbtn" data-escr="${esc(x.n)}">✎ Escrever para o Sesc</button>`:""}
     </article>`).join("");
+  $$("#ffeed [data-escr]").forEach(b=>b.onclick=()=>abrirContato(b.dataset.escr));
 }
 function fInit(){
   const comD=new Set(fUFs());
@@ -3787,18 +3789,61 @@ function subRegistrar(f,extra){
   if(i>=0)a[i]=rec;else a.push(rec);
   subSalvar(a);return rec;
 }
+/* ─── e-mail de apresentação, escrito para quem vai ler ───
+   Antes saía um texto só, igual para todo mundo. Mas quem programa um Sesc
+   decide por critério diferente de quem monta um festival grande, e o
+   pequeno decide por um terceiro. O corpo do e-mail muda conforme isso.
+   Também: a data do festival passa pelo mesmo tratamento da tela — sem
+   isso o e-mail sairia dizendo "para a edição de August 18, 2026". */
+function perfilDestino(f){
+  if(f&&f.sesc)return "sesc";
+  if(f&&f.porte==="internacional")return "internacional";
+  if(f&&f.porte==="grande")return "grande";
+  return "local";
+}
 function gerarEmail(f){
   const c=contaLer(), nome=c.nome||P.nome||"[seu nome]";
   const area=(P.area||"música").toLowerCase();
-  const estilos=P.estilos.length?P.estilos.join(", "):"[seu estilo]";
-  const cidade=UF[P.uf]||P.uf;
-  const quando=f.quando?` para a edição de ${f.quando}`:"";
-  return {assunto:`Proposta artística — ${nome}`,
-    corpo:`Olá, equipe do ${f.n}.\n\nMeu nome é ${nome}, sou artista de ${area} de ${cidade}, com trabalho em ${estilos}.\n\nEscrevo para apresentar minha proposta artística${quando}.\n\nSOBRE O TRABALHO\n[Descreva em 3 ou 4 linhas: o que você faz, o que já lançou e o que torna o show interessante para este festival.]\n\nMATERIAL\n• Vídeo ao vivo: [link]\n• Streaming: [link]\n• Release e fotos: [link]\n• Rider técnico: [link]\n\nFORMATO\nShow de [duração] com [número] músicos em palco.\n\nFico à disposição para enviar o que mais for necessário e agradeço a atenção de vocês.\n\nUm abraço,\n${nome}\n${c.mail||"[seu e-mail]"}\n[seu telefone] · [seu Instagram]`};
+  const estilos=(P.estilos&&P.estilos.length)?P.estilos.join(", "):"[seu estilo]";
+  const cidade=UF[P.uf]||P.uf||"[sua cidade]";
+  const pj=c.tipo==="pj"||c.tipo==="ambos";
+  const D=dataFestival(f&&f.quando);
+  /* só menciona a data quando ela é futura e confirmada */
+  const quando=(D&&D.tipo==="futura")?` para a edição de ${D.txt}`:"";
+  const assina=`\n\nUm abraço,\n${nome}\n${c.mail||"[seu e-mail]"}\n[seu telefone] · [seu Instagram]`;
+  const material=`MATERIAL\n• Vídeo ao vivo: [link]\n• Streaming: [link]\n• Release e fotos: [link]\n• Rider técnico: [link]`;
+  const tipo=perfilDestino(f);
+
+  if(tipo==="sesc"){
+    /* Sesc programa por critério social e formativo, não só artístico —
+       está no estatuto dele. Por isso contrapartida e público vêm antes
+       do release. */
+    return {assunto:`Proposta de pauta — ${nome} (${area})`,
+      corpo:`Olá, equipe do ${f.n}.\n\nMeu nome é ${nome}, sou artista de ${area} de ${cidade}, com trabalho em ${estilos}. Escrevo para apresentar uma proposta de pauta e saber qual o caminho certo de inscrição.\n\nA PROPOSTA\n[Descreva em 3 linhas o show ou a atividade.]\n\nCONTRAPARTIDA\n[O que você oferece além do show: oficina, bate-papo com o público, ensaio aberto, aula. O Sesc valoriza a dimensão formativa.]\n\nPÚBLICO\n[Para quem é: faixa etária, se é livre, se funciona em praça ou teatro.]\n\nFORMATO\nApresentação de [duração] com [número] pessoas em palco.${pj?"\nPosso emitir nota como pessoa jurídica.":""}\n\n${material}\n\nSe houver edital ou cadastro de proponentes em aberto, agradeço a orientação sobre como me inscrever.${assina}`};
+  }
+  if(tipo==="grande"){
+    /* festival grande recebe centenas de propostas: número e prova social
+       primeiro, senão nem chega no release */
+    return {assunto:`${nome} — proposta para o ${f.n}`,
+      corpo:`Olá, equipe do ${f.n}.\n\nSou ${nome}, artista de ${area} de ${cidade}, trabalhando com ${estilos}. Escrevo para apresentar meu show${quando}.\n\nEM NÚMEROS\n• [ouvintes mensais / visualizações]\n• [shows no último ano e principais cidades]\n• [imprensa: veículo e link]\n\nO SHOW\n[Duas linhas sobre o que o público vê no palco e por que conversa com a curadoria de vocês.]\n\n${material}\n\nFORMATO\nShow de [duração] com [número] músicos. Disponibilidade em [meses].\n\nFico à disposição.${assina}`};
+  }
+  if(tipo==="internacional"){
+    return {assunto:`${nome} — artist proposal / proposta artística`,
+      corpo:`Olá, equipe do ${f.n}.\n\nSou ${nome}, artista de ${area} do Brasil (${cidade}), com trabalho em ${estilos}. Escrevo para apresentar meu trabalho${quando}.\n\nO TRABALHO\n[Três linhas: o que você faz e o que torna o show relevante fora do Brasil.]\n\n${material}\n\nLOGÍSTICA\nGrupo de [número] pessoas. Passaporte válido e disponibilidade para [período].\n\nUse o botão de tradução desta tela para enviar no idioma do país.${assina}`};
+  }
+  /* pequeno e médio porte: quem lê acumula funções e decide rápido */
+  return {assunto:`Proposta de show — ${nome}`,
+    corpo:`Olá, equipe do ${f.n}.\n\nSou ${nome}, artista de ${area} de ${cidade}, com trabalho em ${estilos}. Gostaria de me apresentar${quando}.\n\nO SHOW\n[Duas ou três linhas: o que você toca e para quem funciona.]\n\n${material}\n\nFORMATO\nShow de [duração] com [número] pessoas em palco. Tenho flexibilidade de formato e cachê conforme a estrutura de vocês.${pj?"\nPosso emitir nota como pessoa jurídica.":""}\n\nSe não for o momento, agradeço se puder me indicar quando abre a próxima seleção.${assina}`};
 }
+
 let mailAtual=null;
 function abrirContato(nome){
-  const f=FESTIVAIS_TODOS.find(x=>x.n===nome);if(!f)return;
+  /* o Sesc não está em FESTIVAIS_TODOS: é outro acervo. Aqui ele vira uma
+     ficha no mesmo formato, marcada com sesc:true para o gerador de e-mail
+     saber que precisa falar de contrapartida e formação. */
+  const f=FESTIVAIS_TODOS.find(x=>x.n===nome)
+    || (()=>{const x=SESC.find(y=>y.n===nome);return x?Object.assign({},x,{sesc:true,porte:"sesc",quando:null}):null;})();
+  if(!f)return;
   const sub=subDe(f.n), g=gerarEmail(f);
   mailAtual={f,assunto:(sub&&sub.assunto)||g.assunto,corpo:(sub&&sub.corpo)||g.corpo};
   const semMail=!f.mail;
