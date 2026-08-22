@@ -753,6 +753,10 @@
   .kitbox[open]{padding-bottom:13px}
   .kitnota{font-size:12.2px;color:var(--ink-soft);line-height:1.5;margin:0 0 12px}
   .kit2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .kitbox textarea{width:100%;font:inherit;font-size:13.2px;line-height:1.55;padding:10px 12px;
+    border:1px solid var(--line-strong);border-radius:10px;background:var(--surface);
+    color:var(--ink);resize:vertical;margin-bottom:4px}
+  .kitbox textarea:focus{outline:2px solid var(--accent);outline-offset:-1px}
   .assbox{margin-top:14px;padding:15px 17px;background:var(--ok-soft);border-radius:12px;
     text-align:left;font-size:12.9px;line-height:1.55;color:var(--ink)}
   .assbox.aviso{background:var(--warn-soft)}
@@ -1259,6 +1263,11 @@
       <details class="kitbox" id="kitBox">
         <summary>Kit de mídia — entra sozinho nos e-mails</summary>
         <p class="kitnota">São <b>links</b>, não arquivos. O material continua onde já está — Drive, YouTube, seu site — e você troca lá sem mexer aqui.</p>
+        <label>Em duas ou três linhas, quem é você e o que você faz</label>
+        <textarea id="kPitch" rows="3" placeholder="Ex: Cantora e compositora de Curitiba. Meu show mistura MPB e música do interior do Paraná, com voz, violão e viola caipira. Lancei o disco Marés em 2026."></textarea>
+        <label>Estilo ou linguagem</label><input type="text" id="kEstilo" placeholder="MPB, samba, jazz, teatro de rua…">
+        <label>Release completo <small style="font-weight:400;color:var(--muted)">— opcional, para colar em formulário</small></label>
+        <textarea id="kRelTxt" rows="4" placeholder="O texto completo do seu release. Não entra no e-mail, que precisa ser curto — fica guardado para você copiar quando o formulário pedir."></textarea>
         <label>Vídeo ao vivo</label><input type="text" id="kVideo" placeholder="youtube.com/... ou drive.google.com/...">
         <label>Streaming</label><input type="text" id="kStream" placeholder="Spotify, Bandcamp, SoundCloud">
         <label>Release e fotos</label><input type="text" id="kRelease" placeholder="pasta no Drive, Dropbox ou site">
@@ -1274,7 +1283,8 @@
         <input type="text" id="kShows" placeholder="shows no último ano e principais cidades">
         <input type="text" id="kImprensa" placeholder="imprensa: veículo e link">
         <button class="btn ghost sm" id="kitCopiar" style="width:100%;justify-content:center;margin-top:12px">Copiar meu kit</button>
-        <p class="kitnota" style="margin:8px 0 0">Cola em formulário de festival, direct ou WhatsApp. Salve antes de copiar.</p>
+        <button class="btn ghost sm" id="kitRel" style="width:100%;justify-content:center;margin-top:7px">Copiar release completo</button>
+        <p class="kitnota" style="margin:8px 0 0">Salve antes de copiar. O kit é curto, para direct e formulário; o release vai à parte, quando pedirem texto longo.</p>
       </details>
       <div class="ap-avisos">
         <div class="apav"><span>📡</span><div><b>Editais e links reais</b><small id="apFonte">—</small></div></div>
@@ -3172,6 +3182,9 @@ const minhasAreas=()=>(P.areas&&P.areas.length)?P.areas:(P.area?[P.area]:[]);
 const daMinhaArea=cat=>cat==="Todas"||minhasAreas().includes(cat);
 function kitPreencher(){
   const k=(contaLer().kit)||{};
+  {const el=$("#kPitch");if(el)el.value=k.pitch||"";}
+  {const el=$("#kEstilo");if(el)el.value=k.estilo||"";}
+  {const el=$("#kRelTxt");if(el)el.value=k.reltxt||"";}
   {const el=$("#kVideo");if(el)el.value=k.video||"";}
   {const el=$("#kStream");if(el)el.value=k.stream||"";}
   {const el=$("#kRelease");if(el)el.value=k.release||"";}
@@ -3196,7 +3209,9 @@ function kitTexto(){
   const cab=[c.nome||P.nome, (P.area||"").toLowerCase(), UF[c.uf||P.uf]||""]
     .filter(Boolean).join(" — ");
   if(cab)L.push(cab);
-  if(P.estilos&&P.estilos.length)L.push(P.estilos.join(", "));
+  const est=(P.estilos&&P.estilos.length)?P.estilos.join(", "):k.estilo;
+  if(est)L.push(est);
+  if(k.pitch){L.push("");L.push(k.pitch);}
   if(L.length)L.push("");
   add("Vídeo ao vivo",k.video);
   add("Streaming",k.stream);
@@ -3233,6 +3248,9 @@ function contaSalvar(){
     uf:$("#acUf").value,area:$("#acArea").value,tipo});
   /* kit de mídia: guardado junto da conta, no mesmo navegador */
   c.kit=c.kit||{};
+  {const el=$("#kPitch");if(el)c.kit.pitch=el.value.trim();}
+  {const el=$("#kEstilo");if(el)c.kit.estilo=el.value.trim();}
+  {const el=$("#kRelTxt");if(el)c.kit.reltxt=el.value.trim();}
   {const el=$("#kVideo");if(el)c.kit.video=el.value.trim();}
   {const el=$("#kStream");if(el)c.kit.stream=el.value.trim();}
   {const el=$("#kRelease");if(el)c.kit.release=el.value.trim();}
@@ -3894,7 +3912,8 @@ function gerarEmail(f){
   const k=c.kit||{};
   const kv=(campo,rotulo)=>k[campo]?k[campo]:`[${rotulo}]`;
   const area=(P.area||"música").toLowerCase();
-  const estilos=(P.estilos&&P.estilos.length)?P.estilos.join(", "):"[seu estilo]";
+  const estilos=(P.estilos&&P.estilos.length)?P.estilos.join(", ")
+    :((c.kit&&c.kit.estilo)?c.kit.estilo:"[seu estilo]");
   const cidade=UF[P.uf]||P.uf||"[sua cidade]";
   const pj=c.tipo==="pj"||c.tipo==="ambos";
   const D=dataFestival(f&&f.quando);
@@ -3907,27 +3926,31 @@ function gerarEmail(f){
     .map(([r,c])=>`• ${r}: ${kv(c,"link")}`).join("\n");
   const material=`MATERIAL\n${linhas}`;
   const tipo=perfilDestino(f);
+  /* O pitch é escrito uma vez no perfil e serve aos quatro e-mails. Quando
+     está vazio, o colchete continua — mas com a instrução do que escrever
+     para AQUELE destinatário, que não é a mesma coisa. */
+  const sobre=vazio=>k.pitch?k.pitch:`[${vazio}]`;
 
   if(tipo==="sesc"){
     /* Sesc programa por critério social e formativo, não só artístico —
        está no estatuto dele. Por isso contrapartida e público vêm antes
        do release. */
     return {assunto:`Proposta de pauta — ${nome} (${area})`,
-      corpo:`Olá, equipe do ${f.n}.\n\nMeu nome é ${nome}, sou artista de ${area} de ${cidade}, com trabalho em ${estilos}. Escrevo para apresentar uma proposta de pauta e saber qual o caminho certo de inscrição.\n\nA PROPOSTA\n[Descreva em 3 linhas o show ou a atividade.]\n\nCONTRAPARTIDA\n[O que você oferece além do show: oficina, bate-papo com o público, ensaio aberto, aula. O Sesc valoriza a dimensão formativa.]\n\nPÚBLICO\n[Para quem é: faixa etária, se é livre, se funciona em praça ou teatro.]\n\nFORMATO\nApresentação de ${kv("dur","duração")} com ${kv("pessoas","número")} pessoas em palco.${pj?"\nPosso emitir nota como pessoa jurídica.":""}\n\n${material}\n\nSe houver edital ou cadastro de proponentes em aberto, agradeço a orientação sobre como me inscrever.${assina}`};
+      corpo:`Olá, equipe do ${f.n}.\n\nMeu nome é ${nome}, sou artista de ${area} de ${cidade}, com trabalho em ${estilos}. Escrevo para apresentar uma proposta de pauta e saber qual o caminho certo de inscrição.\n\nA PROPOSTA\n${sobre("Descreva em 3 linhas o show ou a atividade")}\n\nCONTRAPARTIDA\n[O que você oferece além do show: oficina, bate-papo com o público, ensaio aberto, aula. O Sesc valoriza a dimensão formativa.]\n\nPÚBLICO\n[Para quem é: faixa etária, se é livre, se funciona em praça ou teatro.]\n\nFORMATO\nApresentação de ${kv("dur","duração")} com ${kv("pessoas","número")} pessoas em palco.${pj?"\nPosso emitir nota como pessoa jurídica.":""}\n\n${material}\n\nSe houver edital ou cadastro de proponentes em aberto, agradeço a orientação sobre como me inscrever.${assina}`};
   }
   if(tipo==="grande"){
     /* festival grande recebe centenas de propostas: número e prova social
        primeiro, senão nem chega no release */
     return {assunto:`${nome} — proposta para o ${f.n}`,
-      corpo:`Olá, equipe do ${f.n}.\n\nSou ${nome}, artista de ${area} de ${cidade}, trabalhando com ${estilos}. Escrevo para apresentar meu show${quando}.\n\nEM NÚMEROS\n• ${kv("ouvintes","ouvintes mensais / visualizações")}\n• ${kv("shows","shows no último ano e principais cidades")}\n• ${kv("imprensa","imprensa: veículo e link")}\n\nO SHOW\n[Duas linhas sobre o que o público vê no palco e por que conversa com a curadoria de vocês.]\n\n${material}\n\nFORMATO\nShow de ${kv("dur","duração")} com ${kv("pessoas","número")} músicos. Disponibilidade em [meses].\n\nFico à disposição.${assina}`};
+      corpo:`Olá, equipe do ${f.n}.\n\nSou ${nome}, artista de ${area} de ${cidade}, trabalhando com ${estilos}. Escrevo para apresentar meu show${quando}.\n\nEM NÚMEROS\n• ${kv("ouvintes","ouvintes mensais / visualizações")}\n• ${kv("shows","shows no último ano e principais cidades")}\n• ${kv("imprensa","imprensa: veículo e link")}\n\nO SHOW\n${sobre("Duas linhas sobre o que o público vê no palco")}\n\n${material}\n\nFORMATO\nShow de ${kv("dur","duração")} com ${kv("pessoas","número")} músicos. Disponibilidade em [meses].\n\nFico à disposição.${assina}`};
   }
   if(tipo==="internacional"){
     return {assunto:`${nome} — artist proposal / proposta artística`,
-      corpo:`Olá, equipe do ${f.n}.\n\nSou ${nome}, artista de ${area} do Brasil (${cidade}), com trabalho em ${estilos}. Escrevo para apresentar meu trabalho${quando}.\n\nO TRABALHO\n[Três linhas: o que você faz e o que torna o show relevante fora do Brasil.]\n\n${material}\n\nLOGÍSTICA\nGrupo de ${kv("pessoas","número")} pessoas. Passaporte válido e disponibilidade para [período].\n\nUse o botão de tradução desta tela para enviar no idioma do país.${assina}`};
+      corpo:`Olá, equipe do ${f.n}.\n\nSou ${nome}, artista de ${area} do Brasil (${cidade}), com trabalho em ${estilos}. Escrevo para apresentar meu trabalho${quando}.\n\nO TRABALHO\n${sobre("Três linhas sobre o que você faz")}\n\n${material}\n\nLOGÍSTICA\nGrupo de ${kv("pessoas","número")} pessoas. Passaporte válido e disponibilidade para [período].\n\nUse o botão de tradução desta tela para enviar no idioma do país.${assina}`};
   }
   /* pequeno e médio porte: quem lê acumula funções e decide rápido */
   return {assunto:`Proposta de show — ${nome}`,
-    corpo:`Olá, equipe do ${f.n}.\n\nSou ${nome}, artista de ${area} de ${cidade}, com trabalho em ${estilos}. Gostaria de me apresentar${quando}.\n\nO SHOW\n[Duas ou três linhas: o que você toca e para quem funciona.]\n\n${material}\n\nFORMATO\nShow de ${kv("dur","duração")} com ${kv("pessoas","número")} pessoas em palco. Tenho flexibilidade de formato e cachê conforme a estrutura de vocês.${pj?"\nPosso emitir nota como pessoa jurídica.":""}\n\nSe não for o momento, agradeço se puder me indicar quando abre a próxima seleção.${assina}`};
+    corpo:`Olá, equipe do ${f.n}.\n\nSou ${nome}, artista de ${area} de ${cidade}, com trabalho em ${estilos}. Gostaria de me apresentar${quando}.\n\nO SHOW\n${sobre("Duas ou três linhas sobre o que você toca")}\n\n${material}\n\nFORMATO\nShow de ${kv("dur","duração")} com ${kv("pessoas","número")} pessoas em palco. Tenho flexibilidade de formato e cachê conforme a estrutura de vocês.${pj?"\nPosso emitir nota como pessoa jurídica.":""}\n\nSe não for o momento, agradeço se puder me indicar quando abre a próxima seleção.${assina}`};
 }
 
 let mailAtual=null;
@@ -4642,6 +4665,11 @@ $("#temaB").onclick=()=>temaAplicar(document.documentElement.getAttribute("data-
 $("#acctBtn").onclick=()=>{$("#acctPop").classList.contains("on")?$("#acctPop").classList.remove("on"):contaAbrir();};
 $("#apX").onclick=()=>$("#acctPop").classList.remove("on");
 $("#acSalvar").onclick=contaSalvar;
+$("#kitRel").onclick=()=>{
+  const t=(contaLer().kit||{}).reltxt;
+  if(!t){toast("Escreva o release completo no perfil e salve.");return;}
+  copy(t,"Release");
+};
 $("#kitCopiar").onclick=()=>{
   const t=kitTexto();
   if(!t||t.length<12){toast("Preencha o kit acima e salve primeiro.");return;}
