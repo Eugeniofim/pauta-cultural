@@ -1225,6 +1225,7 @@
     <nav class="nav" id="nav">
       <button class="nv on" data-s="editais">Editais</button>
       <button class="nv" data-s="festivais">Festivais</button>
+      <button class="nv" data-s="sesc">Sesc</button>
       <button class="nv" data-s="escrever">Escrever</button>
       <button class="nv" data-s="chat">Conversar</button>
       <button class="nv" data-s="projetos">Meus projetos</button>
@@ -1451,7 +1452,7 @@
         <div class="fg"><label>Estado</label><select id="fuf"><option value="">Todos</option></select></div>
         <div class="fg"><label>Contato</label><select id="fct"><option value="">Todos</option><option value="aberto">Inscrições abertas</option>
 <option value="verif">✓ Conferidos</option><option value="mail">Com e-mail</option><option value="any">Com algum contato</option></select></div>
-        <div class="fg"><label>Porte</label><select id="fpt"><option value="">Todos</option><option value="grande">Grandes festivais</option><option value="local">Locais e regionais</option></select></div>
+        <div class="fg"><label>Porte</label><select id="fpt"><option value="">Todos</option><option value="grande">Grande porte</option><option value="local">Pequeno e médio porte</option></select></div>
         <div class="fg"><label>Linguagem</label><select id="flg"><option value="">Todas</option><option>Teatro</option><option>Música</option><option>Cinema</option><option>Dança</option><option>Literatura</option><option>Circo</option></select></div>
         <div class="cnt"><b id="fcnt">0</b> <span id="fcntL">festivais</span></div>
       </div>
@@ -1724,79 +1725,79 @@ const SESC=[
  {n:"Sesc Nacional",uf:"BR",site:"https://www.sesc.com.br/encontre-uma-unidade/",mail:null,rot:null,ed:0,
   d:"Não recebe projeto. Serve para achar o regional do seu estado.",
   verif:"FAQ oficial: as solicitações vão para os regionais."},
- {n:"Sesc Paraná",uf:"PR",site:"https://www.sescpr.com.br/editais/",mail:"eventos.culturais@sescpr.com.br",rot:"eventos culturais",ed:36,
+ {n:"Sesc Paraná",uf:"PR",site:"https://www.sescpr.com.br/editais/",mail:"eventos.culturais@sescpr.com.br",rot:"eventos culturais",insta:"@sesc_pr",ed:36,
   d:"O mais aberto a artista de fora. Editais o ano todo, inscrição por formulário, aceita proposta de qualquer estado.",
   verif:"No edital ARTESESC 2027. Arte Móvel tem e-mail próprio: eventos.acaosocial@sescpr.com.br"},
- {n:"Sesc Distrito Federal",uf:"DF",site:"https://sescdf.com.br/cultura/",mail:"projetosculturais@sescdf.com.br",rot:"projetos culturais",ed:0,
+ {n:"Sesc Distrito Federal",uf:"DF",site:"https://sescdf.com.br/cultura/",mail:"projetosculturais@sescdf.com.br",rot:"projetos culturais",insta:"@sescdf",ed:0,
   d:"Único, além de PR e SP, com e-mail só de projetos culturais.",
   verif:"Na página de cultura."},
- {n:"Sesc São Paulo",uf:"SP",site:"https://www.sescsp.org.br/cadastro/",mail:"cursoseoficinas@sescsp.org.br",rot:"cursos e oficinas",ed:1,
+ {n:"Sesc São Paulo",uf:"SP",site:"https://www.sescsp.org.br/cadastro/",mail:"cursoseoficinas@sescsp.org.br",rot:"cursos e oficinas",insta:"@sescsp",ed:1,
   d:"Entra pelo Cadastro de Fornecedores. Curso e oficina vão por e-mail, com sinopse, duração, equipe e custo.",
   verif:"Na página oficial. É o canal de cursos e oficinas — para espetáculo, use o Cadastro."},
- {n:"Sesc Amazonas",uf:"AM",site:"https://www.sesc-am.com.br/cultura/",mail:"sesc.informacao@sesc-am.com.br",rot:"informação geral",ed:1,
+ {n:"Sesc Amazonas",uf:"AM",site:"https://www.sesc-am.com.br/cultura/",mail:"sesc.informacao@sesc-am.com.br",rot:"informação geral",insta:"@sescnoamazonas",ed:1,
   d:"Página de cultura própria, com e-mail publicado nela.",
   verif:"E-mail conferido na página de cultura em 21/08/2026. É o canal de informação geral, não de curadoria — pergunte por ele a quem falar sobre pauta."},
- {n:"Sesc Piauí",uf:"PI",site:"https://sescpiaui.com.br/cultura/",mail:"sescpiaui@pi.sesc.com.br",rot:"geral",ed:2,
+ {n:"Sesc Piauí",uf:"PI",site:"https://sescpiaui.com.br/cultura/",mail:"sescpiaui@pi.sesc.com.br",rot:"geral",insta:"@sescpi",ed:2,
   d:"Página de cultura própria, com e-mail institucional publicado.",
   verif:"E-mail conferido na página de cultura em 21/08/2026. Endereço geral do regional, não específico de programação."},
  {n:"Sesc Bahia",uf:"BA",site:"https://sescbahia.com.br/",mail:"contato@sescbahia.com.br",rot:"geral",ed:0,
   d:"E-mail de contato geral publicado no site.",
   verif:"E-mail conferido no site oficial em 21/08/2026. Contato geral: peça o setor de cultura ao escrever."},
- {n:"Sesc Mato Grosso",uf:"MT",site:"https://sescmatogrosso.com.br/cultura/",mail:"crc@sescmt.com.br",rot:"central de relacionamento",ed:3,
+ {n:"Sesc Mato Grosso",uf:"MT",site:"https://sescmatogrosso.com.br/cultura/",mail:"crc@sescmt.com.br",rot:"central de relacionamento",insta:"@sescmt",ed:3,
   d:"Página de cultura própria. O e-mail é da central de relacionamento.",
   verif:"E-mail conferido na página de cultura em 21/08/2026. O domínio sescmt.com.br também é do Sesc Mato Grosso, conferido pelo título. É central de relacionamento, não curadoria."},
- {n:"Sesc Pará",uf:"PA",site:"https://sesc-pa.com.br/edital",mail:null,rot:null,ed:5,
+ {n:"Sesc Pará",uf:"PA",site:"https://sesc-pa.com.br/edital",mail:null,rot:null,insta:"@sesc_pa",ed:5,
   d:"Tem seção de editais própria, embora não publique e-mail de programação.",
   verif:"Página de editais conferida em 21/08/2026, título \\\"Edital - Sesc | PA\\\". Nenhum e-mail publicado nela."},
- {n:"Sesc Rio Grande do Norte",uf:"RN",site:"https://sescrn.com.br/cultura/",mail:null,rot:null,ed:13,
+ {n:"Sesc Rio Grande do Norte",uf:"RN",site:"https://sescrn.com.br/cultura/",mail:null,rot:null,insta:"@sescrn",ed:13,
   d:"Segundo maior índice de menções a edital entre os regionais.",
   verif:"Página de cultura conferida em 21/08/2026. E-mail de programação não publicado."},
- {n:"Sesc Tocantins",uf:"TO",site:"https://sescto.com.br/",mail:null,rot:null,ed:7,
+ {n:"Sesc Tocantins",uf:"TO",site:"https://sescto.com.br/",mail:null,rot:null,insta:"@sesctocantins",ed:7,
   d:"Página de cultura própria. Cita editais 7 vezes.",
   verif:"Domínio confere. Sem e-mail de programação publicado."},
- {n:"Sesc Alagoas",uf:"AL",site:"https://www.sescalagoas.com.br/cultura",mail:null,rot:null,ed:7,
+ {n:"Sesc Alagoas",uf:"AL",site:"https://www.sescalagoas.com.br/cultura",mail:null,rot:null,insta:"@sescalagoas",ed:7,
   d:"Página de cultura própria. Cita editais 7 vezes.",
   verif:"Domínio confere. Sem e-mail de programação publicado."},
- {n:"Sesc Espírito Santo",uf:"ES",site:"https://sesc-es.com.br/cultura/",mail:null,rot:null,ed:5,
+ {n:"Sesc Espírito Santo",uf:"ES",site:"https://sesc-es.com.br/cultura/",mail:null,rot:null,insta:"@sesc.es.oficial",ed:5,
   d:"Página de cultura própria. Cita editais 5 vezes.",
   verif:"Domínio confere. Sem e-mail de programação publicado."},
  {n:"Sesc Roraima",uf:"RR",site:"https://sescrr.com.br/cultura/",mail:null,rot:null,ed:4,
   d:"Página de cultura própria. Cita editais 4 vezes.",
   verif:"Domínio confere. Sem e-mail de programação publicado."},
- {n:"Sesc Maranhão",uf:"MA",site:"https://www.sescma.com.br/cultura/",mail:null,rot:null,ed:3,
+ {n:"Sesc Maranhão",uf:"MA",site:"https://www.sescma.com.br/cultura/",mail:null,rot:null,insta:"@sesc_ma",ed:3,
   d:"Página de cultura própria. Cita editais 3 vezes.",
   verif:"Domínio confere. Sem e-mail de programação publicado."},
- {n:"Sesc Sergipe",uf:"SE",site:"https://sesc-se.com.br/cultura/",mail:null,rot:null,ed:2,
+ {n:"Sesc Sergipe",uf:"SE",site:"https://sesc-se.com.br/cultura/",mail:null,rot:null,insta:"@sescemsergipe",ed:2,
   d:"Página de cultura própria. Cita editais 2 vezes.",
   verif:"Domínio confere. Sem e-mail de programação publicado."},
- {n:"Sesc Santa Catarina",uf:"SC",site:"https://www.sesc-sc.com.br/cultura/",mail:null,rot:null,ed:1,
+ {n:"Sesc Santa Catarina",uf:"SC",site:"https://www.sesc-sc.com.br/cultura/",mail:null,rot:null,insta:"@sesc_sc",ed:1,
   d:"Página de cultura própria. Cita editais 1 vez.",
   verif:"Domínio confere. Sem e-mail de programação publicado."},
- {n:"Sesc Minas Gerais",uf:"MG",site:"https://sescmg.com.br/cultura/",mail:null,rot:null,ed:0,
+ {n:"Sesc Minas Gerais",uf:"MG",site:"https://sescmg.com.br/cultura/",mail:null,rot:null,insta:"@sescmg",ed:0,
   d:"Página de cultura própria. Sem e-mail de programação.",
   verif:"Domínio confere. Sem e-mail de programação publicado."},
- {n:"Sesc Rio de Janeiro",uf:"RJ",site:"https://www.sescrio.org.br/cultura/",mail:null,rot:null,ed:0,
+ {n:"Sesc Rio de Janeiro",uf:"RJ",site:"https://www.sescrio.org.br/cultura/",mail:null,rot:null,insta:"@sescrio",ed:0,
   d:"Página de cultura própria. Sem e-mail de programação.",
   verif:"Domínio confere. Sem e-mail de programação publicado."},
- {n:"Sesc Pernambuco",uf:"PE",site:"https://sescpe.org.br/cultura/",mail:null,rot:null,ed:0,
+ {n:"Sesc Pernambuco",uf:"PE",site:"https://sescpe.org.br/cultura/",mail:null,rot:null,insta:"@sescpe",ed:0,
   d:"Página de cultura própria. Sem e-mail de programação.",
   verif:"Domínio confere. Sem e-mail de programação publicado."},
- {n:"Sesc Rondônia",uf:"RO",site:"https://sescro.com.br/cultura/",mail:null,rot:null,ed:0,
+ {n:"Sesc Rondônia",uf:"RO",site:"https://sescro.com.br/cultura/",mail:null,rot:null,insta:"@sescro",ed:0,
   d:"Página de cultura própria. Sem e-mail de programação.",
   verif:"Domínio confere. Sem e-mail de programação publicado."},
  {n:"Sesc Rio Grande do Sul",uf:"RS",site:"https://www.sesc-rs.com.br/cultura/",mail:null,rot:null,ed:0,
   d:"Página de cultura própria. Sem e-mail de programação.",
   verif:"Domínio confere. Sem e-mail de programação publicado."},
- {n:"Sesc Goiás",uf:"GO",site:"https://sescgo.com.br/",mail:null,rot:null,ed:2,
+ {n:"Sesc Goiás",uf:"GO",site:"https://sescgo.com.br/",mail:null,rot:null,insta:"@sescgo",ed:2,
   d:"O único e-mail na página de cultura é do Senac, não do Sesc.",
   verif:"O e-mail publicado é @go.senac.br, de outra instituição."},
- {n:"Sesc Acre",uf:"AC",site:"https://sescacre.com.br/",mail:null,rot:null,ed:0,
+ {n:"Sesc Acre",uf:"AC",site:"https://sescacre.com.br/",mail:null,rot:null,insta:"@sescacre",ed:0,
   d:"Página de cultura própria. Sem e-mail de programação.",
   verif:"Domínio confere. Sem e-mail de programação publicado."},
- {n:"Sesc Amapá",uf:"AP",site:"https://sescamapa.com.br/",mail:null,rot:null,ed:2,
+ {n:"Sesc Amapá",uf:"AP",site:"https://sescamapa.com.br/",mail:null,rot:null,insta:"@sescamapa",ed:2,
   d:"Página de cultura própria. Cita editais 2 vezes.",
   verif:"Domínio confere. Sem e-mail de programação publicado."},
- {n:"Sesc Mato Grosso do Sul",uf:"MS",site:"https://sescms.com.br/",mail:null,rot:null,ed:0,
+ {n:"Sesc Mato Grosso do Sul",uf:"MS",site:"https://sescms.com.br/",mail:null,rot:null,insta:"@sescms",ed:0,
   d:"Página de cultura própria. Sem e-mail de programação.",
   verif:"Domínio confere. Sem e-mail de programação publicado."},
  {n:"Sesc Ceará",uf:"CE",site:null,mail:null,rot:null,ed:0,
@@ -2948,7 +2949,9 @@ function sescRender(){
                :`<p class="fhist">Site oficial não confirmado — por isso não há link aqui. A Pauta não publica endereço que não conferiu.</p>`}
       <div class="ct">
         ${x.mail?`<a href="mailto:${x.mail}"><span class="ic2">✉</span>${x.mail}${x.rot?` <small>(${esc(x.rot)})</small>`:""}</a>`
+                :x.insta?`<span class="nocontact">Sem e-mail publicado — fale pelo direct do Instagram.</span>`
                 :`<span class="nocontact">Sem e-mail publicado — a Pauta não inventa contato.</span>`}
+        ${x.insta?`<a href="https://instagram.com/${esc(x.insta.replace("@",""))}" target="_blank" rel="noopener"><span class="ic2">◎</span>${esc(x.insta)}</a>`:""}
         ${x.site?`<a href="${x.site}" target="_blank" rel="noopener"><span class="ic2">↗</span>${x.site.replace(/^https?:\/\//,"").replace(/\/$/,"").slice(0,44)}</a>`:""}
       </div>
     </article>`).join("");
@@ -3882,13 +3885,17 @@ function fTitulo(){
   const l=$("#flead");
   if(!l)return;
   if(!l.dataset.orig)l.dataset.orig=l.innerHTML;
+  /* A proporção sai da lista, não de um número escrito à mão: o acervo
+     cresce e um número fixo viraria mentira em duas semanas. */
+  const _loc=FESTIVAIS_TODOS.filter(f=>f.porte==="local").length;
+  const _nac=FESTIVAIS_TODOS.filter(f=>f.porte!=="internacional").length;
   l.innerHTML = escopoFest==="sesc"
     ? '<b>Cada estado tem seu Sesc, e cada um decide sozinho.</b> Aqui está a porta de cada um. ✓ = contato conferido na página oficial.'
     : escopoFest==="ame"
     ? '<b>América do Sul, Central e do Norte.</b> Site oficial testado um a um. ✓ = data ou contato conferidos na página. A Pauta escreve o e-mail no idioma do país.'
     : escopoFest==="int"
     ? '<b>São fichas de festivais internacionais</b>, não chamadas com inscrição aberta. A Pauta escreve o e-mail de apresentação no idioma provável do país — confira sempre no site oficial antes de enviar.'
-    : l.dataset.orig;
+    : l.dataset.orig+(_loc?` <b>${_loc} dos ${_nac} são de pequeno e médio porte</b> — é onde projeto novo entra.`:"");
 }
 function fEscopo(){
   fTitulo();
@@ -3899,6 +3906,12 @@ function fEscopo(){
   if(a)a.textContent=nac;if(b)b.textContent=int;if(c)c.textContent=ame;
   if(d)d.textContent=SESC.length;
   $$("#fsub .stb").forEach(x=>x.classList.toggle("on",x.dataset.esc===escopoFest));
+  /* clicar numa sub-aba também acerta o menu de cima */
+  const nS=$('.nv[data-s="sesc"]'), nF=$('.nv[data-s="festivais"]');
+  if($("#s-festivais")&&$("#s-festivais").classList.contains("on")){
+    if(nS)nS.classList.toggle("on",escopoFest==="sesc");
+    if(nF)nF.classList.toggle("on",escopoFest!=="sesc");
+  }
 }
 
 
@@ -4454,7 +4467,18 @@ function fecharLanding(){
 }
 
 /* ---------- nav ---------- */
-function nav(s){if(s==="projetos"){dash();alertas();submissoes();}if(s==="perfil"){head();}if(s==="festivais")fQuizRender();$$(".nv").forEach(n=>n.classList.toggle("on",n.dataset.s===s));
+function nav(s){
+  /* Sesc ganhou entrada própria no menu por ser o que mais se usa para
+     vender show. Por baixo continua sendo a tela de festivais, na sub-aba
+     dele — duplicar a tela seria duplicar o render e o acervo.
+     "aceso" guarda o botão que a pessoa clicou; "s" vira a tela a mostrar.
+     Sem separar os dois, clicar em Sesc acendia Festivais. */
+  const aceso=s;
+  if(s==="sesc"){escopoFest="sesc";fQuiz.feito=true;s="festivais";}
+  else if(s==="festivais"&&escopoFest==="sesc"){escopoFest="nac";}
+  if(s==="projetos"){dash();alertas();submissoes();}if(s==="perfil"){head();}
+  if(s==="festivais"){fEscopo();fQuizRender();}
+  $$(".nv").forEach(n=>n.classList.toggle("on",n.dataset.s===aceso));
   $$(".scr").forEach(x=>x.classList.toggle("on",x.id==="s-"+s));window.scrollTo({top:0,behavior:"smooth"});}
 $$(".nv").forEach(n=>n.onclick=()=>nav(n.dataset.s));
 $$("[data-go]").forEach(b=>b.onclick=()=>nav(b.dataset.go));
