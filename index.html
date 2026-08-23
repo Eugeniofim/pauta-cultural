@@ -922,9 +922,33 @@
   .lp-l li{font-size:14px;color:var(--ink-soft);padding-left:25px;position:relative;line-height:1.5}
   .lp-l li::before{content:"✓";position:absolute;left:0;color:var(--ok-ink);font-weight:800}
   .lp-d-vis{display:flex;flex-direction:column;gap:9px}
-  .lp-mini{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 15px;
-    font-size:14px;font-weight:600;box-shadow:var(--shadow)}
-  .lp-mini span{display:block;font-family:var(--mono);font-size:10px;color:var(--accent-ink);font-weight:600;margin-bottom:3px}
+  /* o diferencial desenhado como mecanismo: perguntas em cima, o traço da
+     Pauta no meio, e o formulário do SALIC ganhando ✓ um a um ao entrar na
+     tela. Os rótulos são o próprio fluxo — nada aqui precisa de legenda. */
+  .sal{display:flex;flex-direction:column}
+  .sal-top small{display:block;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--muted);margin-bottom:8px}
+  .sal-qs{display:flex;flex-wrap:wrap;gap:8px}
+  .sal-q{background:var(--surface);border:1px solid var(--line-strong);border-radius:999px;padding:8px 14px;font-size:12.8px;color:var(--ink);box-shadow:var(--shadow)}
+  .sal-q.sal-mais{background:transparent;border-style:dashed;color:var(--muted);box-shadow:none}
+  .sal-mid{display:flex;align-items:center;gap:10px;margin:14px 0}
+  .sal-mid i{flex:1;height:2px;background:var(--grad-btn);border-radius:2px;opacity:.55}
+  .sal-mid b{font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;
+    background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sal-form{background:var(--surface);border:1px solid var(--line-strong);border-radius:16px;padding:14px 16px;box-shadow:var(--shadow-lg)}
+  .sal-fh{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);
+    padding-bottom:9px;border-bottom:1px solid var(--line);margin-bottom:4px}
+  .sal-g{font-size:10px;letter-spacing:.09em;text-transform:uppercase;font-weight:700;color:var(--accent-ink);margin:9px 0 2px}
+  .sal-r{display:flex;align-items:center;gap:9px;padding:5px 0;font-size:13.4px;color:var(--ink)}
+  .sal-r span{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sal-r em{font-style:normal;font-size:10.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .sal-r i{width:16px;height:16px;border-radius:50%;flex:none;border:1.6px solid var(--line-strong);
+    display:grid;place-items:center;font-style:normal;font-size:9px;color:#fff;
+    transition:background .3s,border-color .3s;transition-delay:calc(var(--i)*.14s + .25s)}
+  .sal.go .sal-r i{background:var(--ok);border-color:var(--ok)}
+  .sal.go .sal-r i::before{content:"✓";opacity:0;animation:salok .01s forwards;animation-delay:calc(var(--i)*.14s + .45s)}
+  @keyframes salok{to{opacity:1}}
+  .sal-ff{margin-top:10px;padding-top:9px;border-top:1px dashed var(--line-strong);font-size:12px;color:var(--ink-soft);text-align:center}
+  @media (prefers-reduced-motion:reduce){.sal-r i{transition:none}.sal.go .sal-r i::before{animation:none;opacity:1}}
 
   .lp-fim{text-align:center;padding:52px 26px;background:var(--surface);border:1px solid var(--line);
     border-radius:26px;box-shadow:var(--shadow)}
@@ -1322,12 +1346,32 @@
           </ul>
         </div>
         <div class="lp-d-vis">
-          <div class="lp-mini"><span>Detalhes técnicos</span>Sinopse da obra</div>
-          <div class="lp-mini"><span>Detalhes técnicos</span>Especificações do produto</div>
-          <div class="lp-mini"><span>Detalhes técnicos</span>Etapas de trabalho</div>
-          <div class="lp-mini"><span>Detalhes técnicos</span>Ficha técnica</div>
-          <div class="lp-mini"><span>Responsabilidade Social</span>Acessibilidade</div>
-          <div class="lp-mini"><span>Responsabilidade Social</span>Democratização de Acesso</div>
+          <div class="sal" id="salFlow">
+            <div class="sal-top">
+              <small>Você responde</small>
+              <div class="sal-qs">
+                <span class="sal-q">“Quem é o proponente?”</span>
+                <span class="sal-q">“Qual o produto principal?”</span>
+                <span class="sal-q sal-mais">+ 34 perguntas simples</span>
+              </div>
+            </div>
+            <div class="sal-mid"><i></i><b>a Pauta escreve</b><i></i></div>
+            <div class="sal-form">
+              <div class="sal-fh">SALIC — os 8 campos de texto</div>
+              <div class="sal-g">Detalhes técnicos</div>
+              <div class="sal-r" style="--i:0"><i></i><span>Sinopse da obra</span><em>8.000</em></div>
+              <div class="sal-r" style="--i:1"><i></i><span>Especificações técnicas do produto</span><em>8.000</em></div>
+              <div class="sal-r" style="--i:2"><i></i><span>Etapas de trabalho</span><em>8.000</em></div>
+              <div class="sal-r" style="--i:3"><i></i><span>Ficha técnica</span><em>8.000</em></div>
+              <div class="sal-r" style="--i:4"><i></i><span>Descrição da atividade do produto</span><em>8.000</em></div>
+              <div class="sal-g">Responsabilidade Social</div>
+              <div class="sal-r" style="--i:5"><i></i><span>Acessibilidade</span><em>8.000</em></div>
+              <div class="sal-r" style="--i:6"><i></i><span>Democratização de Acesso</span><em>8.000</em></div>
+              <div class="sal-g">Outras informações</div>
+              <div class="sal-r" style="--i:7"><i></i><span>Outras informações</span><em>8.000</em></div>
+              <div class="sal-ff">pronto para colar, campo por campo</div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -4762,6 +4806,17 @@ function lpTiltInit(){
   }
   const onb=$("#onb");if(onb)onb.addEventListener("scroll",revela,{passive:true});
   revela();setTimeout(revela,400);setTimeout(()=>cards.forEach(c=>c.classList.add("vis")),2500);
+  const sal=$("#salFlow");
+  if(sal){
+    const liga=()=>sal.classList.add("go");
+    if("IntersectionObserver" in window){
+      const io2=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting){liga();io2.disconnect();}}),{threshold:.25});
+      io2.observe(sal);
+    }
+    const chk=()=>{if(sal.getBoundingClientRect().top<alt()-60)liga();};
+    if(onb)onb.addEventListener("scroll",chk,{passive:true});
+    setTimeout(liga,3000);
+  }
   const fino=matchMedia("(hover:hover) and (pointer:fine)").matches, calmo=matchMedia("(prefers-reduced-motion:reduce)").matches;
   if(!fino||calmo)return;
   cards.forEach(c=>{
