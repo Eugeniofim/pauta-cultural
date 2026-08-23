@@ -1315,7 +1315,7 @@
           <ul class="onb-l">
             <li>Editais federais, estaduais e municipais</li>
             <li>Festivais com contato de quem organiza</li>
-            <li>Aviso quando o prazo aperta</li>
+            <li>Aviso no navegador quando o prazo aperta</li>
             <li>Assistente para Rouanet e editais estaduais</li>
           </ul>
         </div>
@@ -1402,7 +1402,7 @@
     <section class="scr on" id="s-editais">
       <div class="eyebrow">Editais e festivais</div>
       <h1 id="ttl">—</h1>
-      <p class="lead">Programas permanentes e editais abertos, com link para o portal oficial. Clique para ver requisitos e começar a escrever.</p>
+      <p class="lead">Ordenados pela afinidade com você, cada um com link oficial. Estrela para acompanhar o prazo; clique para ver requisitos e escrever.</p>
       <div class="syncbar" id="syncbar">
         <div class="sy"><span class="dot2" id="syDot"></span>
           <div class="sytxt"><b id="syTitle">Base atualizada</b><small id="sySub">—</small></div></div>
@@ -1505,8 +1505,8 @@
     <section class="scr" id="s-plano">
       <div style="max-width:620px;margin:0 auto;text-align:center">
         <div class="eyebrow">Pauta Pro</div>
-        <h1>Todos os editais do Brasil no seu bolso.</h1>
-        <p class="lead" style="margin:0 auto 30px">Um cachê paga a assinatura por anos.</p>
+        <h1>Tudo aberto. Projeto escrito.</h1>
+        <p class="lead" style="margin:0 auto 30px">Todos os editais e festivais da base, os 27 Sesc e o seu projeto nos moldes da Rouanet. Um cachê paga a assinatura por anos.</p>
       </div>
       <div class="planos">
         <div class="plano">
@@ -1576,7 +1576,7 @@
     <section class="scr" id="s-festivais">
       <div class="eyebrow" id="feyeb">Festivais do Brasil</div>
       <h1 id="fttl">Festivais do Brasil</h1>
-      <p class="lead" id="flead"><b>Fichas de festivais, não chamadas abertas.</b> Para achar o festival e falar com quem organiza. Contato só quando a instituição publicou.</p>
+      <p class="lead" id="flead"><b>Ordenados pela afinidade com o seu som</b>, com o motivo em cada um. O contato é o que a organização publicou — e o e-mail de proposta sai pronto.</p>
 
       <div class="subtabs" id="fsub">
         <button class="stb on" data-esc="nac">🇧🇷 Nacionais<span id="cNac"></span></button>
@@ -1617,12 +1617,12 @@
           <button class="pk" data-mode="rouanet">
             <div class="ic">🏛️</div><h3>Lei Rouanet — SALIC</h3>
             <p>Incentivo fiscal federal. Estrutura levantada dentro do sistema: 8 campos de texto, plano de distribuição por produto e custos vinculados.</p>
-            <div class="mt">25 perguntas · IN MinC 29/2026</div>
+            <div class="mt" id="mtRouanet">IN MinC 29/2026</div>
           </button>
           <button class="pk" data-mode="edital">
             <div class="ic">📋</div><h3>Edital estadual ou municipal</h3>
             <p>Estrutura comum de secretarias: apresentação, objetivos, justificativa, democratização, acessibilidade, contrapartida, etapas e divulgação.</p>
-            <div class="mt">18 perguntas · 12 abas</div>
+            <div class="mt" id="mtEdital">12 abas</div>
           </button>
         </div>
       </div>
@@ -2126,7 +2126,7 @@ function feed(){
   $("#fc").textContent=ehPro()?String(l.length):(cortado.lista.length<l.length?`${cortado.lista.length} de ${l.length}`:String(l.length));
   const f=$("#feed");f.innerHTML="";
   const guardados=l;l=cortado.lista;
-  if(!l.length){f.innerHTML='<p class="lead">Nenhum edital com esses filtros.</p>';return;}
+  if(!l.length){f.innerHTML='<p class="lead">Nenhum edital com esses filtros. Tire um filtro ou troque o estado.</p>';return;}
   l.forEach(({e,m})=>{
     const b=bloq(e),lim=dLim(e),pc=e.pz==null?"":e.pz<=7?"c":e.pz<=15?"w":"";
     const el=document.createElement("article");
@@ -2400,7 +2400,7 @@ function mostrarTrava(m){
   el.innerHTML=`
     <div class="cad">🔒</div>
     <div class="eyebrow">Recurso do Pauta Pro</div>
-    <h2>Escrever projeto é do Pro</h2>
+    <h2>Seu projeto escrito, campo por campo.</h2>
     <p class="sub">${R
       ? "Os 8 campos do SALIC, com os limites da norma calculados enquanto você responde."
       : "Os campos que as secretarias pedem, com contagem e alertas de coerência."}</p>
@@ -3281,9 +3281,14 @@ const ONB=[
  {k:"uf",tipo:"uf",q:"Onde você mora?",w:"Muitos editais são restritos ao estado.",op:null},
  {k:"tipo",tipo:"chips",q:"Você se inscreve como?",w:"Muitos editais só aceitam CNPJ — isso muda tudo o que você vê.",
   op:()=>["Pessoa Física","Pessoa Jurídica","As duas"],map:{"Pessoa Física":"pf","Pessoa Jurídica":"pj","As duas":"ambos"}},
- {k:"mail",tipo:"txt",q:"Seu e-mail para avisos de prazo",w:"Opcional. Fica salvo só neste navegador.",ph:"voce@email.com",opcional:true}
+ {k:"mail",tipo:"txt",q:"Seu e-mail",w:"Opcional. Reconhece sua assinatura Pro em outro aparelho e aparece no seu press kit como contato.",ph:"voce@email.com",opcional:true}
 ];
 let onbI=0, onbDados={};
+/* contagem real das perguntas nos cartões do Escrever — texto fixo já
+   envelheceu uma vez (dizia 25 quando eram 36) */
+{const a=$("#mtRouanet"),b=$("#mtEdital");
+ if(a)a.textContent=`${QR.length} perguntas · IN MinC 29/2026`;
+ if(b)b.textContent=`${QE.length} perguntas · 12 abas`;}
 
 const FONTES=[
  {n:"Mapa Cultural de Pernambuco",u:"https://mapacultural.pe.gov.br"},
@@ -3790,6 +3795,9 @@ async function googleInit(){
   if(!apiURL())return;
   try{
     const c=await apiFetch("/config");
+    /* sem chave do assistente, a aba Conversar nem aparece: porta que abre
+       num "ainda não foi ligado" é a pior propaganda possível */
+    if(c&&!c.assistente){const b=document.querySelector('.nv[data-s="chat"]');if(b)b.hidden=true;}
     if(!c||!c.google)return;                  // não configurado: sem botão
     googleId=c.google;
     await new Promise((ok,falha)=>{

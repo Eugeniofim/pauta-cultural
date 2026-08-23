@@ -11,6 +11,10 @@ export const config = { runtime: "edge" };
 
 export default async () =>
   Response.json(
-    { google: process.env.GOOGLE_CLIENT_ID || null },
+    {
+      google: process.env.GOOGLE_CLIENT_ID || null,
+      /* o front esconde a aba Conversar quando isto é falso */
+      assistente: !!process.env.ANTHROPIC_API_KEY,
+    },
     { headers: { "Cache-Control": "public, max-age=300", "Content-Type": "application/json; charset=utf-8" } }
   );
