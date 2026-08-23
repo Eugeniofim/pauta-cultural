@@ -484,6 +484,21 @@
   .acct .acn{font-size:13.5px;font-weight:600;color:var(--ink);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .acct .cv{font-size:11px;color:var(--muted)}
   @media (max-width:860px){.acct .acn{display:none}.nav{margin-left:auto}}
+  /* O menu tem 7 itens e nenhuma regra de celular tinha sido escrita: com o
+     flex-wrap do header, ele quebrava em linhas tortas — o "estranho no
+     celular". Abaixo de 760px a marca, o tema e a conta ficam na primeira
+     linha; o menu vira uma faixa de UMA linha com rolagem lateral, que é o
+     padrão que o polegar já conhece de qualquer app. */
+  @media (max-width:760px){
+    .top{gap:8px;padding:10px 12px}
+    .brand{order:1}
+    .temab{order:2;margin-left:auto}
+    .acct{order:3}
+    .nav{order:4;width:100%;margin:0;flex-wrap:nowrap;overflow-x:auto;
+      -webkit-overflow-scrolling:touch;scrollbar-width:none;overscroll-behavior-x:contain}
+    .nav::-webkit-scrollbar{display:none}
+    .nv{flex:none;white-space:nowrap;padding:9px 13px;font-size:13px}
+  }
 
   .acctpop{position:fixed;top:64px;right:22px;width:min(360px,92vw);background:var(--surface);border:1px solid var(--line);
     border-radius:20px;box-shadow:var(--shadow-lg);z-index:70;display:none;overflow:hidden}
@@ -4787,6 +4802,9 @@ function nav(s){
   if(s==="projetos"){dash();alertas();submissoes();}if(s==="perfil"){head();}
   if(s==="festivais"){fEscopo();fQuizRender();}
   $$(".nv").forEach(n=>n.classList.toggle("on",n.dataset.s===aceso));
+  /* no celular o menu rola: o botão ativo precisa se trazer para a vista */
+  const ativo=$('.nv[data-s="'+aceso+'"]');
+  if(ativo&&ativo.scrollIntoView)ativo.scrollIntoView({inline:"nearest",block:"nearest"});
   $$(".scr").forEach(x=>x.classList.toggle("on",x.id==="s-"+s));window.scrollTo({top:0,behavior:"smooth"});}
 $$(".nv").forEach(n=>n.onclick=()=>nav(n.dataset.s));
 $$("[data-go]").forEach(b=>b.onclick=()=>nav(b.dataset.go));
