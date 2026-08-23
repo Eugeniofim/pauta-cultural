@@ -968,36 +968,21 @@
   .lp-dor:hover{box-shadow:var(--shadow-lg)}
   .lp-dor.destaque{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft),var(--shadow)}
   .lp-dor-in{transform:translateZ(1px);display:flex;flex-direction:column;flex:1}
-  .lp-dor-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .lp-dor-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
   .lp-num{font-size:12px;font-weight:700;letter-spacing:.14em;color:var(--muted)}
   .lp-ico{width:44px;height:44px;border-radius:14px;background:var(--grad-btn);color:#fff;display:grid;place-items:center;
     box-shadow:0 8px 18px rgba(190,24,93,.22);transform:translateZ(30px)}
   .lp-ico svg{width:22px;height:22px}
-  .lp-mui{background:var(--bg);border:1px solid var(--line-strong);border-radius:14px;padding:10px 12px;margin-bottom:18px;
-    display:grid;gap:7px;transform:translateZ(40px);box-shadow:0 14px 30px -14px rgba(90,70,130,.35)}
-  .lp-mcap{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--accent-ink);margin:0 0 3px}
-  .lp-mrow{display:flex;align-items:center;gap:8px;font-size:12.2px;color:var(--ink);min-height:20px}
-  .lp-mrow span{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .lp-mrow em{font-style:normal;font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
-  .lp-mrow b{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);width:52px;flex:none}
-  .lp-mrow i.ok,.lp-mrow i.run{width:14px;height:14px;border-radius:50%;flex:none;display:grid;place-items:center;font-style:normal}
-  .lp-mrow i.ok{background:var(--ok);color:#fff;font-size:9px}.lp-mrow i.ok::before{content:"✓"}
-  .lp-mrow i.run{border:2px solid var(--accent);border-right-color:transparent;animation:spin 1s linear infinite}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  .lp-mrow i.af{width:24px;height:24px;border-radius:50%;flex:none;display:grid;place-items:center;font-style:normal;font-size:10px;font-weight:700;
-    color:var(--ok-ink);background:var(--ok-soft);border:1.5px solid var(--ok)}
-  .lp-mrow i.af.lo{color:var(--warn-ink);background:var(--warn-soft);border-color:var(--warn)}
-  .lp-mchip span{color:var(--accent-ink);font-weight:600}
   .lp-glare{position:absolute;inset:0;border-radius:22px;pointer-events:none;opacity:0;transition:opacity .3s;
     background:radial-gradient(420px circle at var(--gx,50%) var(--gy,50%),rgba(255,255,255,.55),transparent 60%)}
   .lp-dor:hover .lp-glare{opacity:1}
   @media (hover:none){.lp-dor{transform:translateY(28px)}.lp-dor.vis{transform:none}.lp-glare{display:none}}
-  @media (prefers-reduced-motion:reduce){.lp-dor,.lp-dor.vis{opacity:1;transform:none;transition:none}.lp-mrow i.run{animation:none}.lp-glare{display:none}}
+  @media (prefers-reduced-motion:reduce){.lp-dor,.lp-dor.vis{opacity:1;transform:none;transition:none}.lp-glare{display:none}}
   .lp-antes,.lp-depois{font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;font-weight:700;margin-bottom:6px}
   .lp-antes{color:var(--muted)}
   .lp-depois{color:var(--accent-ink);margin-top:16px;padding-top:16px;border-top:1px dashed var(--line-strong)}
-  .lp-p{font-size:13.8px;line-height:1.6;color:var(--muted);margin:0}
-  .lp-d2{font-size:14.2px;line-height:1.6;color:var(--ink-soft);margin:0}
+  .lp-p{font-size:14.4px;line-height:1.62;color:var(--muted);margin:0}
+  .lp-d2{font-size:15px;line-height:1.62;color:var(--ink-soft);margin:0}
   .lp-d2 b{color:var(--ink);font-weight:650}
 
   /* ═══════════ CHAT ═══════════ */
@@ -1295,11 +1280,6 @@
             <div class="lp-dor-in">
               <div class="lp-dor-top"><span class="lp-num">01</span>
                 <span class="lp-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4l10.5-10.5a2.1 2.1 0 0 0-3-3L5 17v3z"/><path d="M13.5 6.5l3 3"/></svg></span></div>
-              <div class="lp-mui"><div class="lp-mcap">Seu projeto no SALIC, campo por campo</div>
-                <div class="lp-mrow"><i class="ok"></i><span>Sinopse da obra</span><em>1.240 / 8.000</em></div>
-                <div class="lp-mrow"><i class="ok"></i><span>Etapas de trabalho</span><em>2.105 / 8.000</em></div>
-                <div class="lp-mrow"><i class="run"></i><span>Acessibilidade</span><em>escrevendo…</em></div>
-              </div>
               <div class="lp-antes">Hoje</div>
               <p class="lp-p">Oito campos de 8.000 caracteres no SALIC. Você fecha a aba.</p>
               <div class="lp-depois">Com a Pauta</div>
@@ -1310,11 +1290,6 @@
             <div class="lp-dor-in">
               <div class="lp-dor-top"><span class="lp-num">02</span>
                 <span class="lp-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3L10 14"/><path d="M21 3l-7 18-4-7-7-4 18-7z"/></svg></span></div>
-              <div class="lp-mui"><div class="lp-mcap">Seu e-mail de proposta, pronto</div>
-                <div class="lp-mrow"><b>Para</b><span>Sesc · programação</span></div>
-                <div class="lp-mrow"><b>Assunto</b><span>Proposta de show — voz e violão</span></div>
-                <div class="lp-mrow lp-mchip"><span>🔗 press kit com link próprio</span><em>anexado</em></div>
-              </div>
               <div class="lp-antes">Hoje</div>
               <p class="lp-p">Cinco anexos e um e-mail escrito do zero para cada festival.</p>
               <div class="lp-depois">Com a Pauta</div>
@@ -1325,11 +1300,6 @@
             <div class="lp-dor-in">
               <div class="lp-dor-top"><span class="lp-num">03</span>
                 <span class="lp-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></svg></span></div>
-              <div class="lp-mui"><div class="lp-mcap">Afinidade com você e canal conferido</div>
-                <div class="lp-mrow"><i class="af">91</i><span>Sesc Paraná</span><em>✓ conferido</em></div>
-                <div class="lp-mrow"><i class="af">83</i><span>Festival Bananada</span><em>✓ e-mail</em></div>
-                <div class="lp-mrow"><i class="af lo">58</i><span>Rock in Rio</span><em>sem canal</em></div>
-              </div>
               <div class="lp-antes">Hoje</div>
               <p class="lp-p">Prazo descoberto no último dia. Release mandado pro festival errado.</p>
               <div class="lp-depois">Com a Pauta</div>
