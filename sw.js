@@ -15,7 +15,7 @@
  *    cancelou continuar com o Pro, e /api/assinar devolveria um link de
  *    checkout já usado. Essas rotas passam direto, sempre.
  */
-const VERSAO = "pauta-v2";
+const VERSAO = "pauta-v3";
 const CASCA  = VERSAO + "-casca";
 const DADOS  = VERSAO + "-dados";
 
@@ -23,7 +23,7 @@ const DADOS  = VERSAO + "-dados";
 const ESSENCIAL = ["/", "/manifest.webmanifest", "/icone.svg", "/icone-192.png", "/icone-512.png", "/icone-maskable-512.png"];
 
 /* rotas que jamais podem sair do cache: dizem respeito a dinheiro e acesso */
-const NUNCA_GUARDAR = /\/api\/(status|portal|assinar|confirmar|cupom)/;
+const NUNCA_GUARDAR = /\/api\/(status|portal|assinar|confirmar|cupom|convite|google|conversar)/;
 
 self.addEventListener("install", e => {
   e.waitUntil((async () => {
