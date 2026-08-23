@@ -4476,6 +4476,14 @@ function chatConfig(){
    Vai só o que ele mesmo escreveu sobre o trabalho. E-mail, telefone e
    links do kit ficam de fora: não ajudam a responder nada e não há motivo
    para trafegar contato a cada mensagem. */
+/* A prova de que quem conversa é assinante: e-mail (o servidor confere a
+   assinatura no Stripe) ou o código do cupom (idem). O servidor decide —
+   mandar daqui é só apresentar a credencial, não conceder o acesso. */
+function acessoParaIA(){
+  const c=contaLer(), info=proInfo();
+  const m=(info.motivo||"").match(/^cupom(?:-servidor)?:(.+)$/);
+  return {email:c.mail||"", cupom:m?m[1]:""};
+}
 function perfilParaIA(){
   const c=contaLer(), k=c.kit||{};
   return {
@@ -4524,7 +4532,7 @@ async function chatEnviar(){
     const r=await fetch(url+"/conversar",{
       method:"POST",headers:{"Content-Type":"application/json"},
       body:JSON.stringify({mensagens:conv.msgs.map(x=>({role:x.role,content:x.content})),
-        projeto:projetoAtual(),perfil:perfilParaIA()})
+        projeto:projetoAtual(),perfil:perfilParaIA(),acesso:acessoParaIA()})
     });
     if(!r.ok||!r.body)throw new Error("sem resposta");
     const rd=r.body.getReader(), dec=new TextDecoder();

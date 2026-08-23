@@ -62,6 +62,56 @@ O QUE VOCÊ SABE FAZER
 
 Use o perfil abaixo para responder no contexto real dele — cite o estilo, o estado e o material que ele tem. Se o perfil estiver vazio, sugira preencher o kit de mídia no menu da conta.`;
 
+
+/* ─── só assinante conversa ───
+   A trava do navegador qualquer pessoa remove editando o JavaScript da
+   página. A que vale é esta: cada mensagem chega com o e-mail ou o cupom, e
+   o servidor confere no Stripe antes de gastar um token. Quem paga o modelo
+   é o dono do app — o custo tem que ficar amarrado a quem paga a assinatura. */
+const ATIVAS = new Set(["active", "trialing", "past_due"]);
+
+async function ehAssinante(stripeKey, email) {
+  if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return false;
+  const h = { Authorization: `Bearer ${stripeKey}` };
+  const rc = await fetch(`https://api.stripe.com/v1/customers?email=${encodeURIComponent(email.toLowerCase())}&limit=5`, { headers: h });
+  if (!rc.ok) return false;
+  for (const c of (await rc.json()).data || []) {
+    const rs = await fetch(`https://api.stripe.com/v1/subscriptions?customer=${c.id}&status=all&limit=5`, { headers: h });
+    if (!rs.ok) continue;
+    if (((await rs.json()).data || []).some(x => ATIVAS.has(x.status))) return true;
+  }
+  return false;
+}
+
+async function cupomVale(stripeKey, codigo) {
+  if (!codigo) return false;
+  const r = await fetch(
+    `https://api.stripe.com/v1/promotion_codes?code=${encodeURIComponent(codigo)}`
+    + `&active=true&limit=1&expand[]=data.promotion.coupon`,
+    { headers: { Authorization: `Bearer ${stripeKey}` } });
+  if (!r.ok) return false;
+  const promo = (await r.json())?.data?.[0];
+  let c = promo?.promotion?.coupon ?? promo?.coupon;
+  if (typeof c === "string") {
+    const rc = await fetch(`https://api.stripe.com/v1/coupons/${c}`,
+      { headers: { Authorization: `Bearer ${stripeKey}` } });
+    c = rc.ok ? await rc.json() : null;
+  }
+  return !!(c && c.percent_off === 100 && c.duration === "forever");
+}
+
+/* Freio de emergência por instância. É melhor-esforço de verdade: a memória
+   zera quando a função hiberna, então isto NÃO é cota confiável — é só o
+   que impede uma rajada de centenas de mensagens num minuto de virar
+   fatura. Cota por dia de verdade pede um armazenamento, que hoje não há. */
+const usoPorEmail = new Map();
+function passaNoFreio(email) {
+  const hoje = new Date().toISOString().slice(0, 10);
+  const u = usoPorEmail.get(email);
+  if (!u || u.dia !== hoje) { usoPorEmail.set(email, { dia: hoje, n: 1 }); return true; }
+  u.n++;
+  return u.n <= 80;
+}
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
   const chave = process.env.ANTHROPIC_API_KEY;
@@ -79,15 +129,44 @@ export default async function handler(req, res) {
     res.end(JSON.stringify({ erro: "use POST" }));
     return;
   }
+  const corpo = req.body || {};
+  const mensagens = corpo.mensagens, projeto = corpo.projeto, perfil = corpo.perfil;
+  const acesso = corpo.acesso || {};
+
+  const stripeKey = process.env.STRIPE_SECRET_KEY;
+  if (!stripeKey) {
+    /* sem Stripe não há como conferir assinatura — e endpoint aberto com a
+       chave do modelo configurada é fatura em nome de desconhecidos */
+    comoSSE();
+    manda("erro", { msg: "O assistente é do Pauta Pro, e não consegui conferir sua assinatura agora." });
+    res.end();
+    return;
+  }
+  let liberado = false;
+  try {
+    if (acesso.cupom) liberado = await cupomVale(stripeKey, String(acesso.cupom).slice(0, 60));
+    if (!liberado && acesso.email) liberado = await ehAssinante(stripeKey, String(acesso.email).slice(0, 200));
+  } catch (e) { console.error("verificação:", e?.message); }
+  if (!liberado) {
+    comoSSE();
+    manda("erro", { msg: "O assistente é do Pauta Pro. Assine na aba Plano — ou, se já assinou, confira o e-mail no seu perfil." });
+    res.end();
+    return;
+  }
+  const idFreio = (acesso.email || acesso.cupom || "").toLowerCase();
+  if (!passaNoFreio(idFreio)) {
+    comoSSE();
+    manda("erro", { msg: "Muitas mensagens hoje. Volte amanhã — o limite existe para o assistente continuar existindo." });
+    res.end();
+    return;
+  }
+
   if (!chave) {
     comoSSE();
     manda("erro", { msg: "O assistente ainda não foi ligado." });
     res.end();
     return;
   }
-
-  const corpo = req.body || {};
-  const mensagens = corpo.mensagens, projeto = corpo.projeto, perfil = corpo.perfil;
 
   /* só role e content, e só os últimos turnos: histórico inteiro de meses
      encareceria cada resposta sem melhorar nenhuma */
