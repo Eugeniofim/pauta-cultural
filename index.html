@@ -759,6 +759,16 @@
   .trava .pnota{font-size:12.5px;color:var(--muted);margin-top:16px;line-height:1.55}
   .pk{position:relative}
   .pk .cadmini{position:absolute;top:12px;right:12px;font-size:15px;opacity:.75}
+  /* faixa "Hoje": só aparece quando algo pede ação */
+  .hoje{display:flex;gap:10px;flex-wrap:wrap;margin:2px 0 16px}
+  .hoje:empty{display:none}
+  .hj{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line-strong);
+    border-radius:13px;padding:10px 15px;cursor:pointer;font:inherit;text-align:left;transition:.15s}
+  .hj:hover{border-color:var(--accent);transform:translateY(-1px)}
+  .hj .ic3{font-size:17px}
+  .hj b{display:block;font-size:13.2px;letter-spacing:-.01em}
+  .hj small{display:block;font-size:11.6px;color:var(--ink-soft)}
+  .hj.urgente{border-color:var(--crit);background:var(--crit-soft)}
   .afsel{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.06em;
     text-transform:uppercase;color:var(--ok-ink);background:var(--ok-soft);
     padding:3px 9px;border-radius:999px;margin-bottom:9px;cursor:help}
@@ -1338,6 +1348,7 @@
         <button class="cvbtn" id="cvToggle">Estados cobertos</button>
       </div>
       <div class="cover" id="cover"></div>
+      <div class="hoje" id="hoje"></div>
       <div class="buscabar">
         <span class="lupa">⌕</span>
         <input type="text" id="qs" placeholder="Buscar por nome, instituição ou tema…">
@@ -2008,7 +2019,41 @@ function pass(e){
   if($("#ql").value==="p"&&!pode(e))return false;
   return true;
 }
+/* A faixa "Hoje". Decisão de desenho: NÃO existe tela de dashboard — uma
+   casa separada seria um pedágio entre a pessoa e os editais. O resumo vem
+   para onde ela já cai, e só quando há o que fazer: prazo apertando de
+   edital acompanhado, contato para retomar, kit pela metade. Sem pendência,
+   a faixa some — enfeite vazio é ruído. */
+function hojeStrip(){
+  const el=$("#hoje");if(!el)return;
+  const C=[];
+  const seg=(typeof seguidos==="function")?seguidos():[];
+  if(seg.length&&seg[0].pz<=7){
+    const e0=seg[0];
+    C.push({cls:e0.pz<=2?"hj urgente":"hj",ic:"⏳",
+      b:e0.pz===0?"Encerra HOJE":e0.pz===1?"Encerra amanhã":`Encerra em ${e0.pz} dias`,
+      s:e0.t.slice(0,44),go:()=>openD(e0.id)});
+  }
+  try{
+    const DIA=864e5;
+    const fups=subLer().filter(x=>x.status==="Enviado"&&x.enviadoEm&&(Date.now()-x.enviadoEm)>=7*DIA);
+    if(fups.length)C.push({cls:"hj",ic:"↩",
+      b:fups.length===1?"1 contato para retomar":`${fups.length} contatos para retomar`,
+      s:fups[0].festival.slice(0,44),go:()=>nav("projetos")});
+  }catch(e){}
+  const k=(contaLer().kit)||{};
+  const chaves=["pitch","estilo","video","stream","release","rider","site","insta","tel","dur","pessoas","ouvintes"];
+  const ok=chaves.filter(c=>k[c]&&String(k[c]).trim()).length;
+  if(ok>0&&ok<chaves.length){
+    C.push({cls:"hj",ic:"🎒",b:`Kit ${Math.round(ok/chaves.length*100)}% pronto`,
+      s:"complete para o e-mail sair inteiro",go:()=>nav("perfil")});
+  }
+  el.innerHTML=C.map((c,i)=>`<button class="${c.cls}" data-hj="${i}">
+    <span class="ic3">${c.ic}</span><span><b>${esc(c.b)}</b><small>${esc(c.s)}</small></span></button>`).join("");
+  C.forEach((c,i)=>{const b=el.querySelector('[data-hj="'+i+'"]');if(b)b.onclick=c.go;});
+}
 function feed(){
+  hojeStrip();
   let l=ED.filter(pass).map(e=>({e,m:score(e)}));
   const o=$("#qo").value;
   l.sort((a,b)=>o==="p"?((a.e.pz==null?9e9:a.e.pz)-(b.e.pz==null?9e9:b.e.pz)):o==="v"?((b.e.v||0)-(a.e.v||0)):b.m-a.m);
