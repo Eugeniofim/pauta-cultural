@@ -131,6 +131,8 @@
   input:focus,select:focus,textarea:focus{border-color:var(--accent);background:var(--surface);outline:none;box-shadow:0 0 0 4px var(--accent-soft)}
   .chips{display:flex;gap:8px;flex-wrap:wrap}
   .chip{border:1px solid var(--line-strong);background:var(--surface-2);color:var(--ink-soft);border-radius:999px;padding:9px 16px;font-size:13.6px;font-weight:540;cursor:pointer;transition:.15s}
+  .atalhos{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}
+  .atalhos .chip.on{background:var(--grad-btn);color:#fff;border-color:transparent}
   .chip:hover{border-color:var(--accent);color:var(--accent-ink)}
   .chip.on{background:var(--grad-btn);color:#fff;border-color:transparent}
 
@@ -1411,6 +1413,7 @@
       </div>
       <div class="cover" id="cover"></div>
       <div class="hoje" id="hoje"></div>
+      <div class="atalhos"><button class="chip" id="atPatro" title="Empresas que patrocinam projetos aprovados em lei de incentivo">💼 Tem projeto Rouanet aprovado? Veja quem patrocina</button></div>
       <div class="buscabar">
         <span class="lupa">⌕</span>
         <input type="text" id="qs" placeholder="Buscar por nome, instituição ou tema…">
@@ -1420,8 +1423,8 @@
         <div class="fg"><label>Área</label><select id="qa"><option value="">Todas</option></select></div>
         <div class="fg"><label>Estado</label><select id="quf"><option value="">Todos</option></select></div>
         <div class="fg"><label>Cidade</label><select id="qcid"><option value="">Todas</option></select></div>
-        <div class="fg"><label>Esfera</label><select id="qe"><option value="">Todas</option><option>Federal</option><option>Estadual</option><option>Municipal</option><option>Privado</option></select></div>
-        <div class="fg"><label>Tipo</label><select id="qt"><option value="">Todos</option><option>Incentivo fiscal</option><option>Fomento</option><option>Prêmio</option><option>Festival</option><option>Oficina</option></select></div>
+        <div class="fg"><label>Esfera</label><select id="qe"><option value="">Todas</option><option>Federal</option><option>Estadual</option><option>Municipal</option><option>Privado</option><option>Estatal</option></select></div>
+        <div class="fg"><label>Tipo</label><select id="qt"><option value="">Todos</option><option>Incentivo fiscal</option><option>Patrocínio</option><option>Fomento</option><option>Prêmio</option><option>Festival</option><option>Oficina</option></select></div>
         <div class="fg"><label>Elegibilidade</label><select id="ql"><option value="">Todos</option><option value="p">Só os que posso</option></select></div>
         <div class="fg"><label>Ordenar</label><select id="qo"><option value="m">Afinidade</option><option value="p">Prazo</option><option value="v">Valor</option></select></div>
         <button class="limpar" id="qLimpar">limpar filtros</button>
@@ -1720,6 +1723,37 @@ const P={tipo:"pf",nome:"",area:"Música",uf:"SP",estilos:[],objetivos:[],moment
 /* ---- programas reais, com portal oficial verificado ---- */
 const VERIF="09/08/2026";
 const REAIS=[
+ /* ── Patrocínio de empresas via lei de incentivo ──
+    Cada ficha foi lida na página oficial em 23/08/2026. O campo "exige" diz
+    o que a empresa pede: "sim" = projeto já aprovado na Rouanet (ou lei
+    estadual) na hora de enviar; "depois" = registra após ser selecionado;
+    "conferir" = a página não deixa claro, e a Pauta não decide por ela. */
+ {id:180,t:"MAPFRE — Patrocínios Incentivados 2026",o:"MAPFRE Brasil",sis:"Hub do Incentivo",cid:null,tp:"Patrocínio",cat:"Todas",reg:"BR",esf:"Privado",fo:"priv",ex:"pj",ate:"2026-09-30",
+  link:"https://www.mapfre.com.br/quem-somos/patrocinios-incentivados/",
+  link2:{u:"https://mapfre.hubdoincentivo.com.br/",n:"Hub do Incentivo — onde se inscreve"},
+  d:"Seleção anual de projetos já aprovados em lei de incentivo. Na cultura: artes cênicas, artes visuais e música, pela Lei Federal de Incentivo à Cultura (Rouanet). Inscrições até 30/09/2026; seleção concluída até 15/11/2026; resultado em janeiro de 2027. Dúvidas: edital.mapfre@hubdoincentivo.com.br",
+  r:["Projeto já aprovado em lei de incentivo fiscal na data da inscrição — desclassifica se não cumprir","Somente pessoa jurídica: instituições, sociedades, fundações ou associações","Inscrição pela plataforma Hub do Incentivo"],
+  c:["Definidas no edital"],rouanet:true,exige:"sim"},
+ {id:181,t:"Copel — Patrocínio incentivado a projetos culturais",o:"Copel",sis:"SGPI — Sistema de Patrocínios da Copel",cid:null,tp:"Patrocínio",cat:"Todas",reg:"BR",esf:"Privado",fo:"priv",ex:"ambos",janela:"Recebimento contínuo pelo sistema SGPI — funciona só no Chrome, em computador",
+  link:"https://www.copel.com/site/institucional/patrocinios/",
+  d:"Projetos culturais só entram pela via do incentivo fiscal: precisam estar aprovados em lei federal ou estadual (Rouanet ou PROFICE). A contrapartida é a divulgação da marca Copel, empresa de energia do Paraná. Pessoa física ou jurídica com projeto aprovado pode solicitar.",
+  r:["Projeto aprovado em lei de incentivo federal ou estadual","Cadastro como proponente no SGPI (ícone Solicitar Incentivo) — só Chrome, em PC ou notebook","Quem já recebeu incentivo da Copel precisa ter entregue o relatório final"],
+  c:["Divulgação da marca Copel e de orientações sobre uso seguro e eficiente da energia"],rouanet:true,exige:"sim"},
+ {id:182,t:"Grupo Boticário — Patrocínio incentivado",o:"Grupo Boticário",sis:"Grupo Boticário",cid:null,tp:"Patrocínio",cat:"Todas",reg:"BR",esf:"Privado",fo:"priv",ex:"ambos",janela:"Recebimento contínuo por e-mail",
+  link:"https://www.grupoboticario.com.br/patrocinio-incentivado/",
+  d:"Aportes via Lei Rouanet (Lei 8.313/1991) em projetos já aprovados, com prioridade para o entorno das fábricas, escritórios e centros de distribuição do grupo. Envio de projetos e dúvidas: patrociniosincentivosfiscais@grupoboticario.com.br",
+  r:["Projeto já aprovado na Lei Rouanet (mecanismo federal)","Envio por e-mail para patrociniosincentivosfiscais@grupoboticario.com.br"],
+  c:["Definidas caso a caso"],rouanet:true,exige:"sim"},
+ {id:183,t:"Banco do Brasil — Programa de Patrocínios e Edital CCBB",o:"Banco do Brasil",sis:"Banco do Brasil",cid:null,tp:"Patrocínio",cat:"Todas",reg:"BR",esf:"Estatal",fo:"priv",ex:"ambos",janela:"Edital CCBB é bienal — o de 2026/2027 encerrou em 26/05/2025. Banco permanente de propostas (shows e eventos) recebe o ano todo, com 90 dias de antecedência",
+  link:"https://www.bb.com.br/site/patrocinios/",
+  d:"Dois caminhos. O Edital CCBB seleciona a programação dos Centros Culturais em Belo Horizonte, Brasília, Rio, Salvador e São Paulo (artes cênicas, música, cinema, exposição e educação), a cada dois anos. O banco permanente recebe propostas de shows e eventos o ano inteiro. O BB não patrocina gravação de CD/DVD, edição de livros nem obras de construção.",
+  r:["Edital CCBB: próxima edição sem data — acompanhe bb.com.br/patrocinios","Banco permanente: proposta com no mínimo 90 dias de antecedência do evento","Exigência de lei de incentivo: está no edital e no formulário de cada modalidade"],
+  c:["Definidas no edital"],rouanet:true,exige:"conferir"},
+ {id:184,t:"Seleção Petrobras Cultural",o:"Petrobras",sis:"Petrobras",cid:null,tp:"Patrocínio",cat:"Todas",reg:"BR",esf:"Estatal",fo:"priv",ex:"pj",janela:"Seleção 2026 encerrada em 31/07/2026 — resultado em novembro; próxima edição sem data",
+  link:"https://petrobras.com.br/cultural/selecoes-publicas-culturais",
+  d:"R$ 270 milhões via Lei Rouanet e Lei do Audiovisual, em 11 modalidades: espaços culturais e instituições de memória, grupos e coletivos, longas (produção e distribuição), cultura digital, games, circuitos de apresentação artística, circuitos de exposição, incubação cultural, festivais e mostras, festas populares. Não exige aprovação prévia em lei de incentivo para se inscrever: o selecionado providencia o registro depois.",
+  r:["Somente pessoa jurídica com CNPJ — MEI e pessoa física não podem","Inscrição pela plataforma em petrobras.com.br/cultura, dentro da janela da seleção","Registro na Lei Rouanet (MinC) ou Lei do Audiovisual (Ancine) após a seleção"],
+  c:["Definidas no regulamento"],rouanet:true,exige:"depois"},
  {id:171,t:"Outras Palavras — Apoio a Publicações Independentes (Chamamento 014/2026)",o:"Secretaria de Estado da Cultura do Paraná",sis:"SIC.Cultura PR",cid:null,tp:"Fomento",cat:"Literatura",reg:"PR",esf:"Estadual",fo:"pub",ex:"ambos",ate:"2026-08-28",
   link:"https://www.cultura.pr.gov.br/Pagina/Edital-Acessivel-Edital-de-Apoio-Publicacoes-Independentes-Outras-Palavras",
   link2:{u:"https://www.sic.cultura.pr.gov.br/","n":"SIC.Cultura — onde se inscreve"},
@@ -2187,6 +2221,10 @@ function openD(id){
           <div class="rs-l"><span>Modalidade</span><p>${e.tp}${e.esf?" · "+e.esf:""}${e.fo==="priv"?" · iniciativa privada":""}</p></div>
           <div class="rs-l"><span>Quem publica</span><p>${e.o}${e.sis&&e.sis!==e.o?" — pelo "+e.sis:""}</p></div>
           <div class="rs-l"><span>Quem pode entrar</span><p>${e.ex==="pj"?"Somente pessoa jurídica (CNPJ)":e.ex==="pf"?"Somente pessoa física":"Pessoa física e pessoa jurídica"}${e.reg==="BR"?" · de todo o Brasil":" · de "+(UF[e.reg]||e.reg)}</p></div>
+          ${e.exige?`<div class="rs-l"><span>Lei de incentivo</span><p>${
+            e.exige==="sim"?"<b>Precisa de projeto já aprovado na Lei Rouanet</b> (ou lei estadual, quando a empresa aceita). É patrocínio: a empresa escolhe entre projetos aprovados e faz o aporte."
+            :e.exige==="depois"?"<b>Não exige aprovação prévia.</b> Quem é selecionado registra o projeto na Lei Rouanet ou na Ancine depois."
+            :"Patrocínio via lei de incentivo — a exigência de aprovação prévia está no edital ou no formulário da empresa."}</p></div>`:""}
           <div class="rs-l"><span>Prazo</span><p>${e.pz!=null?`Inscrições até <b>${fdl(lim)}</b> — ${e.pz===0?"encerra hoje":e.pz===1?"resta 1 dia":"restam "+e.pz+" dias"}`:(e.janela||"Sem data fixa — confira no portal")}</p></div>
           <div class="rs-l"><span>Valores</span><p>${e.v
             ? `${money(e.v)}${e.vnota?" — "+e.vnota:""}`
@@ -5087,11 +5125,14 @@ $("#fn").oninput=e=>{P.nome=e.target.value;refresh();};
 $("#fa").onchange=e=>{P.area=e.target.value;P.estilos=[];chipsUI();refresh();};
 $("#fu").onchange=e=>{P.uf=e.target.value;refresh();};
 $("#fm").onchange=e=>{P.momento=e.target.value;refresh();};
-["#qa","#quf","#qcid","#qe","#qt","#ql","#qo"].forEach(x=>{const e=$(x);if(e)e.onchange=()=>{if(x==="#quf")atualizaCidades();feed();};});
+["#qa","#quf","#qcid","#qe","#qt","#ql","#qo"].forEach(x=>{const e=$(x);if(e)e.onchange=()=>{if(x==="#quf")atualizaCidades();feed();
+  const b=$("#atPatro");if(b)b.classList.toggle("on",$("#qt").value==="Patrocínio");};});
 $("#qs").oninput=feed;
 $("#qs").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();feed();}};
 $("#qsBtn").onclick=feed;
-$("#qLimpar").onclick=()=>{["#qs","#qa","#quf","#qcid","#qe","#qt","#ql"].forEach(x=>{const e=$(x);if(e)e.value="";});$("#qo").value="m";atualizaCidades();feed();toast("Filtros limpos");};
+{const b=$("#atPatro");if(b)b.onclick=()=>{const t=$("#qt");const liga=t.value!=="Patrocínio";t.value=liga?"Patrocínio":"";b.classList.toggle("on",liga);feed();
+  if(liga){const f=$("#feed");if(f)f.scrollIntoView({block:"start",behavior:"smooth"});}};}
+$("#qLimpar").onclick=()=>{["#qs","#qa","#quf","#qcid","#qe","#qt","#ql"].forEach(x=>{const e=$(x);if(e)e.value="";});$("#qo").value="m";atualizaCidades();feed();$("#atPatro")?.classList.remove("on");toast("Filtros limpos");};
 
 epkInit();temaInit();aplicarInstagram();aplicarVerificados();contaAplicar();initSel();chipsUI();refresh();onbIniciar();dash();submissoes();fInit();syncInfo();coverPanel();alertas();/* Atualizar na mão. A trava de 5 minutos existe porque cada busca forçada
    consulta os 6 portais estaduais de verdade — clique nervoso repetido é
