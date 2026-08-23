@@ -1267,6 +1267,7 @@
       <button class="nv" data-s="escrever">Escrever</button>
       <button class="nv" data-s="chat">Conversar</button>
       <button class="nv" data-s="projetos">Meus projetos</button>
+      <button class="nv" data-s="perfil">Perfil</button>
       <button class="nv" data-s="plano">Plano</button>
     </nav>
     <button class="temab" id="temaB" title="Alternar tema">☀</button>
@@ -1386,7 +1387,9 @@
           <div class="mi"><span>Fora do seu perfil</span><b id="pb">—</b></div>
           <button class="btn pri sm" style="width:100%;justify-content:center;margin-top:15px" data-go="editais">Ver editais →</button>
           <button class="btn ghost sm" style="width:100%;justify-content:center;margin-top:8px" id="pSalvarConta">Salvar como minha conta</button>
-        </div></div>
+        </div>
+        <div class="card" style="padding:22px;margin-top:16px" id="kitResumo"></div>
+        </div>
       </div>
     </section>
 
@@ -2121,11 +2124,17 @@ function textoDivulgar(e){
   return L.join("\n");
 }
 async function divulgar(e){
-  const txt=textoDivulgar(e);
-  /* no celular abre a folha nativa (WhatsApp, Telegram, o que houver);
-     no computador copia, porque compartilhar do desktop é colar num grupo */
-  if(navigator.share){
-    try{await navigator.share({text:txt});return;}catch(err){if(err&&err.name==="AbortError")return;}
+  /* Relato real: "apertei e nada acontece". Duas causas possíveis, as duas
+     tratadas: no computador o navigator.share existe mas abre uma folha do
+     sistema discreta ou falha calado — então desktop agora sempre COPIA, com
+     aviso na tela. E qualquer erro na montagem vira toast, nunca silêncio. */
+  let txt;
+  try{txt=textoDivulgar(e);}
+  catch(err){console.error("divulgar:",err);toast("Não consegui montar a mensagem. Me avisa qual edital era.");return;}
+  const celular=/Android|iPhone|iPad|Mobile/i.test(navigator.userAgent);
+  if(celular&&navigator.share){
+    try{await navigator.share({text:txt});return;}
+    catch(err){if(err&&err.name==="AbortError")return;/* falhou: cai na cópia */}
   }
   copy(txt,"Mensagem de divulgação");
 }
@@ -3306,6 +3315,36 @@ function kitPreencher(){
    festival, direct, WhatsApp. Nove dos regionais do Sesc só têm formulário
    — sem isto a pessoa reescreve tudo à mão em cada um.
    Linha vazia não entra: kit com "Rider: " em branco passa desleixo. */
+/* A prévia do kit no Perfil. O kit alimenta os e-mails e a afinidade, mas
+   vivia escondido no popover da conta — quem não achava, mandava e-mail com
+   colchete. Aqui ele mostra o que está pronto, o que falta, e leva direto
+   para completar. */
+function kitResumo(){
+  const el=$("#kitResumo");if(!el)return;
+  const k=(contaLer().kit)||{};
+  const itens=[["pitch","Quem você é (2–3 linhas)"],["estilo","Estilo ou linguagem"],
+   ["video","Vídeo ao vivo"],["stream","Streaming"],["release","Release e fotos (link)"],
+   ["rider","Rider técnico"],["site","Site ou portfólio"],["insta","Instagram"],
+   ["tel","Telefone"],["dur","Duração do show"],["pessoas","Gente em palco"],
+   ["ouvintes","Números para festival grande"]];
+  const ok=itens.filter(([c])=>k[c]&&String(k[c]).trim()).length;
+  const pct=Math.round(ok/itens.length*100);
+  el.innerHTML=`
+    <div class="mi" style="margin-top:0"><span>Kit de mídia</span><b>${pct}% pronto</b></div>
+    <div class="prg" style="margin:10px 0 14px"><div class="br"><i style="width:${pct}%"></i></div></div>
+    ${itens.map(([c,r])=>`<div style="display:flex;gap:8px;align-items:baseline;font-size:12.8px;line-height:1.9">
+      <span style="color:${k[c]&&String(k[c]).trim()?"var(--ok-ink)":"var(--muted)"}">${k[c]&&String(k[c]).trim()?"✔":"—"}</span>
+      <span style="color:${k[c]&&String(k[c]).trim()?"var(--ink)":"var(--muted)"}">${r}</span></div>`).join("")}
+    <p style="font-size:12.2px;color:var(--ink-soft);line-height:1.5;margin:12px 0 0">${pct===100
+      ?"Tudo pronto: cada e-mail de proposta sai completo, sem colchete."
+      :"O que estiver preenchido entra sozinho em todo e-mail de proposta."}</p>
+    <button class="btn pri sm" style="width:100%;justify-content:center;margin-top:12px" id="kitIr">${ok?"Editar kit de mídia":"Preencher meu kit"}</button>`;
+  /* o clique precisa parar aqui: o fecha-ao-clicar-fora do popover mora no
+     documento, e o mesmo clique que abre fecharia no borbulho */
+  $("#kitIr").onclick=ev=>{ev.stopPropagation();contaAbrir();$("#acctPop").classList.add("on");
+    const bx=$("#kitBox");if(bx)bx.open=true;
+    setTimeout(()=>{const bx2=$("#kitBox");if(bx2)bx2.scrollIntoView({block:"center"});},150);};
+}
 function kitTexto(){
   const c=contaLer(), k=c.kit||{};
   const L=[];
@@ -4800,7 +4839,7 @@ function nav(s){
   const aceso=s;
   if(s==="sesc"){escopoFest="sesc";fQuiz.feito=true;s="festivais";}
   else if(s==="festivais"&&escopoFest==="sesc"){escopoFest="nac";}
-  if(s==="projetos"){dash();alertas();submissoes();}if(s==="perfil"){head();}
+  if(s==="projetos"){dash();alertas();submissoes();}if(s==="perfil"){head();kitResumo();}
   if(s==="festivais"){fEscopo();fQuizRender();}
   $$(".nv").forEach(n=>n.classList.toggle("on",n.dataset.s===aceso));
   /* no celular o menu rola: o botão ativo precisa se trazer para a vista */
