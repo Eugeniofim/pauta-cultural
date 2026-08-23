@@ -19,3 +19,4 @@ assinantes.json
 .DS_Store
 .vercel
 .env*
+.claude/
