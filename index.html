@@ -1255,6 +1255,30 @@
     var(--bg);background-attachment:fixed}
 </style>
 
+<script>
+/* Prova de paleta: ?paleta=galeria|estudio|entardecer aplica uma direção por
+   cima dos tokens, só nesta visita — sem o parâmetro, nada muda. Serve para
+   escolher a cor definitiva olhando o app real; a escolhida vira token e
+   isto sai. */
+(function(){
+  var q=new URLSearchParams(location.search).get("paleta");if(!q)return;
+  var T={
+    galeria:{bg:"#F7F4F1",s:"#FFFFFF",s2:"#F0EBE5",l:"#E9E2DA",ls:"#D9CFC3",
+      topo:"linear-gradient(180deg, rgba(255,124,86,.10), rgba(255,166,72,.05) 300px, rgba(255,166,72,0) 560px)",v:".07",c:".08",g:".09"},
+    estudio:{bg:"#FAF4EE",s:"#FFFFFF",s2:"#F4E9E0",l:"#EFE0D4",ls:"#E0CDBD",
+      topo:"linear-gradient(180deg, rgba(255,116,74,.20), rgba(255,166,72,.08) 380px, rgba(255,166,72,0) 680px)",v:".10",c:".14",g:".16"},
+    entardecer:{bg:"#FBF1E9",s:"#FFFFFF",s2:"#F5E7DA",l:"#EFDFCF",ls:"#E2CBB4",
+      topo:"linear-gradient(180deg, #FFC79F, rgba(255,199,159,.35) 240px, rgba(255,231,214,0) 620px)",v:".12",c:".10",g:".12"}
+  }[q];
+  if(!T)return;
+  var fundo=T.topo+", radial-gradient(1300px 600px at 92% -12%, rgba(142,134,240,"+T.v+"), transparent 60%), radial-gradient(1100px 560px at 8% -4%, rgba(255,96,58,"+T.c+"), transparent 60%), radial-gradient(1000px 520px at 55% -10%, rgba(255,166,72,"+T.g+"), transparent 58%), "+T.bg;
+  var css=":root,:root[data-theme=light]{--bg:"+T.bg+";--surface:"+T.s+";--surface-2:"+T.s2+";--line:"+T.l+";--line-strong:"+T.ls+"}"
+    +"body,:root[data-theme=light] body{background:"+T.bg+" !important}"
+    +".app,:root[data-theme=light] .app,.onb,.epk{background:"+fundo+" !important;background-attachment:fixed !important}";
+  var el=document.createElement("style");el.textContent=css;document.head.appendChild(el);
+})();
+</script>
+
 <div class="app">
   <div class="onb" id="onb">
     <div class="lp">
