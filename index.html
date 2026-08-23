@@ -759,6 +759,25 @@
   .trava .pnota{font-size:12.5px;color:var(--muted);margin-top:16px;line-height:1.55}
   .pk{position:relative}
   .pk .cadmini{position:absolute;top:12px;right:12px;font-size:15px;opacity:.75}
+  /* página do press kit */
+  .epk{position:fixed;inset:0;z-index:200;overflow:auto;background:var(--bg);color:var(--ink);font-family:var(--sans)}
+  .epk-in{max-width:640px;margin:0 auto;padding:34px 22px 60px}
+  .epk-top{display:flex;align-items:center;gap:10px;margin-bottom:26px}
+  .epk-mk{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700}
+  .epk h1{font-size:34px;letter-spacing:-.03em;line-height:1.1;margin:0 0 8px}
+  .epk-sub{color:var(--ink-soft);font-size:14.5px;margin:0 0 20px}
+  .epk-p{font-size:17px;line-height:1.55;margin:0 0 24px}
+  .epk-ls{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px}
+  .epk-l{display:flex;align-items:center;gap:10px;padding:13px 15px;border-radius:13px;background:var(--surface);
+    border:1px solid var(--line-strong);color:var(--ink);text-decoration:none;font-weight:620;font-size:13.6px}
+  .epk-l span{font-size:15px;color:var(--accent-ink)}
+  .epk-b{background:var(--surface);border:1px solid var(--line-strong);border-radius:13px;padding:14px 16px;margin-bottom:12px}
+  .epk-b small{display:block;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:5px}
+  .epk-b b{font-size:14px}.epk-b ul{margin:0;padding-left:18px;font-size:13.6px;line-height:1.7;color:var(--ink-soft)}
+  .epk-r{margin:0;font-size:14px;line-height:1.6;color:var(--ink-soft);white-space:pre-wrap}
+  .epk-ct a,.epk-ct span{display:inline-block;margin:2px 14px 2px 0;font-size:14px;color:var(--accent-ink);font-weight:620}
+  .epk-foot{display:block;margin-top:28px;font-size:12.2px;color:var(--muted);text-decoration:none;text-align:center}
+  @media (max-width:520px){.epk-ls{grid-template-columns:1fr}.epk h1{font-size:28px}}
   /* faixa "Hoje": só aparece quando algo pede ação */
   .hoje{display:flex;gap:10px;flex-wrap:wrap;margin:2px 0 16px}
   .hoje:empty{display:none}
@@ -3380,16 +3399,103 @@ function kitResumo(){
     ${itens.map(([c,r])=>`<div style="display:flex;gap:8px;align-items:baseline;font-size:12.8px;line-height:1.9">
       <span style="color:${k[c]&&String(k[c]).trim()?"var(--ok-ink)":"var(--muted)"}">${k[c]&&String(k[c]).trim()?"✔":"—"}</span>
       <span style="color:${k[c]&&String(k[c]).trim()?"var(--ink)":"var(--muted)"}">${r}</span></div>`).join("")}
-    <p style="font-size:12.2px;color:var(--ink-soft);line-height:1.5;margin:12px 0 0">${pct===100
-      ?"Tudo pronto: cada e-mail de proposta sai completo, sem colchete."
-      :"O que estiver preenchido entra sozinho em todo e-mail de proposta."}</p>
-    <button class="btn pri sm" style="width:100%;justify-content:center;margin-top:12px" id="kitIr">${ok?"Editar kit de mídia":"Preencher meu kit"}</button>`;
+    <p style="font-size:12.2px;color:var(--ink-soft);line-height:1.5;margin:12px 0 0">Com o kit preenchido você ganha três coisas: <b>o e-mail de proposta sai pronto</b>, o <b>kit copiável</b> para formulário e direct, e <b>seu press kit com link próprio</b> para mandar a qualquer contratante.</p>
+    <button class="btn pri sm" style="width:100%;justify-content:center;margin-top:12px" id="kitIr">${ok?"Editar kit de mídia":"Preencher meu kit"}</button>
+    ${k.pitch?`<button class="btn ghost sm" style="width:100%;justify-content:center;margin-top:7px" id="epkCopiar">Copiar link do meu press kit</button>
+    <button class="btn ghost sm" style="width:100%;justify-content:center;margin-top:7px" id="epkVer">Ver meu press kit</button>`
+    :`<p style="font-size:11.8px;color:var(--muted);margin:8px 0 0">Escreva quem você é (2–3 linhas) e o link do seu press kit aparece aqui.</p>`}`;
+  const ec=$("#epkCopiar");if(ec)ec.onclick=async()=>{copy(await epkLink(),"Link do press kit");};
+  const ev=$("#epkVer");if(ev)ev.onclick=async()=>{window.open(await epkLink(),"_blank");};
   /* o clique precisa parar aqui: o fecha-ao-clicar-fora do popover mora no
      documento, e o mesmo clique que abre fecharia no borbulho */
   $("#kitIr").onclick=ev=>{ev.stopPropagation();contaAbrir();$("#acctPop").classList.add("on");
     const bx=$("#kitBox");if(bx)bx.open=true;
     setTimeout(()=>{const bx2=$("#kitBox");if(bx2)bx2.scrollIntoView({block:"center"});},150);};
 }
+/* ─── EPK: press kit eletrônico com link próprio, SEM servidor ───
+   O link carrega os dados dentro de si (comprimidos, no fragmento #epk=).
+   Nada fica guardado em lugar nenhum: o artista é dono do link, e quem o
+   recebe vê a página montada na hora. Sem banco, sem custo por pessoa, sem
+   moderação de conteúdo de terceiro — que era o que tornava a ideia cara.
+   Preço: o link é longo. Um encurtador é etapa futura, não impedimento. */
+async function epkCodificar(obj){
+  const json=JSON.stringify(obj);
+  const bytes=new TextEncoder().encode(json);
+  let saida=bytes, pref="p";
+  if(typeof CompressionStream!=="undefined"){
+    try{
+      const cs=new CompressionStream("deflate-raw");
+      const w=cs.writable.getWriter(); w.write(bytes); w.close();
+      saida=new Uint8Array(await new Response(cs.readable).arrayBuffer()); pref="z";
+    }catch(e){saida=bytes;pref="p";}
+  }
+  let bin="";saida.forEach(b=>bin+=String.fromCharCode(b));
+  return pref+":"+btoa(bin).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+}
+async function epkDecodificar(txt){
+  const i=txt.indexOf(":");const pref=txt.slice(0,i),b64=txt.slice(i+1).replace(/-/g,"+").replace(/_/g,"/");
+  const bin=atob(b64+"=".repeat((4-b64.length%4)%4));
+  let bytes=Uint8Array.from(bin,c=>c.charCodeAt(0));
+  if(pref==="z"){
+    const ds=new DecompressionStream("deflate-raw");
+    const w=ds.writable.getWriter(); w.write(bytes); w.close();
+    bytes=new Uint8Array(await new Response(ds.readable).arrayBuffer());
+  }
+  return JSON.parse(new TextDecoder().decode(bytes));
+}
+function epkDados(){
+  const c=contaLer(), k=c.kit||{};
+  return {v:1,n:c.nome||P.nome||"",a:P.area||c.area||"",uf:c.uf||P.uf||"",
+    e:k.estilo||((P.estilos||[]).join(", ")),p:k.pitch||"",r:k.reltxt||"",
+    vi:k.video||"",st:k.stream||"",re:k.release||"",ri:k.rider||"",si:k.site||"",
+    ig:k.insta||"",tel:k.tel||"",m:c.mail||"",d:k.dur||"",pe:k.pessoas||"",
+    ou:k.ouvintes||"",sh:k.shows||"",im:k.imprensa||""};
+}
+async function epkLink(){
+  return location.origin+"/#epk="+await epkCodificar(epkDados());
+}
+const urlOk=u=>/^https?:\/\//i.test(u)?u:"https://"+u.replace(/^\/+/,"");
+function epkRender(d){
+  const esc2=x=>esc(String(x||""));
+  const links=[["▶","Vídeo ao vivo",d.vi],["♫","Streaming",d.st],["✦","Release e fotos",d.re],["⚙","Rider técnico",d.ri],["↗","Site",d.si]]
+    .filter(([,,u])=>u).map(([ic,r,u])=>`<a class="epk-l" href="${esc2(urlOk(u))}" target="_blank" rel="noopener"><span>${ic}</span>${esc2(r)}</a>`).join("");
+  const nums=[d.ou,d.sh,d.im].filter(Boolean).map(x=>`<li>${esc2(x)}</li>`).join("");
+  const fmt=[d.d,d.pe&&(d.pe+" em palco")].filter(Boolean).join(" · ");
+  const el=document.createElement("div"); el.id="epkView"; el.className="epk";
+  el.innerHTML=`
+    <div class="epk-in">
+      <div class="epk-top"><div class="mark"><span>P</span></div><span class="epk-mk">press kit</span></div>
+      <h1>${esc2(d.n||"Artista")}</h1>
+      <p class="epk-sub">${[d.a,d.e,UF[d.uf]||d.uf].filter(Boolean).map(esc2).join(" · ")}</p>
+      ${d.p?`<p class="epk-p">${esc2(d.p)}</p>`:""}
+      ${links?`<div class="epk-ls">${links}</div>`:""}
+      ${fmt?`<div class="epk-b"><small>Formato</small><b>${esc2(fmt)}</b></div>`:""}
+      ${nums?`<div class="epk-b"><small>Em números</small><ul>${nums}</ul></div>`:""}
+      ${d.r?`<div class="epk-b"><small>Release</small><p class="epk-r">${esc2(d.r)}</p></div>`:""}
+      <div class="epk-b epk-ct"><small>Contato</small>
+        ${d.m?`<a href="mailto:${esc2(d.m)}">${esc2(d.m)}</a>`:""}
+        ${d.tel?`<span>${esc2(d.tel)}</span>`:""}
+        ${d.ig?`<a href="https://instagram.com/${esc2(d.ig.replace("@",""))}" target="_blank" rel="noopener">${esc2(d.ig.startsWith("@")?d.ig:"@"+d.ig)}</a>`:""}
+      </div>
+      <a class="epk-foot" href="${location.origin}/">Feito na Pauta Cultural — editais, festivais e o caminho de cada Sesc</a>
+    </div>`;
+  document.body.appendChild(el);
+  document.title=(d.n||"Artista")+" — press kit";
+}
+/* roda antes de tudo: link de EPK abre a página do artista, não o app.
+   Também escuta a troca de fragmento: colar o link numa aba que já está no
+   app não recarrega a página, e sem isto o press kit não apareceria. */
+async function epkInit(){
+  const m=location.hash.match(/^#epk=(.+)$/);
+  if(!m)return false;
+  try{const d=await epkDecodificar(m[1]);if(!d||d.v!==1)throw 0;
+    document.querySelector("#epkView")?.remove();epkRender(d);return true;}
+  catch(e){return false;}
+}
+window.addEventListener("hashchange",()=>{
+  if(/^#epk=/.test(location.hash))epkInit();
+  else document.querySelector("#epkView")?.remove();
+});
 function kitTexto(){
   const c=contaLer(), k=c.kit||{};
   const L=[];
@@ -4906,7 +5012,7 @@ $("#qs").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();feed();}};
 $("#qsBtn").onclick=feed;
 $("#qLimpar").onclick=()=>{["#qs","#qa","#quf","#qcid","#qe","#qt","#ql"].forEach(x=>{const e=$(x);if(e)e.value="";});$("#qo").value="m";atualizaCidades();feed();toast("Filtros limpos");};
 
-temaInit();aplicarInstagram();aplicarVerificados();contaAplicar();initSel();chipsUI();refresh();onbIniciar();dash();submissoes();fInit();syncInfo();coverPanel();alertas();/* Atualizar na mão. A trava de 5 minutos existe porque cada busca forçada
+epkInit();temaInit();aplicarInstagram();aplicarVerificados();contaAplicar();initSel();chipsUI();refresh();onbIniciar();dash();submissoes();fInit();syncInfo();coverPanel();alertas();/* Atualizar na mão. A trava de 5 minutos existe porque cada busca forçada
    consulta os 6 portais estaduais de verdade — clique nervoso repetido é
    tráfego inútil neles e fila aqui. */
 let ultAtualiza=0;
