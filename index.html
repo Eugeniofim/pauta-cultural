@@ -1317,6 +1317,7 @@
       <div class="syncbar" id="syncbar">
         <div class="sy"><span class="dot2" id="syDot"></span>
           <div class="sytxt"><b id="syTitle">Base atualizada</b><small id="sySub">—</small></div></div>
+        <button class="cvbtn" id="syAtualiza" title="Buscar agora nos portais oficiais">↻ Atualizar</button>
         <button class="cvbtn" id="cvToggle">Estados cobertos</button>
       </div>
       <div class="cover" id="cover"></div>
@@ -4701,10 +4702,13 @@ async function cupomPorLink(){
 const API_EDITAIS="/api/editais";
 let fonteDados="embutida";
 
-async function carregarAoVivo(){
+async function carregarAoVivo(forcar){
   try{
-    const c=new AbortController();const t=setTimeout(()=>c.abort(),9000);
-    const r=await fetch(API_EDITAIS,{signal:c.signal});
+    const c=new AbortController();const t=setTimeout(()=>c.abort(),forcar?20000:9000);
+    /* a borda guarda a resposta por até 6h — bom para abrir rápido, ruim para
+       quem quer o agora. A URL única fura esse cache e obriga a busca real
+       nos portais, que leva alguns segundos a mais. */
+    const r=await fetch(forcar?API_EDITAIS+"?t="+Date.now():API_EDITAIS,{signal:c.signal});
     clearTimeout(t);
     if(!r.ok)throw new Error("HTTP "+r.status);
     const j=await r.json();
@@ -4799,7 +4803,21 @@ $("#qs").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();feed();}};
 $("#qsBtn").onclick=feed;
 $("#qLimpar").onclick=()=>{["#qs","#qa","#quf","#qcid","#qe","#qt","#ql"].forEach(x=>{const e=$(x);if(e)e.value="";});$("#qo").value="m";atualizaCidades();feed();toast("Filtros limpos");};
 
-temaInit();aplicarInstagram();aplicarVerificados();contaAplicar();initSel();chipsUI();refresh();onbIniciar();dash();submissoes();fInit();syncInfo();coverPanel();alertas();$("#cvToggle").onclick=()=>{const c=$("#cover");c.classList.toggle("open");$("#cvToggle").textContent=c.classList.contains("open")?"Ocultar estados":"Estados cobertos";};
+temaInit();aplicarInstagram();aplicarVerificados();contaAplicar();initSel();chipsUI();refresh();onbIniciar();dash();submissoes();fInit();syncInfo();coverPanel();alertas();/* Atualizar na mão. A trava de 5 minutos existe porque cada busca forçada
+   consulta os 6 portais estaduais de verdade — clique nervoso repetido é
+   tráfego inútil neles e fila aqui. */
+let ultAtualiza=0;
+$("#syAtualiza").onclick=async()=>{
+  const b=$("#syAtualiza");
+  if(Date.now()-ultAtualiza<5*60*1000){toast("Atualizado há pouco — os portais não publicam a cada minuto.");return;}
+  ultAtualiza=Date.now();
+  b.disabled=true;const antes=b.textContent;b.textContent="Buscando…";
+  const tt=$("#syTitle");if(tt)tt.textContent="Consultando os portais…";
+  try{await carregarAoVivo(true);toast("Editais atualizados agora.");}
+  catch(e){toast("Não consegui atualizar — mostrando a última lista.");}
+  b.disabled=false;b.textContent=antes;
+};
+$("#cvToggle").onclick=()=>{const c=$("#cover");c.classList.toggle("open");$("#cvToggle").textContent=c.classList.contains("open")?"Ocultar estados":"Estados cobertos";};
 $("#temaB").onclick=()=>temaAplicar(document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark");
 $("#acctBtn").onclick=()=>{$("#acctPop").classList.contains("on")?$("#acctPop").classList.remove("on"):contaAbrir();};
 $("#apX").onclick=()=>$("#acctPop").classList.remove("on");
