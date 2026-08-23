@@ -4151,6 +4151,19 @@ async function aplicarCupomAsync(codigo){
       const j=await apiFetch("/cupom",{method:"POST",headers:{"Content-Type":"application/json"},
         body:JSON.stringify({codigo:cod,email:c.mail||""})});
       if(j&&j.ok&&j.pro){ativarPro("cupom-servidor:"+cod);return {ok:true,msg:j.msg||"Cupom aplicado."};}
+      if(j&&j.ok&&j.convite){
+        /* convite de 7 dias: precisa do e-mail da conta — é ele que fica
+           marcado no Stripe e impede usar o convite duas vezes */
+        if(!c.mail||!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(c.mail)){
+          contaAbrir();$("#acctPop").classList.add("on");
+          const em=$("#acMail");if(em)em.focus();
+          return {ok:false,msg:"Convite de 7 dias! Preencha seu e-mail na conta (ou entre com o Google) e aplique o código de novo."};
+        }
+        const cv=await apiFetch("/convite",{method:"POST",headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({codigo:cod,email:c.mail})});
+        if(cv&&cv.ok&&cv.url){location.href=cv.url;return {ok:true,msg:"Abrindo a confirmação do seu convite…"};}
+        return {ok:false,msg:(cv&&cv.msg)||"Não consegui aplicar o convite agora."};
+      }
       if(j)return {ok:!!j.ok,msg:j.msg||"Cupom inválido."};
     }catch(e){/* cai para o modo local */}
   }

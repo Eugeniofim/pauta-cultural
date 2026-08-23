@@ -36,6 +36,12 @@ export default async (req) => {
     if (c.percent_off === 100 && c.duration === "forever")
       return Response.json({ ok: true, pro: true, msg: "Cupom aplicado — acesso completo liberado." });
 
+    /* 100% que não é vitalício = convite de 7 dias: o navegador manda a
+       pessoa para o fluxo do convite (exige e-mail, cria o teste no Stripe) */
+    if (c.percent_off === 100)
+      return Response.json({ ok: true, pro: false, convite: true,
+        msg: "Este código é um convite de 7 dias de Pro." });
+
     const desc = c.percent_off ? `${c.percent_off}% de desconto`
       : c.amount_off ? `R$ ${(c.amount_off / 100).toFixed(2).replace(".", ",")} de desconto` : null;
     return Response.json({ ok: true, pro: false,
