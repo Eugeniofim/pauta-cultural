@@ -2078,13 +2078,39 @@ function openD(id){
     <div class="df">
       <button class="btn ghost" id="segB">${segue(e.id)?"★ Acompanhando":"☆ Acompanhar prazo"}</button>
       <button class="btn ghost" id="dsB">Dossiê</button>
+      <button class="btn ghost" id="cpB" title="Mandar este edital para um grupo ou amigo">📤 Divulgar</button>
       <button class="btn pri" id="wrB" ${b?"disabled":""}>Escrever projeto</button>
     </div>`;
   $("#dt").classList.add("on");$("#scrim").classList.add("on");$("#dt").setAttribute("aria-hidden","false");
   $("#xd").onclick=closeD;
   $("#segB").onclick=()=>{toggleSeg(e.id);openD(e.id);feed();alertas();};
   $("#dsB").onclick=()=>copy(dossie(e),"Dossiê");
+  $("#cpB").onclick=()=>divulgar(e);
   const w=$("#wrB");if(w&&!b)w.onclick=()=>{closeD();nav("escrever");startMode(e.rouanet?"rouanet":"edital",e);};
+}
+/* Mensagem de divulgação montada na hora, dos dados do próprio edital.
+   Texto escrito à mão envelhece — "faltam 7 dias" vira mentira amanhã.
+   Daqui sai sempre com a contagem do dia do clique. */
+function textoDivulgar(e){
+  const L=[];
+  L.push(`📢 ${e.t}`);
+  if(e.pz!=null)L.push(e.pz===0?"⚠️ ENCERRA HOJE":e.pz===1?"⚠️ Resta 1 dia":`⏳ Restam ${e.pz} dias — até ${fdl(dLim(e))}`);
+  else if(e.janela)L.push(e.janela);
+  if(e.v)L.push(`💰 ${money(e.v)}${e.vnota?" ("+e.vnota+")":""}`);
+  L.push(`${e.o}${e.reg==="BR"?" · nacional":" · "+(UF[e.reg]||e.reg)}`);
+  L.push("");
+  L.push("Achei na Pauta Cultural — editais com prazo real, festivais e o caminho de cada Sesc:");
+  L.push("https://pauta-cultural.vercel.app");
+  return L.join("\n");
+}
+async function divulgar(e){
+  const txt=textoDivulgar(e);
+  /* no celular abre a folha nativa (WhatsApp, Telegram, o que houver);
+     no computador copia, porque compartilhar do desktop é colar num grupo */
+  if(navigator.share){
+    try{await navigator.share({text:txt});return;}catch(err){if(err&&err.name==="AbortError")return;}
+  }
+  copy(txt,"Mensagem de divulgação");
 }
 function closeD(){$("#dt").classList.remove("on");$("#scrim").classList.remove("on");$("#dt").setAttribute("aria-hidden","true");}
 $("#scrim").onclick=closeD;
