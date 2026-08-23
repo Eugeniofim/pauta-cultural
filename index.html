@@ -840,7 +840,11 @@
     color:var(--ok-ink);background:var(--ok-soft);padding:7px 14px;border-radius:999px;margin-bottom:20px}
   .lp-selo::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--ok)}
   .lp-hero h1{font-size:clamp(31px,4.6vw,50px);line-height:1.06;letter-spacing:-.042em;font-weight:660;margin:0 0 18px}
-  .lp-h-txt>p{font-size:17.5px;line-height:1.6;color:var(--ink-soft);max-width:50ch;margin:0 0 28px}
+  .lp-h-txt>p{font-size:17.5px;line-height:1.6;color:var(--ink-soft);max-width:50ch;margin:0 0 20px}
+  .lp-ben{list-style:none;margin:0 0 28px;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:9px 22px}
+  .lp-ben li{position:relative;padding-left:24px;font-size:14.6px;line-height:1.45;color:var(--ink);font-weight:560}
+  .lp-ben li::before{content:"✓";position:absolute;left:0;top:0;color:var(--ok-ink);font-weight:800}
+  @media (max-width:560px){.lp-ben{grid-template-columns:1fr}}
   .lp-cta{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
   .lp-big{font-size:16px;padding:16px 30px;border-radius:15px}
   .lp-nota{font-size:13px;color:var(--muted)}
@@ -890,14 +894,6 @@
   .lp-mini{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 15px;
     font-size:14px;font-weight:600;box-shadow:var(--shadow)}
   .lp-mini span{display:block;font-family:var(--mono);font-size:10px;color:var(--accent-ink);font-weight:600;margin-bottom:3px}
-
-  .lp-honesto{padding-bottom:60px}
-  .lp-honesto h2{font-size:clamp(21px,2.6vw,27px);letter-spacing:-.03em;font-weight:650;margin:0 0 24px}
-  .lp-hgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-  @media (max-width:760px){.lp-hgrid{grid-template-columns:1fr}}
-  .lp-hgrid>div{background:var(--surface);border:1px solid var(--line);border-radius:17px;padding:22px;box-shadow:var(--shadow)}
-  .lp-hgrid b{display:block;font-size:15.5px;font-weight:650;margin-bottom:8px}
-  .lp-hgrid p{font-size:13.8px;line-height:1.6;color:var(--ink-soft);margin:0}
 
   .lp-fim{text-align:center;padding:52px 26px;background:var(--surface);border:1px solid var(--line);
     border-radius:26px;box-shadow:var(--shadow)}
@@ -1018,7 +1014,7 @@
   @media (prefers-reduced-motion:reduce){.nav::before{transition:none}}
 
   /* cartões com elevação em duas camadas e reação ao ponteiro */
-  .ec,.fc,.lp-dor,.lp-hgrid>div{transition:transform .26s cubic-bezier(.32,.72,0,1),box-shadow .26s,border-color .2s}
+  .ec,.fc,.lp-dor{transition:transform .26s cubic-bezier(.32,.72,0,1),box-shadow .26s,border-color .2s}
   .ec:hover,.fc:hover{transform:translateY(-3px)}
   .ec::after,.fc::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
     background:radial-gradient(420px circle at var(--mx,50%) var(--my,0%),
@@ -1168,8 +1164,16 @@
       <section class="lp-hero">
         <div class="lp-h-txt">
           <div class="lp-selo">Editais reais, conferidos na fonte</div>
-          <h1>Projeto escrito.<br>Material pronto.<br>Contato certo.</h1>
-          <p><b>Seu projeto nos moldes da Lei Rouanet, seu press kit com link próprio e a porta de cada festival e Sesc do país.</b> O e-mail de proposta sai pronto — você revisa e envia.</p>
+          <h1>Artista, cansado de prospectar<br>em vinte abas abertas?</h1>
+          <p>Tudo num lugar só — e o e-mail de proposta sai pronto. Você revisa e envia.</p>
+          <ul class="lp-ben">
+            <li>Editais com prazo real e link oficial</li>
+            <li>Afinidade com você: área, estado, estilo</li>
+            <li>Festivais ordenados pelo seu som</li>
+            <li>Os 27 Sesc com o canal conferido</li>
+            <li>Projeto escrito nos moldes da Lei Rouanet</li>
+            <li>Press kit com link próprio</li>
+          </ul>
           <div class="lp-cta">
             <button class="btn pri lp-big" id="lpComecar">Começar de graça</button>
             <span class="lp-nota">Sem cartão. Leva 40 segundos.</span>
@@ -1241,15 +1245,6 @@
           <div class="lp-mini"><span>Detalhes técnicos</span>Ficha técnica</div>
           <div class="lp-mini"><span>Responsabilidade Social</span>Acessibilidade</div>
           <div class="lp-mini"><span>Responsabilidade Social</span>Democratização de Acesso</div>
-        </div>
-      </section>
-
-      <section class="lp-honesto">
-        <h2>Regra da casa: zero chute.</h2>
-        <div class="lp-hgrid">
-          <div><b>Contato só conferido</b><p>E-mail que bate com o domínio oficial do festival. Se não confirma, a gente diz — e te manda ao site.</p></div>
-          <div><b>Prazo só da fonte</b><p>Todo edital com link oficial. O regulamento manda; o texto da Pauta é o seu rascunho sério.</p></div>
-          <div><b>Senha só sua</b><p>O e-mail abre no seu Gmail, já escrito. Você revisa e aperta enviar.</p></div>
         </div>
       </section>
 
