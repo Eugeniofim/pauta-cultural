@@ -131,8 +131,6 @@
   input:focus,select:focus,textarea:focus{border-color:var(--accent);background:var(--surface);outline:none;box-shadow:0 0 0 4px var(--accent-soft)}
   .chips{display:flex;gap:8px;flex-wrap:wrap}
   .chip{border:1px solid var(--line-strong);background:var(--surface-2);color:var(--ink-soft);border-radius:999px;padding:9px 16px;font-size:13.6px;font-weight:540;cursor:pointer;transition:.15s}
-  .atalhos{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}
-  .atalhos .chip.on{background:var(--grad-btn);color:#fff;border-color:transparent}
   .chip:hover{border-color:var(--accent);color:var(--accent-ink)}
   .chip.on{background:var(--grad-btn);color:#fff;border-color:transparent}
 
@@ -793,15 +791,34 @@
   .epk-foot span{display:block;font-size:12.2px;color:var(--muted);line-height:1.45;margin-top:2px}
   @media (max-width:520px){.epk-ls{grid-template-columns:1fr}.epk h1{font-size:28px}}
   /* faixa "Hoje": só aparece quando algo pede ação */
-  .hoje{display:flex;gap:10px;flex-wrap:wrap;margin:2px 0 16px}
+  /* topo de Editais: cabeçalho + status lado a lado, faixa de destaques
+     (parada, rolável no celular — nada gira sozinho) e uma barra única
+     com busca e filtros */
+  .ed-head{display:grid;grid-template-columns:1fr auto;gap:16px 28px;align-items:end}
+  @media (max-width:860px){.ed-head{grid-template-columns:1fr}}
+  .ed-head .lead{margin-bottom:0}
+  .ed-head .syncbar{margin:0;padding:12px 14px;flex-direction:column;align-items:stretch;gap:10px;min-width:250px;max-width:330px}
+  .ed-head .sy-acts{display:flex;gap:8px}
+  .ed-head .sy-acts .cvbtn{flex:1;text-align:center}
+  .hoje{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(236px,1fr);gap:10px;margin:18px 0 14px;
+    overflow-x:auto;scroll-snap-type:x proximity;padding:2px 2px 6px;scrollbar-width:none}
+  .hoje::-webkit-scrollbar{display:none}
   .hoje:empty{display:none}
-  .hj{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line-strong);
-    border-radius:13px;padding:10px 15px;cursor:pointer;font:inherit;text-align:left;transition:.15s}
-  .hj:hover{border-color:var(--accent);transform:translateY(-1px)}
-  .hj .ic3{font-size:17px}
-  .hj b{display:block;font-size:13.2px;letter-spacing:-.01em}
-  .hj small{display:block;font-size:11.6px;color:var(--ink-soft)}
+  .hj{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line-strong);
+    border-radius:15px;padding:12px 14px;cursor:pointer;font:inherit;text-align:left;transition:.15s;scroll-snap-align:start;min-width:0;box-shadow:var(--shadow)}
+  .hj:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+  .hj .ic3{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-size:18px;flex:none;background:var(--surface-2)}
+  .hj>span:last-child{min-width:0}
+  .hj b{display:block;font-size:13.4px;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .hj small{display:block;font-size:11.8px;color:var(--ink-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
   .hj.urgente{border-color:var(--crit);background:var(--crit-soft)}
+  .hj.urgente .ic3{background:var(--crit-ink);color:#fff}
+  .hj.on{border-color:transparent;background:var(--grad-btn);color:#fff}
+  .hj.on small{color:rgba(255,255,255,.85)}.hj.on .ic3{background:rgba(255,255,255,.18)}
+  .toolbar{background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:9px;margin:0 0 22px}
+  .toolbar .buscabar{margin:0;border-color:transparent;box-shadow:none;background:var(--surface-2)}
+  .toolbar .buscabar:focus-within{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+  .toolbar .filters{margin:8px 0 0;padding:8px 8px 4px;border:0;box-shadow:none;background:transparent}
   .afsel{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.06em;
     text-transform:uppercase;color:var(--ok-ink);background:var(--ok-soft);
     padding:3px 9px;border-radius:999px;margin-bottom:9px;cursor:help}
@@ -1139,6 +1156,18 @@
   .multinota{font-size:12.5px;color:var(--muted);margin:12px 0 0}
   .onb-nav .btn:disabled{opacity:.4;cursor:default}
 
+  .fatos2{display:grid;grid-template-columns:1.15fr 1fr;gap:9px;margin:6px 0 2px}
+  .fato2{background:var(--surface-2);border-radius:13px;padding:11px 13px;min-width:0}
+  .fato2 small{display:block;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:4px}
+  .fato2 b{display:block;font-size:15.5px;font-weight:680;letter-spacing:-.02em;line-height:1.2}
+  .fato2 i{display:block;font-style:normal;font-size:11.6px;color:var(--ink-soft);margin-top:3px;line-height:1.4;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .fato2.pz-w{background:var(--warn-soft)}.fato2.pz-w b{color:var(--warn-ink)}
+  .fato2.pz-c{background:var(--crit-soft)}.fato2.pz-c b{color:var(--crit-ink)}
+  .fonte2{font-size:12.4px;font-weight:560;display:flex;align-items:center;gap:8px;color:var(--ink-soft);line-height:1.25;min-width:0}
+  .fonte2 .d{width:8px;height:8px;border-radius:50%;flex:none;background:var(--ok);box-shadow:0 0 0 3px var(--ok-soft)}
+  .fonte2 .d.w{background:var(--warn);box-shadow:0 0 0 3px var(--warn-soft)}.fonte2 .d.c{background:var(--crit);box-shadow:0 0 0 3px var(--crit-soft)}
+  .fonte2 small{display:block;font-size:10.8px;color:var(--muted);font-weight:500}
   .fatos{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);
     border-radius:12px;overflow:hidden;margin:14px 0 12px}
   .fato{background:var(--surface);padding:11px 12px;min-width:0}
@@ -1412,7 +1441,7 @@
     <div class="ap-h"><b>Sua conta</b><button class="btn ghost sm" id="apX">Fechar</button></div>
     <div class="ap-b">
       <label>Nome</label><input type="text" id="acNome" placeholder="Como você assina seu trabalho">
-      <label>E-mail para avisos de prazo</label><input type="text" id="acMail" placeholder="voce@email.com">
+      <label>E-mail <small style="font-weight:400;color:var(--muted)">— reconhece o Pro em outro aparelho e vai no press kit</small></label><input type="text" id="acMail" placeholder="voce@email.com">
       <label>Você se inscreve como</label>
       <div class="seg" id="acTipo"><button type="button" data-t="pf">Pessoa Física</button><button type="button" data-t="pj">Jurídica</button><button type="button" data-t="ambos">As duas</button></div>
       <label>Estado</label><select id="acUf"></select>
@@ -1458,18 +1487,22 @@
   <main>
     <!-- EDITAIS -->
     <section class="scr on" id="s-editais">
-      <div class="eyebrow">Editais e festivais</div>
-      <h1 id="ttl">—</h1>
-      <p class="lead">Ordenados pela afinidade com você, cada um com link oficial. Estrela para acompanhar o prazo; clique para ver requisitos e escrever.</p>
-      <div class="syncbar" id="syncbar">
-        <div class="sy"><span class="dot2" id="syDot"></span>
-          <div class="sytxt"><b id="syTitle">Base atualizada</b><small id="sySub">—</small></div></div>
-        <button class="cvbtn" id="syAtualiza" title="Buscar agora nos portais oficiais">↻ Atualizar</button>
-        <button class="cvbtn" id="cvToggle">Estados cobertos</button>
+      <div class="ed-head">
+        <div>
+          <div class="eyebrow">Editais e festivais</div>
+          <h1 id="ttl">—</h1>
+          <p class="lead">Ordenados pela afinidade com você, cada um com link oficial. Estrela para acompanhar o prazo; clique para ver requisitos e escrever.</p>
+        </div>
+        <div class="syncbar" id="syncbar">
+          <div class="sy"><span class="dot2" id="syDot"></span>
+            <div class="sytxt"><b id="syTitle">Base atualizada</b><small id="sySub">—</small></div></div>
+          <div class="sy-acts"><button class="cvbtn" id="syAtualiza" title="Buscar agora nos portais oficiais">↻ Atualizar</button>
+          <button class="cvbtn" id="cvToggle">Estados cobertos</button></div>
+        </div>
       </div>
       <div class="cover" id="cover"></div>
       <div class="hoje" id="hoje"></div>
-      <div class="atalhos"><button class="chip" id="atPatro" title="Empresas que patrocinam projetos aprovados em lei de incentivo">💼 Tem projeto Rouanet aprovado? Veja quem patrocina</button></div>
+      <div class="toolbar">
       <div class="buscabar">
         <span class="lupa">⌕</span>
         <input type="text" id="qs" placeholder="Buscar por nome, instituição ou tema…">
@@ -1485,6 +1518,7 @@
         <div class="fg"><label>Ordenar</label><select id="qo"><option value="m">Afinidade</option><option value="p">Prazo</option><option value="v">Valor</option></select></div>
         <button class="limpar" id="qLimpar">limpar filtros</button>
         <div class="cnt"><b id="fc">0</b> encontrados</div>
+      </div>
       </div>
       <div class="feed" id="feed"></div>
       <div id="proLock"></div>
@@ -2197,14 +2231,30 @@ function hojeStrip(){
       b:fups.length===1?"1 contato para retomar":`${fups.length} contatos para retomar`,
       s:fups[0].festival.slice(0,44),go:()=>nav("projetos")});
   }catch(e){}
+  /* sem edital seguido urgente, o prazo mais próximo do acervo — a faixa
+     nunca fica vazia e a urgência é sempre real, contada no dia */
+  if(!C.length){
+    const ab=ED.filter(e=>e.pz!=null).sort((a,b)=>a.pz-b.pz)[0];
+    if(ab)C.push({cls:ab.pz<=2?"hj urgente":"hj",ic:"⏳",
+      b:ab.pz===0?"Encerra HOJE":ab.pz===1?"Encerra amanhã":`Encerra em ${ab.pz} dias`,
+      s:ab.t.slice(0,60),go:()=>openD(ab.id)});
+  }
+  const nPat=ED.filter(e=>e.tp==="Patrocínio").length;
+  if(nPat){
+    const ligado=$("#qt")&&$("#qt").value==="Patrocínio";
+    C.push({cls:"hj"+(ligado?" on":""),id:"atPatro",ic:"💼",b:`${nPat} empresas patrocinam`,
+      s:ligado?"mostrando só patrocínio — toque para voltar":"projeto Rouanet aprovado",
+      go:()=>{const t=$("#qt");const liga=t.value!=="Patrocínio";t.value=liga?"Patrocínio":"";feed();
+        if(liga){const f=$("#feed");if(f)f.scrollIntoView({block:"start",behavior:"smooth"});}}});
+  }
   const k=(contaLer().kit)||{};
   const chaves=["pitch","estilo","video","stream","release","rider","site","insta","tel","dur","pessoas","ouvintes"];
   const ok=chaves.filter(c=>k[c]&&String(k[c]).trim()).length;
-  if(ok>0&&ok<chaves.length){
-    C.push({cls:"hj",ic:"🎒",b:`Kit ${Math.round(ok/chaves.length*100)}% pronto`,
-      s:"complete para o e-mail sair inteiro",go:()=>nav("perfil")});
+  if(ok<chaves.length){
+    C.push({cls:"hj",ic:"🎒",b:ok?`Kit ${Math.round(ok/chaves.length*100)}% pronto`:"Monte seu kit de mídia",
+      s:ok?"complete para o e-mail sair inteiro":"e-mail, WhatsApp e press kit saem prontos",go:()=>nav("perfil")});
   }
-  el.innerHTML=C.map((c,i)=>`<button class="${c.cls}" data-hj="${i}">
+  el.innerHTML=C.slice(0,4).map((c,i)=>`<button class="${c.cls}" data-hj="${i}"${c.id?` id="${c.id}"`:""}>
     <span class="ic3">${c.ic}</span><span><b>${esc(c.b)}</b><small>${esc(c.s)}</small></span></button>`).join("");
   C.forEach((c,i)=>{const b=el.querySelector('[data-hj="'+i+'"]');if(b)b.onclick=c.go;});
 }
@@ -2223,20 +2273,24 @@ function feed(){
     const el=document.createElement("article");
     el.className="ec card";el.tabIndex=0;el.setAttribute("role","button");
     if(b)el.style.paddingBottom="36px";
+    /* Prazo e valor são o que se lê primeiro — ganham espaço e podem
+       quebrar linha (o corte com reticências escondia "Editais ao longo do
+       ano" e "no regulamento", que são a informação). Modalidade já está no
+       cabeçalho; repetir era ruído. */
+    const prazoB=e.pz==null?"Sem data fixa":hojeMesmo(e)?"Encerra hoje":e.pz<=1?"Encerra amanhã":`Faltam ${e.pz} dias`;
+    const prazoI=e.pz==null?(e.janela||"consulte o portal oficial"):`até ${fd(lim)}`;
     el.innerHTML=`<div><div class="kk">${e.tp} · ${e.o}</div><h3>${e.t}</h3></div>
       <p>${e.d}</p>
-      <div class="fatos">
-        <div class="fato ${pc?"pz-"+pc:""}"><small>Prazo</small><b>${e.pz!=null?fd(lim):(e.janela||"consultar portal")}</b>
-          <i>${e.pz==null?"sem data fixa":hojeMesmo(e)?"encerra hoje":e.pz<=1?"encerra amanhã":"faltam "+e.pz+" dias"}</i></div>
-        <div class="fato"><small>Valor</small><b>${e.v?money(e.v):"no regulamento"}</b>
-          <i>${e.v?(e.vnota||"valor no regulamento"):"a Pauta não estima valor"}</i></div>
-        <div class="fato"><small>Modalidade</small><b>${e.tp}</b><i>${e.esf.toLowerCase()}</i></div>
+      <div class="fatos2">
+        <div class="fato2 ${pc?"pz-"+pc:""}"><small>Prazo</small><b>${prazoB}</b><i>${esc(prazoI)}</i></div>
+        <div class="fato2"><small>Valor</small><b>${e.v?money(e.v):"No regulamento"}</b><i>${esc(e.v?(e.vnota||"por projeto"):"a Pauta não estima valor")}</i></div>
       </div>
       <div class="tg"><span class="pl ${e.fo==="priv"?"pv":""}">${e.esf}</span>
         <span class="pl">${e.cid?e.cid+" · "+e.reg:(e.reg==="BR"?"Nacional":UF[e.reg])}</span>
         ${e.tp==="Festival"?'<span class="pl fs">Festival</span>':""}
+        ${e.exige==="sim"?'<span class="pl pv">Rouanet aprovada</span>':""}
         ${e.ex==="pj"?'<span class="pl pj">Exige CNPJ</span>':e.ex==="pf"?'<span class="pl pj">Só PF</span>':""}</div>
-      <div class="ft"><div class="pz ${pc}"><span class="d"></span><span>${jTxt(e)}<small>${e.pz!=null?"faltam "+e.pz+" dias":(e.sis||"portal oficial")}</small></span></div>
+      <div class="ft"><div class="fonte2"><span class="d ${pc}"></span><span>${esc(e.sis||"portal oficial")}<small>${e.link?"link oficial na ficha":"sem link"}</small></span></div>
         <div class="af"><div class="ring" style="--p:${m}" data-v="${m}"></div>
           <div class="lb"><b>${m>=85?"Alta":m>=65?"Boa":"Parcial"}</b><small>afinidade</small></div></div></div>
       ${b?`<div class="blk">⚠ ${e.ex==="pj"?"Exige CNPJ":"Aceita só PF"}</div>`:""}
@@ -3262,7 +3316,7 @@ function fRender(){
         :`<p class="fhist">${f.origem==="catalogo"?"Dados do catálogo — confirme no site oficial antes de enviar.":"Ficha de registro — confirme a próxima edição com o organizador."}</p>`}
       <div class="ct">
         ${f.mail?`<a href="mailto:${f.mail}"><span class="ic2">✉</span>${f.mail}</a>`:""}
-        ${f.tel?`<span><span class="ic2">☎</span>${f.tel}</span>`:""}
+        ${f.tel?(numWa(f.tel)?`<a href="https://wa.me/${numWa(f.tel)}" target="_blank" rel="noopener" data-wa="${numWa(f.tel)}" data-dest="${esc(f.n)}" data-tipo="festival" title="Abre o WhatsApp com sua apresentação já escrita"><span class="ic2">✆</span>${esc(f.tel)} · texto pronto</a>`:`<span><span class="ic2">☎</span>${esc(f.tel)}</span>`):""}
         ${f.insta?`<a href="https://instagram.com/${esc(f.insta.replace("@",""))}" target="_blank" rel="noopener"><span class="ic2">◎</span>${esc(f.insta)}</a>`:""}
         ${f.site?`<a href="${f.site}" target="_blank" rel="noopener"><span class="ic2">↗</span>${f.site.replace(/^https?:\/\//,"").replace(/\/$/,"").slice(0,44)}</a>`:""}
         ${!temCt?`<span class="nocontact">${f.origem==="catalogo"?"Contato não verificado — procure no site oficial do festival.":"Sem contato público na ficha de origem."}</span>`:""}
@@ -3275,6 +3329,7 @@ function fRender(){
   }).join("")+bannerPro(cort.ocultos,"festivais");
   $$("#ffeed [data-go]").forEach(b=>b.onclick=()=>nav(b.dataset.go));
   $$("#ffeed [data-escr]").forEach(b=>b.onclick=()=>abrirContato(b.dataset.escr));
+  $$("#ffeed [data-wa]").forEach(a=>a.onclick=ev=>{ev.preventDefault();abrirWhats(a.dataset.wa,a.dataset.dest,a.dataset.tipo);});
 }
 /* O Sesc não tem prazo para listar: o valor aqui é o canal de envio. Por isso
    cada ficha diz o que foi conferido e o que não foi, em vez de fingir que
@@ -3320,7 +3375,7 @@ function sescRender(){
                 :(x.wa||x.form)?`<span class="nocontact">Sem e-mail de programação — use o canal ao lado e peça o setor de cultura.</span>`
                 :x.insta?`<span class="nocontact">Sem e-mail publicado — fale pelo direct do Instagram.</span>`
                 :`<span class="nocontact">Sem e-mail publicado — a Pauta não inventa contato.</span>`}
-        ${x.wa?`<a href="https://wa.me/${esc(x.wa)}" target="_blank" rel="noopener"><span class="ic2">✆</span>WhatsApp</a>`:""}
+        ${x.wa?`<a href="https://wa.me/${esc(x.wa)}" target="_blank" rel="noopener" data-wa="${esc(x.wa)}" data-dest="${esc(x.n)}" data-tipo="sesc" title="Abre o WhatsApp com sua apresentação já escrita"><span class="ic2">✆</span>WhatsApp com texto pronto</a>`:""}
         ${x.form?`<a href="${x.form}" target="_blank" rel="noopener"><span class="ic2">✎</span>formulário de contato</a>`:""}
         ${x.insta?`<a href="https://instagram.com/${esc(x.insta.replace("@",""))}" target="_blank" rel="noopener"><span class="ic2">◎</span>${esc(x.insta)}</a>`:""}
         ${x.site?`<a href="${x.site}" target="_blank" rel="noopener"><span class="ic2">↗</span>${x.site.replace(/^https?:\/\//,"").replace(/\/$/,"").slice(0,44)}</a>`:""}
@@ -3328,6 +3383,7 @@ function sescRender(){
       ${(x.mail||x.form||x.wa)?`<button class="btn pri sm escrbtn" data-escr="${esc(x.n)}">✎ Escrever para o Sesc</button>`:""}
     </article>`).join("")+bannerPro(ocultos,"Sesc",`O plano grátis mostra ${SESC_LIVRE} — o do seu estado primeiro. O Pro abre os 27 regionais e o Sesc Nacional, com o canal conferido.`);
   $$("#ffeed [data-escr]").forEach(b=>b.onclick=()=>abrirContato(b.dataset.escr));
+  $$("#ffeed [data-wa]").forEach(a=>a.onclick=ev=>{ev.preventDefault();abrirWhats(a.dataset.wa,a.dataset.dest,a.dataset.tipo);});
 }
 function fInit(){
   const comD=new Set(fUFs());
@@ -4369,6 +4425,44 @@ function perfilDestino(f){
   if(f&&f.porte==="grande")return "grande";
   return "local";
 }
+/* WhatsApp não é e-mail: mensagem curta, sem assunto, sem lista de links —
+   uma apresentação de quatro linhas e a pergunta certa. O que falta no kit
+   vira colchete, igual ao e-mail, para a pessoa ver o buraco antes de enviar. */
+/* "de Paraná" é erro que qualquer contratante nota. Estado com artigo leva
+   "do"/"da"; os demais, "de". */
+const UF_ART={PR:"do",RJ:"do",RS:"do",RN:"do",ES:"do",MA:"do",PA:"do",PI:"do",CE:"do",AM:"do",AP:"do",AC:"do",TO:"do",MT:"do",MS:"do",DF:"do",BA:"da",PB:"da"};
+const deUF=uf=>UF[uf]?`${UF_ART[uf]||"de"} ${UF[uf]}`:"[seu estado]";
+async function textoWhats(destino,tipo){
+  const c=contaLer(), k=c.kit||{};
+  const nome=c.nome||P.nome||"[seu nome]";
+  const estilo=(P.estilos&&P.estilos.length)?P.estilos.join(", "):(k.estilo||"[seu estilo]");
+  const uf=deUF(c.uf||P.uf);
+  const pitch=k.pitch?k.pitch.split(/(?<=[.!?])\s/)[0]:"[uma frase sobre o seu trabalho]";
+  const fmt=[k.dur,k.pessoas&&(k.pessoas+" em palco")].filter(Boolean).join(", ");
+  const video=k.video?`Vídeo ao vivo: ${k.video}`:"";
+  let pagina="";
+  if(k.pitch){try{pagina="Meu press kit: "+await epkLink();}catch(e){}}
+  const quem=tipo==="sesc"?"o Sesc":"o festival";
+  const L=[
+    `Olá! Sou ${nome}, ${estilo}, ${uf}.`,
+    pitch,
+    fmt?`Show de ${fmt}.`:"",
+    video, pagina,
+    tipo==="sesc"
+      ?`Gostaria de apresentar uma proposta para a programação cultural ${destino?"do "+destino:"do Sesc"}. Posso enviar o material completo por e-mail ou por aqui?`
+      :`Gostaria de apresentar o trabalho para a curadoria ${destino?"do "+destino:quem}. Posso enviar o material completo por aqui?`
+  ].filter(Boolean);
+  return L.join("\n");
+}
+function numWa(t){
+  let dg=String(t||"").replace(/\D/g,"");
+  if(dg&&!/^\+/.test(String(t).trim())&&(dg.length===10||dg.length===11))dg="55"+dg;
+  return dg.length>=12?dg:"";
+}
+async function abrirWhats(num,destino,tipo){
+  const txt=await textoWhats(destino,tipo);
+  window.open("https://wa.me/"+num+"?text="+encodeURIComponent(txt),"_blank","noopener");
+}
 function gerarEmail(f){
   const c=contaLer(), nome=c.nome||P.nome||"[seu nome]";
   /* O que estiver no kit entra pronto; o que faltar continua como colchete,
@@ -4380,6 +4474,7 @@ function gerarEmail(f){
   const estilos=(P.estilos&&P.estilos.length)?P.estilos.join(", ")
     :((c.kit&&c.kit.estilo)?c.kit.estilo:"[seu estilo]");
   const cidade=UF[P.uf]||P.uf||"[sua cidade]";
+  const deCidade=P.uf&&UF[P.uf]?deUF(P.uf):`de ${cidade}`;
   const pj=c.tipo==="pj"||c.tipo==="ambos";
   const D=dataFestival(f&&f.quando);
   /* só menciona a data quando ela é futura e confirmada */
@@ -4401,13 +4496,13 @@ function gerarEmail(f){
        está no estatuto dele. Por isso contrapartida e público vêm antes
        do release. */
     return {assunto:`Proposta de pauta — ${nome} (${area})`,
-      corpo:`Olá, equipe do ${f.n}.\n\nMeu nome é ${nome}, sou artista de ${area} de ${cidade}, com trabalho em ${estilos}. Escrevo para apresentar uma proposta de pauta e saber qual o caminho certo de inscrição.\n\nA PROPOSTA\n${sobre("Descreva em 3 linhas o show ou a atividade")}\n\nCONTRAPARTIDA\n[O que você oferece além do show: oficina, bate-papo com o público, ensaio aberto, aula. O Sesc valoriza a dimensão formativa.]\n\nPÚBLICO\n[Para quem é: faixa etária, se é livre, se funciona em praça ou teatro.]\n\nFORMATO\nApresentação de ${kv("dur","duração")} com ${kv("pessoas","número")} pessoas em palco.${pj?"\nPosso emitir nota como pessoa jurídica.":""}\n\n${material}\n\nSe houver edital ou cadastro de proponentes em aberto, agradeço a orientação sobre como me inscrever.${assina}`};
+      corpo:`Olá, equipe do ${f.n}.\n\nMeu nome é ${nome}, sou artista de ${area} ${deCidade}, com trabalho em ${estilos}. Escrevo para apresentar uma proposta de pauta e saber qual o caminho certo de inscrição.\n\nA PROPOSTA\n${sobre("Descreva em 3 linhas o show ou a atividade")}\n\nCONTRAPARTIDA\n[O que você oferece além do show: oficina, bate-papo com o público, ensaio aberto, aula. O Sesc valoriza a dimensão formativa.]\n\nPÚBLICO\n[Para quem é: faixa etária, se é livre, se funciona em praça ou teatro.]\n\nFORMATO\nApresentação de ${kv("dur","duração")} com ${kv("pessoas","número")} pessoas em palco.${pj?"\nPosso emitir nota como pessoa jurídica.":""}\n\n${material}\n\nSe houver edital ou cadastro de proponentes em aberto, agradeço a orientação sobre como me inscrever.${assina}`};
   }
   if(tipo==="grande"){
     /* festival grande recebe centenas de propostas: número e prova social
        primeiro, senão nem chega no release */
     return {assunto:`${nome} — proposta para o ${f.n}`,
-      corpo:`Olá, equipe do ${f.n}.\n\nSou ${nome}, artista de ${area} de ${cidade}, trabalhando com ${estilos}. Escrevo para apresentar meu show${quando}.\n\nEM NÚMEROS\n• ${kv("ouvintes","ouvintes mensais / visualizações")}\n• ${kv("shows","shows no último ano e principais cidades")}\n• ${kv("imprensa","imprensa: veículo e link")}\n\nO SHOW\n${sobre("Duas linhas sobre o que o público vê no palco")}\n\n${material}\n\nFORMATO\nShow de ${kv("dur","duração")} com ${kv("pessoas","número")} músicos. Disponibilidade em [meses].\n\nFico à disposição.${assina}`};
+      corpo:`Olá, equipe do ${f.n}.\n\nSou ${nome}, artista de ${area} ${deCidade}, trabalhando com ${estilos}. Escrevo para apresentar meu show${quando}.\n\nEM NÚMEROS\n• ${kv("ouvintes","ouvintes mensais / visualizações")}\n• ${kv("shows","shows no último ano e principais cidades")}\n• ${kv("imprensa","imprensa: veículo e link")}\n\nO SHOW\n${sobre("Duas linhas sobre o que o público vê no palco")}\n\n${material}\n\nFORMATO\nShow de ${kv("dur","duração")} com ${kv("pessoas","número")} músicos. Disponibilidade em [meses].\n\nFico à disposição.${assina}`};
   }
   if(tipo==="internacional"){
     return {assunto:`${nome} — artist proposal / proposta artística`,
@@ -4415,7 +4510,7 @@ function gerarEmail(f){
   }
   /* pequeno e médio porte: quem lê acumula funções e decide rápido */
   return {assunto:`Proposta de show — ${nome}`,
-    corpo:`Olá, equipe do ${f.n}.\n\nSou ${nome}, artista de ${area} de ${cidade}, com trabalho em ${estilos}. Gostaria de me apresentar${quando}.\n\nO SHOW\n${sobre("Duas ou três linhas sobre o que você toca")}\n\n${material}\n\nFORMATO\nShow de ${kv("dur","duração")} com ${kv("pessoas","número")} pessoas em palco. Tenho flexibilidade de formato e cachê conforme a estrutura de vocês.${pj?"\nPosso emitir nota como pessoa jurídica.":""}\n\nSe não for o momento, agradeço se puder me indicar quando abre a próxima seleção.${assina}`};
+    corpo:`Olá, equipe do ${f.n}.\n\nSou ${nome}, artista de ${area} ${deCidade}, com trabalho em ${estilos}. Gostaria de me apresentar${quando}.\n\nO SHOW\n${sobre("Duas ou três linhas sobre o que você toca")}\n\n${material}\n\nFORMATO\nShow de ${kv("dur","duração")} com ${kv("pessoas","número")} pessoas em palco. Tenho flexibilidade de formato e cachê conforme a estrutura de vocês.${pj?"\nPosso emitir nota como pessoa jurídica.":""}\n\nSe não for o momento, agradeço se puder me indicar quando abre a próxima seleção.${assina}`};
 }
 
 let mailAtual=null;
@@ -5212,13 +5307,11 @@ $("#fa").onchange=e=>{P.area=e.target.value;P.estilos=[];chipsUI();refresh();};
 $("#fu").onchange=e=>{P.uf=e.target.value;refresh();};
 $("#fm").onchange=e=>{P.momento=e.target.value;refresh();};
 ["#qa","#quf","#qcid","#qe","#qt","#ql","#qo"].forEach(x=>{const e=$(x);if(e)e.onchange=()=>{if(x==="#quf")atualizaCidades();feed();
-  const b=$("#atPatro");if(b)b.classList.toggle("on",$("#qt").value==="Patrocínio");};});
+};});
 $("#qs").oninput=feed;
 $("#qs").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();feed();}};
 $("#qsBtn").onclick=feed;
-{const b=$("#atPatro");if(b)b.onclick=()=>{const t=$("#qt");const liga=t.value!=="Patrocínio";t.value=liga?"Patrocínio":"";b.classList.toggle("on",liga);feed();
-  if(liga){const f=$("#feed");if(f)f.scrollIntoView({block:"start",behavior:"smooth"});}};}
-$("#qLimpar").onclick=()=>{["#qs","#qa","#quf","#qcid","#qe","#qt","#ql"].forEach(x=>{const e=$(x);if(e)e.value="";});$("#qo").value="m";atualizaCidades();feed();$("#atPatro")?.classList.remove("on");toast("Filtros limpos");};
+$("#qLimpar").onclick=()=>{["#qs","#qa","#quf","#qcid","#qe","#qt","#ql"].forEach(x=>{const e=$(x);if(e)e.value="";});$("#qo").value="m";atualizaCidades();feed();toast("Filtros limpos");};
 
 epkInit();temaInit();aplicarInstagram();aplicarVerificados();contaAplicar();initSel();chipsUI();refresh();onbIniciar();dash();submissoes();fInit();syncInfo();coverPanel();alertas();/* Atualizar na mão. A trava de 5 minutos existe porque cada busca forçada
    consulta os 6 portais estaduais de verdade — clique nervoso repetido é
