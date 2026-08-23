@@ -684,7 +684,8 @@
   .vabr{display:inline-block;margin-left:8px;font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;font-weight:700;padding:3px 9px;border-radius:999px;background:var(--grad-btn);color:#fff;vertical-align:middle}
   .vok{display:inline-block;margin-left:8px;font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;
     font-weight:700;padding:3px 9px;border-radius:999px;background:var(--ok-soft);color:var(--ok-ink);vertical-align:middle}
-  .fverif{font-size:11.6px;color:var(--ok-ink);margin:0;padding:9px 11px;background:var(--ok-soft);border-radius:9px;line-height:1.5}
+  .fverif{font-size:11.6px;color:var(--ok-ink);margin:0;padding:9px 11px;background:var(--ok-soft);border-radius:9px;line-height:1.5;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
   .fverif b{font-weight:700}
 
   .escrbtn{width:100%;justify-content:center;margin-top:11px}
@@ -804,11 +805,11 @@
   .ed-head .sy-acts{display:flex;gap:8px}
   .ed-head .sy-acts .cvbtn{flex:1;text-align:center}
   .hoje{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(236px,1fr);gap:10px;margin:18px 0 14px;
-    overflow-x:auto;scroll-snap-type:x proximity;padding:2px 2px 6px;scrollbar-width:none}
+    overflow-x:auto;padding:2px 2px 6px;scrollbar-width:none}
   .hoje::-webkit-scrollbar{display:none}
   .hoje:empty{display:none}
   .hj{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line-strong);
-    border-radius:15px;padding:12px 14px;cursor:pointer;font:inherit;text-align:left;transition:.15s;scroll-snap-align:start;min-width:0;box-shadow:var(--shadow)}
+    border-radius:15px;padding:12px 14px;cursor:pointer;font:inherit;text-align:left;transition:.15s;min-width:0;box-shadow:var(--shadow)}
   .hj:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow-lg)}
   .hj .ic3{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-size:18px;flex:none;background:var(--surface-2)}
   .hj>span:last-child{min-width:0}
@@ -1518,7 +1519,7 @@
           <div class="kpi"><b id="pc">0</b><span>editais<br>compatíveis</span></div>
           <div class="mi"><span>Maior afinidade</span><b id="pt">—</b></div>
           <div class="mi"><span>Prazo mais próximo</span><b id="pp">—</b></div>
-          <div class="mi"><span>Soma dos valores</span><b id="pv">—</b></div>
+          <div class="mi"><span>Abertos agora</span><b id="pv">—</b></div>
           <div class="mi"><span>Fora do seu perfil</span><b id="pb">—</b></div>
           <button class="btn pri sm" style="width:100%;justify-content:center;margin-top:15px" data-go="editais">Ver editais →</button>
           <button class="btn ghost sm" style="width:100%;justify-content:center;margin-top:8px" id="pSalvarConta">Salvar como minha conta</button>
@@ -2127,7 +2128,7 @@ function score(e){
 function motivos(e){
   const o=[];
   o.push(e.cat==="Todas"?"Aberto a todas as áreas culturais.":daMinhaArea(e.cat)?`É de uma das suas áreas: ${e.cat}.`:`Atenção: é da área de ${e.cat}, fora das que você marcou.`);
-  o.push(e.reg==="BR"?"É nacional, aberto a todo o Brasil.":e.reg===P.uf?`É do seu estado (${UF[e.reg]}).`:`Atenção: restrito a ${UF[e.reg]}, e você está em ${UF[P.uf]}.`);
+  o.push(e.reg==="BR"?"É nacional, aberto a todo o Brasil.":e.reg===P.uf?`É do seu estado (${UF[e.reg]}).`:`Atenção: restrito ${UF_ART[e.reg]==="do"?"ao":UF_ART[e.reg]==="da"?"à":"a"} ${UF[e.reg]}, e você está em ${UF[P.uf]}.`);
   const pt=[...P.estilos,...P.objetivos];
   const h=e.tg.filter(t=>pt.map(x=>x.toLowerCase()).includes(t.toLowerCase()));
   if(h.length)o.push(`Combina com o seu perfil: ${h.join(", ")}.`);
@@ -2171,10 +2172,11 @@ const compat=()=>ED.map(e=>({e,m:score(e)})).filter(x=>x.m>=55).sort((a,b)=>b.m-
 function sidePanel(){
   const c=compat();
   $("#pc").textContent=c.length;
-  $("#pt").textContent=c.length?c[0].e.t.split("—")[0].trim():"—";
+  const topo=c.find(x=>x.e.pz!=null)||c[0];
+  $("#pt").textContent=topo?topo.e.t.split("—")[0].trim():"—";
   const s=[...c].sort((a,b)=>(a.e.pz==null?9e9:a.e.pz)-(b.e.pz==null?9e9:b.e.pz))[0];
   $("#pp").textContent=s&&s.e.pz!=null?fd(dLim(s.e)):"contínuo";
-  $("#pv").textContent=c.length+" programas";
+  $("#pv").textContent=c.filter(x=>x.e.pz!=null).length+" editais";
   const b=ED.filter(e=>!pode(e)).length;
   $("#pb").textContent=b?b+" editais":"nenhum";
   const abertos=ED.filter(e=>e.pz!=null).length, prog=ED.filter(e=>e.pz==null).length;
@@ -2254,7 +2256,9 @@ function feed(){
   hojeStrip();
   let l=ED.filter(pass).map(e=>({e,m:score(e)}));
   const o=$("#qo").value;
-  l.sort((a,b)=>o==="p"?((a.e.pz==null?9e9:a.e.pz)-(b.e.pz==null?9e9:b.e.pz)):o==="v"?((b.e.v||0)-(a.e.v||0)):b.m-a.m);
+  /* na afinidade, edital ABERTO vem antes de programa sem data: a vitrine
+     de quem chega não pode ser uma porta fechada */
+  l.sort((a,b)=>o==="p"?((a.e.pz==null?9e9:a.e.pz)-(b.e.pz==null?9e9:b.e.pz)):o==="v"?((b.e.v||0)-(a.e.v||0)):(((a.e.pz==null)?1:0)-((b.e.pz==null)?1:0))||b.m-a.m);
   const cortado=limitar(l);
   $("#fc").textContent=ehPro()?String(l.length):(cortado.lista.length<l.length?`${cortado.lista.length} de ${l.length}`:String(l.length));
   const f=$("#feed");f.innerHTML="";
@@ -2323,7 +2327,7 @@ function openD(id){
           <div class="rs-l"><span>Objetivo</span><p>${e.d}</p></div>
           <div class="rs-l"><span>Modalidade</span><p>${e.tp}${e.esf?" · "+e.esf:""}${e.fo==="priv"?" · iniciativa privada":""}</p></div>
           <div class="rs-l"><span>Quem publica</span><p>${e.o}${e.sis&&e.sis!==e.o?" — pelo "+e.sis:""}</p></div>
-          <div class="rs-l"><span>Quem pode entrar</span><p>${e.ex==="pj"?"Somente pessoa jurídica (CNPJ)":e.ex==="pf"?"Somente pessoa física":e.ex==="conferir"?"A página não diz quem pode se inscrever — confira no edital":"Pessoa física e pessoa jurídica"}${e.reg==="BR"?" · de todo o Brasil":" · de "+(UF[e.reg]||e.reg)}</p></div>
+          <div class="rs-l"><span>Quem pode entrar</span><p>${e.ex==="pj"?"Somente pessoa jurídica (CNPJ)":e.ex==="pf"?"Somente pessoa física":e.ex==="conferir"?"A página não diz quem pode se inscrever — confira no edital":"Pessoa física e pessoa jurídica"}${e.reg==="BR"?" · de todo o Brasil":" · "+deUF(e.reg)}</p></div>
           ${e.exige?`<div class="rs-l"><span>Lei de incentivo</span><p>${
             e.exige==="sim"?"<b>Precisa de projeto já aprovado na Lei Rouanet</b> (ou lei estadual, quando a empresa aceita). É patrocínio: a empresa escolhe entre projetos aprovados e faz o aporte."
             :e.exige==="depois"?"<b>Não exige aprovação prévia.</b> Quem é selecionado registra o projeto na Lei Rouanet ou na Ancine depois."
