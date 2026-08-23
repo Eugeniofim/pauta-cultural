@@ -2160,14 +2160,17 @@ function openD(id){
     <div class="df">
       <button class="btn ghost" id="segB">${segue(e.id)?"★ Acompanhando":"☆ Acompanhar prazo"}</button>
       <button class="btn ghost" id="dsB">Dossiê</button>
-      <button class="btn ghost" id="cpB" title="Mandar este edital para um grupo ou amigo">📤 Divulgar</button>
+      <button class="btn ghost" id="dvB" title="Mandar este edital para um grupo ou amigo">📤 Divulgar</button>
       <button class="btn pri" id="wrB" ${b?"disabled":""}>Escrever projeto</button>
     </div>`;
   $("#dt").classList.add("on");$("#scrim").classList.add("on");$("#dt").setAttribute("aria-hidden","false");
   $("#xd").onclick=closeD;
   $("#segB").onclick=()=>{toggleSeg(e.id);openD(e.id);feed();alertas();};
   $("#dsB").onclick=()=>copy(dossie(e),"Dossiê");
-  $("#cpB").onclick=()=>divulgar(e);
+  /* id próprio: havia outro #cpB (o "Copiar tudo" da tela Escrever), e
+     querySelector devolvia aquele — o Divulgar ficava sem clique e o Copiar
+     tudo passava a divulgar o último edital aberto. Um id, dois botões. */
+  $("#dt #dvB").onclick=()=>divulgar(e);
   const w=$("#wrB");if(w&&!b)w.onclick=()=>{closeD();nav("escrever");startMode(e.rouanet?"rouanet":"edital",e);};
 }
 /* Mensagem de divulgação montada na hora, dos dados do próprio edital.
@@ -2198,7 +2201,7 @@ async function divulgar(e){
     try{await navigator.share({text:txt});return;}
     catch(err){if(err&&err.name==="AbortError")return;/* falhou: cai na cópia */}
   }
-  copy(txt,"Mensagem de divulgação");
+  copy(txt,"Texto de divulgação");
 }
 function closeD(){$("#dt").classList.remove("on");$("#scrim").classList.remove("on");$("#dt").setAttribute("aria-hidden","true");}
 $("#scrim").onclick=closeD;
