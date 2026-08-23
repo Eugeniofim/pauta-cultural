@@ -42,8 +42,8 @@
 <title>Pauta Cultural — editais e festivais do Brasil</title>
 <style>
   :root{
-    --bg:#F7EEDC;--surface:#FFFBF2;--surface-2:#F1E7D0;--ink:#221E33;--ink-soft:#5C5678;--muted:#67607E;
-    --line:#EEE8DC;--line-strong:#E2DACA;
+    --bg:#F9E2D4;--surface:#FFF7F2;--surface-2:#F7E6DB;--ink:#221E33;--ink-soft:#5C5678;--muted:#67607E;
+    --line:#F0D9CC;--line-strong:#E6C6B5;
     --peach:#FF9269;--rose:#F2669D;--periw:#8E86F0;
     --accent:#E85A8A;--accent-ink:#B53560;--accent-soft:#FDF0F5;
     --ok:#2F9670;--ok-soft:#EAF7F1;--warn:#B8801A;--warn-soft:#FDF6E7;--crit:#D4425F;--crit-soft:#FDEFF2;
@@ -66,8 +66,8 @@
       --grad:linear-gradient(103deg,var(--peach),var(--rose) 45%,var(--periw));--grad-btn:linear-gradient(103deg,#C2410C,#BE185D 45%,#4F46E5);
       --shadow:0 1px 3px rgba(0,0,0,.3),0 14px 40px rgba(0,0,0,.4);--shadow-lg:0 28px 66px rgba(0,0,0,.55);}
   }
-  :root[data-theme="light"]{--bg:#F7EEDC;--surface:#FFFBF2;--surface-2:#F1E7D0;--ink:#221E33;--ink-soft:#5C5678;--muted:#67607E;
-    --line:#EEE8DC;--line-strong:#E2DACA;--peach:#FF9269;--rose:#F2669D;--periw:#8E86F0;
+  :root[data-theme="light"]{--bg:#F9E2D4;--surface:#FFF7F2;--surface-2:#F7E6DB;--ink:#221E33;--ink-soft:#5C5678;--muted:#67607E;
+    --line:#F0D9CC;--line-strong:#E6C6B5;--peach:#FF9269;--rose:#F2669D;--periw:#8E86F0;
     --accent:#E85A8A;--accent-ink:#B53560;--accent-soft:#FDF0F5;--ok:#2F9670;--ok-soft:#EAF7F1;--warn:#B8801A;--warn-soft:#FDF6E7;--crit:#D4425F;--crit-soft:#FDEFF2;
     --warn-ink:#83590B;--crit-ink:#BC2A49;--ok-ink:#1F6B50;
     --grad:linear-gradient(103deg,#C2410C,#BE185D 45%,#4F46E5);--grad-btn:linear-gradient(103deg,#C2410C,#BE185D 45%,#4F46E5);
@@ -393,8 +393,9 @@
 
   /* ——— profundidade e acabamento ——— */
   .app{background:
-    radial-gradient(1200px 560px at 88% -10%, rgba(142,134,240,.045), transparent 64%),
-    radial-gradient(950px 480px at 5% 2%, rgba(255,146,105,.035), transparent 62%),
+    radial-gradient(1200px 560px at 88% -10%, rgba(142,134,240,.08), transparent 64%),
+    radial-gradient(950px 480px at 5% 2%, rgba(255,112,84,.12), transparent 62%),
+    radial-gradient(1000px 520px at 55% -10%, rgba(255,166,72,.14), transparent 58%),
     var(--bg);
     background-attachment:fixed}
   @media (prefers-color-scheme:dark){.app{background:
@@ -624,14 +625,16 @@
 
   :root[data-theme="light"]{
     --ink:#1C1826;--ink-soft:#4A4560;--muted:#67607E;
-    --line:#EAE3D6;--line-strong:#DCD3C2;
-    --surface-2:#F1E7D0;--bg:#F7EEDC;
+    --line:#EFD8CB;--line-strong:#E3C3B1;
+    --surface-2:#F7E6DB;--bg:#F9E2D4;
   }
+  /* pôr do sol: salmão à esquerda, dourado no centro, violeta de crepúsculo
+     à direita — tudo no topo, onde não há texto por cima */
   :root[data-theme="light"] .app{background:
-    radial-gradient(1300px 600px at 92% -12%, rgba(142,134,240,.05), transparent 60%),
-    radial-gradient(1100px 560px at 8% -4%, rgba(255,166,105,.09), transparent 60%),
-    radial-gradient(1000px 520px at 55% -10%, rgba(255,178,66,.12), transparent 58%),
-    #F7EEDC; background-attachment:fixed}
+    radial-gradient(1300px 600px at 92% -12%, rgba(142,134,240,.08), transparent 60%),
+    radial-gradient(1100px 560px at 8% -4%, rgba(255,112,84,.13), transparent 60%),
+    radial-gradient(1000px 520px at 55% -10%, rgba(255,166,72,.15), transparent 58%),
+    var(--bg); background-attachment:fixed}
 
   /* corpo do texto mais legível */
   .app{font-size:15.5px;line-height:1.62;letter-spacing:-.003em}
@@ -760,7 +763,11 @@
   .pk{position:relative}
   .pk .cadmini{position:absolute;top:12px;right:12px;font-size:15px;opacity:.75}
   /* página do press kit */
-  .epk{position:fixed;inset:0;z-index:200;overflow:auto;background:var(--bg);color:var(--ink);font-family:var(--sans)}
+  .epk{position:fixed;inset:0;z-index:200;overflow:auto;color:var(--ink);font-family:var(--sans);background:
+    radial-gradient(1100px 520px at 92% -12%, rgba(142,134,240,.08), transparent 60%),
+    radial-gradient(900px 480px at 8% -4%, rgba(255,112,84,.13), transparent 60%),
+    radial-gradient(900px 460px at 55% -10%, rgba(255,166,72,.15), transparent 58%),
+    var(--bg)}
   .epk-in{max-width:640px;margin:0 auto;padding:34px 22px 60px}
   .epk-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:26px}
   .epk-brand{display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--ink)}
@@ -827,9 +834,14 @@
   .cfg-passos p{margin:11px 0 0;color:var(--muted)}
 
   /* ═══════════ LANDING ═══════════ */
-  .onb{align-items:stretch;padding:0;overflow-y:auto;background:var(--bg)}
+  .onb{align-items:stretch;padding:0;overflow-y:auto;background:
+    radial-gradient(1300px 600px at 92% -12%, rgba(142,134,240,.08), transparent 60%),
+    radial-gradient(1100px 560px at 8% -4%, rgba(255,112,84,.13), transparent 60%),
+    radial-gradient(1000px 520px at 55% -10%, rgba(255,166,72,.15), transparent 58%),
+    var(--bg)}
   .lp{width:100%;max-width:1120px;margin:0 auto;padding:0 26px 70px}
-  .lp-top{display:flex;align-items:center;gap:14px;padding:20px 0 0;position:sticky;top:0;background:var(--bg);z-index:5}
+  .lp-top{display:flex;align-items:center;gap:14px;padding:20px 0 0;position:sticky;top:0;z-index:5;
+    background:color-mix(in srgb,var(--bg) 72%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
   .lp-marca{display:flex;align-items:center;gap:10px;margin-right:auto}
   .lp-marca b{font-size:19px;font-weight:660;letter-spacing:-.03em}
   .lp-marca span{font-size:19px;font-weight:400;color:var(--muted);letter-spacing:-.03em}
