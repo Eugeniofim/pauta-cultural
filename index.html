@@ -910,8 +910,21 @@
   .lp-fim{text-align:center;padding:52px 26px;background:var(--surface);border:1px solid var(--line);
     border-radius:26px;box-shadow:var(--shadow)}
   .lp-fim h2{font-size:clamp(24px,3.2vw,33px);letter-spacing:-.035em;font-weight:660;margin:0 0 11px}
-  .lp-fim p{font-size:16px;color:var(--ink-soft);margin:0 0 26px}
-  .lp-fim .lp-nota{display:block;margin-top:14px}
+  .lp-fim>p{font-size:16px;color:var(--ink-soft);margin:0 0 26px}
+  .lp-fim>p b{color:var(--crit-ink);font-weight:650}
+  .lp-planos{display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:820px;margin:0 auto;text-align:left}
+  @media (max-width:680px){.lp-planos{grid-template-columns:1fr}}
+  .lp-pl{background:var(--bg);border:1px solid var(--line-strong);border-radius:19px;padding:24px;display:flex;flex-direction:column}
+  .lp-pl.pro{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  .lp-pl-n{font-size:11px;letter-spacing:.13em;text-transform:uppercase;font-weight:700;color:var(--muted)}
+  .lp-pl.pro .lp-pl-n{color:var(--accent-ink)}
+  .lp-pl-v{font-size:30px;font-weight:660;letter-spacing:-.035em;margin:4px 0 12px;line-height:1.1}
+  .lp-pl-v small{font-size:13px;font-weight:500;color:var(--muted);letter-spacing:0;margin-left:4px}
+  .lp-pl ul{list-style:none;margin:0 0 20px;padding:0;display:grid;gap:8px;flex:1}
+  .lp-pl li{position:relative;padding-left:22px;font-size:14px;line-height:1.45;color:var(--ink)}
+  .lp-pl li::before{content:"✓";position:absolute;left:0;top:0;color:var(--ok-ink);font-weight:800}
+  .lp-pl .btn{width:100%;justify-content:center}
+  .lp-fim .lp-nota{display:block;margin-top:12px;text-align:center}
 
   /* modal do cadastro por cima da landing */
   .onb-mask{position:fixed;inset:0;background:rgba(28,24,38,.5);backdrop-filter:blur(4px);
@@ -1261,10 +1274,34 @@
       </section>
 
       <section class="lp-fim">
-        <h2>Prospectar é grátis. Escrever é R$ 9,90.</h2>
-        <p>Grátis para sempre, com 30% das oportunidades. O Pro abre todas e escreve o projeto com você — R$ 9,90 por mês ou R$ 99 por ano.</p>
-        <button class="btn pri lp-big" id="lpComecar2">Criar minha conta</button>
-        <span class="lp-nota">Seus dados ficam no seu navegador.</span>
+        <h2>Comece hoje. O prazo não espera.</h2>
+        <p id="lpPrazo">Editais abertos agora, com a data de cada um.</p>
+        <div class="lp-planos">
+          <div class="lp-pl">
+            <div class="lp-pl-n">Grátis</div>
+            <div class="lp-pl-v">R$ 0 <small>para sempre</small></div>
+            <ul>
+              <li>30% dos editais e festivais, os mais urgentes primeiro</li>
+              <li>Os 27 Sesc com o canal conferido</li>
+              <li>E-mail de proposta pronto para cada contato</li>
+              <li>Press kit com link próprio</li>
+            </ul>
+            <button class="btn pri lp-big" id="lpComecar2">Começar de graça</button>
+            <span class="lp-nota">Sem cartão. Sem senha. Seus dados ficam no seu navegador.</span>
+          </div>
+          <div class="lp-pl pro">
+            <div class="lp-pl-n">Pro</div>
+            <div class="lp-pl-v">R$ 9,90 <small>por mês · ou R$ 99 por ano</small></div>
+            <ul>
+              <li>Todos os editais e festivais, sem corte</li>
+              <li>Projeto escrito nos moldes da Lei Rouanet — os 8 campos do SALIC</li>
+              <li>Assistente para editais estaduais e municipais</li>
+              <li>Exportar dossiê, projeto e lista de contatos</li>
+            </ul>
+            <button class="btn ghost lp-big" id="lpPro">Criar conta e assinar</button>
+            <span class="lp-nota">Um cachê paga a assinatura por anos.</span>
+          </div>
+        </div>
       </section>
     </div>
 
@@ -1647,6 +1684,7 @@ const cap=s=>s?s.charAt(0).toUpperCase()+s.slice(1):s;
 const lp=s=>String(s||"").trim().replace(/\s*\.\s*$/,"");
 const LIM=8000;
 const CONTA_KEY="pauta.conta.v1";
+let posOnb=null; /* para onde ir quando o cadastro terminar (ex.: "plano") */
 const SEG_KEY="pauta.seguindo.v1";
 const NOTI_KEY="pauta.notificados.v1";
 const HOJE=new Date();HOJE.setHours(0,0,0,0);
@@ -3613,6 +3651,7 @@ function onbIniciar(){
   el.classList.add("on");
   lpNumeros();
   ["#lpComecar","#lpComecar2","#lpEntrar"].forEach(x=>{const b=$(x);if(b)b.onclick=abrirCadastro;});
+  {const b=$("#lpPro");if(b)b.onclick=()=>{posOnb="plano";abrirCadastro();};}
   return true;
 }
 
@@ -3827,6 +3866,7 @@ function onbFim(){
   if($("#fu"))$("#fu").value=P.uf;
   chipsUI();refresh();head();
   toast("Tudo pronto, "+P.nome.split(" ")[0]+"!");
+  if(posOnb){const d=posOnb;posOnb=null;setTimeout(()=>nav(d),350);}
 }
 
 
@@ -4491,6 +4531,10 @@ function lpEditalReal(){
   const e=abertos[0];
   const d=e.pz===0?"encerra hoje":e.pz===1?"falta 1 dia":`faltam ${e.pz} dias`;
   const [A,M,D]=e.ate.split("-");
+  /* o fechamento usa o mesmo edital: urgência de verdade, com a conta do dia,
+     não frase de vitrine */
+  const pz=$("#lpPrazo");
+  if(pz)pz.innerHTML=`${esc(e.t.length>60?e.t.slice(0,57)+"…":e.t)} — <b>${d}</b>. E é só um dos ${abertos.length} editais abertos agora.`;
   c.style.display="";
   c.innerHTML=`
     <div class="lp-k">${esc(e.tp||"Edital")} · ${esc((e.o||"").slice(0,34))}</div>
@@ -4988,6 +5032,7 @@ function verLanding(){
     if(t1)t1.textContent="Voltar ao app";
     if(t2)t2.textContent="Voltar ao app";
     if(t3)t3.textContent="Voltar ao app";
+    const tp=$("#lpPro");if(tp){tp.textContent="Ver o Pauta Pro";tp.onclick=()=>{fecharLanding();nav("plano");};}
   }
 }
 function fecharLanding(){
