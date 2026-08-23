@@ -42,10 +42,10 @@
 <title>Pauta Cultural — editais e festivais do Brasil</title>
 <style>
   :root{
-    --bg:#F9E2D4;--surface:#FFF7F2;--surface-2:#F7E6DB;--ink:#221E33;--ink-soft:#5C5678;--muted:#67607E;
-    --line:#F0D9CC;--line-strong:#E6C6B5;
+    --bg:#FAD8C2;--surface:#FFF7F2;--surface-2:#F7E6DB;--ink:#221E33;--ink-soft:#5C5678;--muted:#5F5878;
+    --line:#F2D2BC;--line-strong:#E7C0A5;
     --peach:#FF9269;--rose:#F2669D;--periw:#8E86F0;
-    --accent:#E85A8A;--accent-ink:#B53560;--accent-soft:#FDF0F5;
+    --accent:#E85A8A;--accent-ink:#AC3059;--accent-soft:#FDF0F5;
     --ok:#2F9670;--ok-soft:#EAF7F1;--warn:#B8801A;--warn-soft:#FDF6E7;--crit:#D4425F;--crit-soft:#FDEFF2;
     --warn-ink:#83590B;--crit-ink:#BC2A49;--ok-ink:#1F6B50;
     --grad:linear-gradient(103deg,#C2410C,#BE185D 45%,#4F46E5);
@@ -66,9 +66,9 @@
       --grad:linear-gradient(103deg,var(--peach),var(--rose) 45%,var(--periw));--grad-btn:linear-gradient(103deg,#C2410C,#BE185D 45%,#4F46E5);
       --shadow:0 1px 3px rgba(0,0,0,.3),0 14px 40px rgba(0,0,0,.4);--shadow-lg:0 28px 66px rgba(0,0,0,.55);}
   }
-  :root[data-theme="light"]{--bg:#F9E2D4;--surface:#FFF7F2;--surface-2:#F7E6DB;--ink:#221E33;--ink-soft:#5C5678;--muted:#67607E;
-    --line:#F0D9CC;--line-strong:#E6C6B5;--peach:#FF9269;--rose:#F2669D;--periw:#8E86F0;
-    --accent:#E85A8A;--accent-ink:#B53560;--accent-soft:#FDF0F5;--ok:#2F9670;--ok-soft:#EAF7F1;--warn:#B8801A;--warn-soft:#FDF6E7;--crit:#D4425F;--crit-soft:#FDEFF2;
+  :root[data-theme="light"]{--bg:#FAD8C2;--surface:#FFF7F2;--surface-2:#F7E6DB;--ink:#221E33;--ink-soft:#5C5678;--muted:#5F5878;
+    --line:#F2D2BC;--line-strong:#E7C0A5;--peach:#FF9269;--rose:#F2669D;--periw:#8E86F0;
+    --accent:#E85A8A;--accent-ink:#AC3059;--accent-soft:#FDF0F5;--ok:#2F9670;--ok-soft:#EAF7F1;--warn:#B8801A;--warn-soft:#FDF6E7;--crit:#D4425F;--crit-soft:#FDEFF2;
     --warn-ink:#83590B;--crit-ink:#BC2A49;--ok-ink:#1F6B50;
     --grad:linear-gradient(103deg,#C2410C,#BE185D 45%,#4F46E5);--grad-btn:linear-gradient(103deg,#C2410C,#BE185D 45%,#4F46E5);
     --shadow:0 1px 1px rgba(34,30,51,.02),0 2px 4px rgba(34,30,51,.022),0 8px 18px rgba(110,90,150,.045);--shadow-lg:0 2px 4px rgba(30,26,46,.04),0 12px 28px rgba(90,70,130,.10),0 28px 60px rgba(90,70,130,.10);}
@@ -393,9 +393,10 @@
 
   /* ——— profundidade e acabamento ——— */
   .app{background:
-    radial-gradient(1200px 560px at 88% -10%, rgba(142,134,240,.08), transparent 64%),
-    radial-gradient(950px 480px at 5% 2%, rgba(255,112,84,.12), transparent 62%),
-    radial-gradient(1000px 520px at 55% -10%, rgba(255,166,72,.14), transparent 58%),
+    linear-gradient(180deg, rgba(255,112,72,.16), rgba(255,146,72,.06) 340px, rgba(255,146,72,0) 640px),
+    radial-gradient(1200px 560px at 88% -10%, rgba(142,134,240,.10), transparent 64%),
+    radial-gradient(950px 480px at 5% 2%, rgba(255,96,58,.15), transparent 62%),
+    radial-gradient(1000px 520px at 55% -10%, rgba(255,166,72,.17), transparent 58%),
     var(--bg);
     background-attachment:fixed}
   @media (prefers-color-scheme:dark){.app{background:
@@ -624,16 +625,17 @@
   .temab:hover{border-color:var(--accent);color:var(--accent-ink)}
 
   :root[data-theme="light"]{
-    --ink:#1C1826;--ink-soft:#4A4560;--muted:#67607E;
-    --line:#EFD8CB;--line-strong:#E3C3B1;
-    --surface-2:#F7E6DB;--bg:#F9E2D4;
+    --ink:#1C1826;--ink-soft:#4A4560;--muted:#5F5878;
+    --line:#F0CFB8;--line-strong:#E2BBA0;
+    --surface-2:#F7E6DB;--bg:#FAD8C2;
   }
   /* pôr do sol: salmão à esquerda, dourado no centro, violeta de crepúsculo
      à direita — tudo no topo, onde não há texto por cima */
   :root[data-theme="light"] .app{background:
-    radial-gradient(1300px 600px at 92% -12%, rgba(142,134,240,.08), transparent 60%),
-    radial-gradient(1100px 560px at 8% -4%, rgba(255,112,84,.13), transparent 60%),
-    radial-gradient(1000px 520px at 55% -10%, rgba(255,166,72,.15), transparent 58%),
+    linear-gradient(180deg, rgba(255,112,72,.16), rgba(255,146,72,.06) 340px, rgba(255,146,72,0) 640px),
+    radial-gradient(1300px 600px at 92% -12%, rgba(142,134,240,.10), transparent 60%),
+    radial-gradient(1100px 560px at 8% -4%, rgba(255,96,58,.15), transparent 60%),
+    radial-gradient(1000px 520px at 55% -10%, rgba(255,166,72,.17), transparent 58%),
     var(--bg); background-attachment:fixed}
 
   /* corpo do texto mais legível */
@@ -764,9 +766,10 @@
   .pk .cadmini{position:absolute;top:12px;right:12px;font-size:15px;opacity:.75}
   /* página do press kit */
   .epk{position:fixed;inset:0;z-index:200;overflow:auto;color:var(--ink);font-family:var(--sans);background:
-    radial-gradient(1100px 520px at 92% -12%, rgba(142,134,240,.08), transparent 60%),
-    radial-gradient(900px 480px at 8% -4%, rgba(255,112,84,.13), transparent 60%),
-    radial-gradient(900px 460px at 55% -10%, rgba(255,166,72,.15), transparent 58%),
+    linear-gradient(180deg, rgba(255,112,72,.16), rgba(255,146,72,.06) 340px, rgba(255,146,72,0) 640px),
+    radial-gradient(1100px 520px at 92% -12%, rgba(142,134,240,.10), transparent 60%),
+    radial-gradient(900px 480px at 8% -4%, rgba(255,96,58,.15), transparent 60%),
+    radial-gradient(900px 460px at 55% -10%, rgba(255,166,72,.17), transparent 58%),
     var(--bg)}
   .epk-in{max-width:640px;margin:0 auto;padding:34px 22px 60px}
   .epk-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:26px}
@@ -854,16 +857,17 @@
 
   /* ═══════════ LANDING ═══════════ */
   .onb{align-items:stretch;padding:0;overflow-y:auto;background:
-    radial-gradient(1300px 600px at 92% -12%, rgba(142,134,240,.08), transparent 60%),
-    radial-gradient(1100px 560px at 8% -4%, rgba(255,112,84,.13), transparent 60%),
-    radial-gradient(1000px 520px at 55% -10%, rgba(255,166,72,.15), transparent 58%),
+    linear-gradient(180deg, rgba(255,112,72,.16), rgba(255,146,72,.06) 340px, rgba(255,146,72,0) 640px),
+    radial-gradient(1300px 600px at 92% -12%, rgba(142,134,240,.10), transparent 60%),
+    radial-gradient(1100px 560px at 8% -4%, rgba(255,96,58,.15), transparent 60%),
+    radial-gradient(1000px 520px at 55% -10%, rgba(255,166,72,.17), transparent 58%),
     var(--bg)}
   .lp{width:100%;max-width:1120px;margin:0 auto;padding:0 26px 70px}
   .lp-top{display:flex;align-items:center;gap:14px;padding:20px 0 0;position:sticky;top:0;z-index:5;
     background:color-mix(in srgb,var(--bg) 72%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
   .lp-marca{display:flex;align-items:center;gap:10px;margin-right:auto}
   .lp-marca b{font-size:19px;font-weight:660;letter-spacing:-.03em}
-  .lp-marca span{font-size:19px;font-weight:400;color:var(--muted);letter-spacing:-.03em}
+  .lp-marca span{font-size:19px;font-weight:400;color:var(--ink-soft);letter-spacing:-.03em}
 
   .lp-hero{display:grid;grid-template-columns:1.08fr .92fr;gap:44px;align-items:center;padding:52px 0 60px}
   @media (max-width:900px){.lp-hero{grid-template-columns:1fr;gap:34px;padding:34px 0 44px}.lp-h-vis{display:none}}
@@ -878,13 +882,13 @@
   @media (max-width:560px){.lp-ben{grid-template-columns:1fr}}
   .lp-cta{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
   .lp-big{font-size:16px;padding:16px 30px;border-radius:15px}
-  .lp-nota{font-size:13px;color:var(--muted)}
+  .lp-nota{font-size:13px;color:var(--ink-soft)}
   .lp-nums{display:grid;grid-template-columns:repeat(4,auto);gap:14px 30px;margin-top:34px;padding-top:26px;border-top:1px solid var(--line);justify-content:start}
   @media (max-width:620px){.lp-nums{grid-template-columns:repeat(2,1fr)}}
   .lp-nums div{display:flex;flex-direction:column;gap:2px}
   .lp-nums b{font-size:27px;font-weight:660;letter-spacing:-.03em;line-height:1;
     background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
-  .lp-nums span{font-size:12.3px;color:var(--muted);line-height:1.3;max-width:14ch}
+  .lp-nums span{font-size:12.3px;color:var(--ink-soft);line-height:1.3;max-width:14ch}
 
   .lp-h-vis{position:relative;height:400px}
   .lp-card{position:absolute;background:var(--surface);border:1px solid var(--line);border-radius:17px;
