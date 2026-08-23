@@ -4015,15 +4015,29 @@ function gerarEmail(f){
 }
 
 let mailAtual=null;
-function abrirContato(nome){
+/* Follow-up curto de propósito: retomada de contato não reapresenta o
+   trabalho, só volta à superfície. Reenviar o e-mail original inteiro lê
+   como spam; três linhas lêem como profissional. */
+function gerarFollowup(f,enviadoEm){
+  const c=contaLer(), nome=c.nome||P.nome||"[seu nome]";
+  const quando=enviadoEm?new Date(enviadoEm).toLocaleDateString("pt-BR"):"há algumas semanas";
+  return {assunto:`Re: Proposta de ${nome}`,
+    corpo:`Olá, equipe do ${f.n}.\n\nEscrevi em ${quando} apresentando meu trabalho e imagino que a caixa de vocês seja cheia — só passando para retomar o contato.\n\nSigo à disposição para mandar qualquer material que ajude na avaliação. E, se a agenda deste ano já fechou, adoraria saber quando abre a próxima seleção.\n\nObrigado pelo tempo de vocês.\n\n${nome}\n${c.mail||"[seu e-mail]"}`};
+}
+function abrirContato(nome,opts){
   /* o Sesc não está em FESTIVAIS_TODOS: é outro acervo. Aqui ele vira uma
      ficha no mesmo formato, marcada com sesc:true para o gerador de e-mail
      saber que precisa falar de contrapartida e formação. */
   const f=FESTIVAIS_TODOS.find(x=>x.n===nome)
     || (()=>{const x=SESC.find(y=>y.n===nome);return x?Object.assign({},x,{sesc:true,porte:"sesc",quando:null}):null;})();
   if(!f)return;
-  const sub=subDe(f.n), g=gerarEmail(f);
-  mailAtual={f,assunto:(sub&&sub.assunto)||g.assunto,corpo:(sub&&sub.corpo)||g.corpo};
+  const sub=subDe(f.n);
+  const g=(opts&&opts.fup)?gerarFollowup(f,sub&&sub.enviadoEm):gerarEmail(f);
+  /* no follow-up o texto novo vence o rascunho salvo: retomar com o e-mail
+     antigo seria reenviar a mesma coisa */
+  mailAtual=(opts&&opts.fup)
+    ? {f,assunto:g.assunto,corpo:g.corpo}
+    : {f,assunto:(sub&&sub.assunto)||g.assunto,corpo:(sub&&sub.corpo)||g.corpo};
   const semMail=!f.mail;
   $("#mailBox").innerHTML=`
     <div class="mb-h">
@@ -4085,19 +4099,26 @@ function submissoes(){
   const el=$("#subBox");if(!el)return;
   const a=subLer().sort((x,y)=>y.at-x.at);
   const env=a.filter(x=>x.status!=="Rascunho").length;
+  /* prospecção não termina no envio: sem resposta em 7 dias, é hora de
+     retomar — e quase ninguém retoma porque nada avisa. Aqui avisa. */
+  const DIA=864e5;
+  const precisaFup=x=>x.status==="Enviado"&&x.enviadoEm&&(Date.now()-x.enviadoEm)>=7*DIA;
+  const fups=a.filter(precisaFup).length;
   el.innerHTML=`<div class="alertbox"><div class="ah"><b>Onde você já se apresentou</b>
-      <span style="font-size:12.5px;color:var(--muted)">${a.length} ${a.length===1?"festival":"festivais"} · ${env} ${env===1?"enviado":"enviados"}</span></div>
+      <span style="font-size:12.5px;color:var(--muted)">${a.length} ${a.length===1?"festival":"festivais"} · ${env} ${env===1?"enviado":"enviados"}${fups?` · <b style="color:var(--warn-ink)">${fups} para retomar</b>`:""}</span></div>
     <div class="ab">${a.length?a.map(x=>`
       <div class="al"><span class="stt ${x.status.replace(/\s/g,"").toLowerCase()}">${x.status}</span>
         <div class="ai"><b>${esc(x.festival)}</b>
           <small>${x.mail?esc(x.mail):"sem e-mail"} · ${x.enviadoEm?"enviado em "+new Date(x.enviadoEm).toLocaleDateString("pt-BR"):"rascunho salvo"}</small></div>
         <select class="stsel" data-st="${esc(x.festival)}">${STATUS.map(o=>`<option${o===x.status?" selected":""}>${o}</option>`).join("")}</select>
-        <button class="btn ghost sm" data-reab="${esc(x.festival)}">Abrir</button></div>`).join("")
+        ${precisaFup(x)?`<button class="btn pri sm" data-fup="${esc(x.festival)}">Retomar contato</button>`
+                       :`<button class="btn ghost sm" data-reab="${esc(x.festival)}">Abrir</button>`}</div>`).join("")
       :'<div class="alempty">Nenhum contato ainda. Na aba Festivais, clique em <b>Escrever para o festival</b>.</div>'}</div></div>`;
   $$("#subBox .stsel").forEach(sel=>sel.onchange=()=>{
     const a2=subLer(),i=a2.findIndex(x=>x.festival===sel.dataset.st);
     if(i>=0){a2[i].status=sel.value;a2[i].at=Date.now();subSalvar(a2);submissoes();toast("Situação atualizada");}});
   $$("#subBox [data-reab]").forEach(b=>b.onclick=()=>abrirContato(b.dataset.reab));
+  $$("#subBox [data-fup]").forEach(b=>b.onclick=()=>abrirContato(b.dataset.fup,{fup:true}));
 }
 function fTitulo(){
   const t={nac:["Festivais do Brasil","Festivais do Brasil"],
