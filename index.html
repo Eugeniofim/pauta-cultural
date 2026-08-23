@@ -1397,6 +1397,7 @@
       <button class="nv" data-s="chat">Conversar</button>
       <button class="nv" data-s="projetos">Meus projetos</button>
       <button class="nv" data-s="perfil">Perfil</button>
+      <button class="nv" data-s="vender" id="nvVender" hidden>📣 Vender</button>
       <button class="nv" data-s="plano">Plano</button>
     </nav>
     <button class="temab" id="temaB" title="Alternar tema">☀</button>
@@ -1565,6 +1566,40 @@
 
 
     <!-- PLANO -->
+    <!-- MODO DONO: cockpit de venda. Só aparece para o dono do app. -->
+    <section class="scr" id="s-vender">
+      <div class="eyebrow">Modo dono</div>
+      <h1>Venda a Pauta.</h1>
+      <p class="lead">Textos prontos com seu código de convite. Nos <b>festivais e no Sesc</b>, o botão 📣 de cada cartão gera o texto usando aquele festival como gancho.</p>
+      <div class="grid2" style="margin-top:24px">
+        <div class="card">
+          <h3 style="margin:0 0 6px">Seu código de convite</h3>
+          <p class="note" style="margin:0 0 12px">7 dias de Pro, sem cartão, um por e-mail. Crie e gerencie códigos no painel do Stripe.</p>
+          <label>Código</label>
+          <input type="text" id="vCupom" autocapitalize="characters">
+          <label style="margin-top:10px">Link mágico (abre o app com o código preenchido)</label>
+          <input type="text" id="vLink" readonly>
+          <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+            <button class="btn pri sm" id="vLinkCopiar">Copiar link</button>
+            <button class="btn ghost sm" id="vZap">Abrir WhatsApp com o texto</button>
+          </div>
+        </div>
+        <div class="card">
+          <h3 style="margin:0 0 6px">Textos prontos</h3>
+          <p class="note" style="margin:0 0 12px">Edite à vontade antes de copiar — o link com seu código já vai dentro.</p>
+          <label>WhatsApp / direct</label>
+          <textarea id="vTxtZap" rows="6" spellcheck="true"></textarea>
+          <button class="btn ghost sm" data-vcopy="vTxtZap" style="margin:6px 0 14px">Copiar</button>
+          <label>Legenda de Instagram</label>
+          <textarea id="vTxtInsta" rows="8" spellcheck="true"></textarea>
+          <button class="btn ghost sm" data-vcopy="vTxtInsta" style="margin:6px 0 14px">Copiar</button>
+          <label>E-mail (assunto na primeira linha)</label>
+          <textarea id="vTxtMail" rows="8" spellcheck="true"></textarea>
+          <button class="btn ghost sm" data-vcopy="vTxtMail" style="margin-top:6px">Copiar</button>
+        </div>
+      </div>
+    </section>
+
     <section class="scr" id="s-plano">
       <div style="max-width:620px;margin:0 auto;text-align:center">
         <div class="eyebrow">Pauta Pro</div>
@@ -3319,6 +3354,7 @@ function fRender(){
         ${f.link?`<a href="${f.link}" target="_blank" rel="noopener"><span class="ic2">▸</span>${f.origem==="catalogo"?"Site oficial":"Ver ficha no "+esc(f.sis)}</a>`:""}
       </div>
       <button class="btn pri sm escrbtn" data-escr="${esc(f.n)}">✎ Escrever para o festival</button>
+      ${ehDono()?`<button class="btn ghost sm" data-vender="${esc(f.n)}" title="Gerar texto de venda da Pauta usando este festival como gancho">📣 Prospectar com este</button>`:""}
       <div style="display:none">
       </div>
     </article>`;
@@ -3326,6 +3362,7 @@ function fRender(){
   $$("#ffeed [data-go]").forEach(b=>b.onclick=()=>nav(b.dataset.go));
   $$("#ffeed [data-escr]").forEach(b=>b.onclick=()=>abrirContato(b.dataset.escr));
   $$("#ffeed [data-wa]").forEach(a=>a.onclick=ev=>{ev.preventDefault();abrirWhats(a.dataset.wa,a.dataset.dest,a.dataset.tipo);});
+  $$("#ffeed [data-vender]").forEach(b=>b.onclick=()=>venderCom(b.dataset.vender));
 }
 /* O Sesc não tem prazo para listar: o valor aqui é o canal de envio. Por isso
    cada ficha diz o que foi conferido e o que não foi, em vez de fingir que
@@ -3377,9 +3414,11 @@ function sescRender(){
         ${x.site?`<a href="${x.site}" target="_blank" rel="noopener"><span class="ic2">↗</span>${x.site.replace(/^https?:\/\//,"").replace(/\/$/,"").slice(0,44)}</a>`:""}
       </div>
       ${(x.mail||x.form||x.wa)?`<button class="btn pri sm escrbtn" data-escr="${esc(x.n)}">✎ Escrever para o Sesc</button>`:""}
+      ${ehDono()?`<button class="btn ghost sm" data-vender="${esc(x.n)}" title="Gerar texto de venda da Pauta usando este Sesc como gancho">📣 Prospectar com este</button>`:""}
     </article>`).join("")+bannerPro(ocultos,"Sesc",`O plano grátis mostra ${SESC_LIVRE} — o do seu estado primeiro. O Pro abre os 27 regionais e o Sesc Nacional, com o canal conferido.`);
   $$("#ffeed [data-escr]").forEach(b=>b.onclick=()=>abrirContato(b.dataset.escr));
   $$("#ffeed [data-wa]").forEach(a=>a.onclick=ev=>{ev.preventDefault();abrirWhats(a.dataset.wa,a.dataset.dest,a.dataset.tipo);});
+  $$("#ffeed [data-vender]").forEach(b=>b.onclick=()=>venderCom(b.dataset.vender));
 }
 function fInit(){
   const comD=new Set(fUFs());
@@ -5312,7 +5351,80 @@ function nav(s){
 $$(".nv").forEach(n=>n.onclick=()=>nav(n.dataset.s));
 $$("[data-go]").forEach(b=>b.onclick=()=>nav(b.dataset.go));
 
-function refresh(){head();tipoUI();sidePanel();feed();}
+/* ── MODO DONO: cockpit de venda ──
+   Reconhece o dono pelo e-mail da conta ou pelo cupom vitalício aplicado.
+   Nada disso dá poder extra no servidor — só desenha a aba e os geradores
+   de texto. O foco dos textos é UM só: vender a assinatura, usando os 7
+   dias do convite como porta. */
+const DONO_MAILS=["eugeniofim@gmail.com"];
+function ehDono(){
+  const m=(contaLer().mail||"").toLowerCase();
+  if(DONO_MAILS.includes(m))return true;
+  return /^cupom(-servidor)?:eugeniofim2026$/i.test(proInfo().motivo||"");
+}
+function donoUI(){const b=$("#nvVender");if(b)b.hidden=!ehDono();}
+const VCUPOM_KEY="pauta.dono.cupom";
+const vCupom=()=>{try{return (localStorage.getItem(VCUPOM_KEY)||"PAUTA7").toUpperCase();}catch(e){return "PAUTA7";}}
+const vLink=()=>"https://pauta-cultural.vercel.app/?cupom="+encodeURIComponent(vCupom());
+function textosVenda(gancho){
+  const L=vLink(), C=vCupom();
+  const abre=gancho
+    ? (gancho.sesc
+        ? `Quer levar teu show pro ${gancho.n}? A Pauta tem o canal conferido de cada Sesc do país e escreve a proposta contigo.`
+        : `Vai mandar material pro ${gancho.n}? Na Pauta o e-mail de proposta sai pronto — e teu press kit vira um link.`)
+    : `Tu vive caçando edital e mandando material no braço? A Pauta junta tudo: editais com prazo real, festivais com contato conferido, os 27 Sesc — e escreve teu projeto da Lei Rouanet em 36 perguntas.`;
+  const zap=`${abre}
+Te consegui 7 dias de Pro, sem cartão: ${L}
+Depois é R$ 9,90/mês (ou R$ 99/ano) — um cachê paga anos.`;
+  const insta=`${gancho?`Mandando material pro ${gancho.n}? 👇`:`Pra quem vive de arte e cansou de caçar edital em vinte abas: 👇`}
+
+A Pauta Cultural junta num lugar só:
+✓ Editais com prazo real e link oficial
+✓ Festivais do Brasil, Américas e Europa com contato conferido
+✓ Os 27 Sesc, com o canal certo de cada um
+✓ Teu projeto da Lei Rouanet escrito em 36 perguntas
+✓ Press kit com link próprio
+
+7 dias de Pro grátis com o código ${C} 🎟️
+Link na bio → depois R$ 9,90/mês ou R$ 99/ano.`;
+  const mail=`Assunto: 7 dias de Pauta Pro pra você
+
+Oi! Lembrei de você${gancho?` por causa do ${gancho.n}`:""}.
+
+Estou usando a Pauta Cultural pra prospectar: editais com prazo real, festivais com contato conferido, os 27 Sesc com o canal certo, e o projeto da Lei Rouanet escrito em 36 perguntas — o e-mail de proposta sai pronto.
+
+Te consegui 7 dias de Pro, sem cartão: ${L}
+Depois, se valer (pra mim valeu), é R$ 9,90/mês ou R$ 99/ano.
+
+Abraço!`;
+  return {zap,insta,mail};
+}
+function venderPreencher(gancho){
+  const t=textosVenda(gancho||null);
+  const z=$("#vTxtZap"),i=$("#vTxtInsta"),m=$("#vTxtMail");
+  if(z)z.value=t.zap; if(i)i.value=t.insta; if(m)m.value=t.mail;
+  const c=$("#vCupom"),l=$("#vLink");
+  if(c&&!c.value)c.value=vCupom(); if(l)l.value=vLink();
+}
+function venderInit(){
+  const c=$("#vCupom");if(!c)return;
+  c.value=vCupom();
+  c.oninput=()=>{try{localStorage.setItem(VCUPOM_KEY,c.value.trim().toUpperCase());}catch(e){}venderPreencher(venderGancho);};
+  $("#vLinkCopiar").onclick=()=>copy(vLink(),"Link de convite");
+  $("#vZap").onclick=()=>window.open("https://wa.me/?text="+encodeURIComponent($("#vTxtZap").value),"_blank","noopener");
+  $$("#s-vender [data-vcopy]").forEach(b=>b.onclick=()=>copy($("#"+b.dataset.vcopy).value,"Texto"));
+  venderPreencher(null);
+}
+let venderGancho=null;
+function venderCom(nome){
+  /* usa o festival/Sesc como gancho e cai na aba Vender com tudo preenchido */
+  let f=FESTIVAIS_TODOS.find(x=>x.n===nome), sesc=false;
+  if(!f){const y=SESC.find(x=>x.n===nome);if(y){f=y;sesc=true;}}
+  venderGancho=f?{n:f.n,sesc}:null;
+  nav("vender");venderPreencher(venderGancho);
+  toast(f?("Textos prontos com o gancho: "+f.n):"Textos prontos");
+}
+function refresh(){head();tipoUI();sidePanel();feed();donoUI();}
 $$("#ft button").forEach(b=>b.onclick=()=>{P.tipo=b.dataset.t;refresh();});
 $("#fn").oninput=e=>{P.nome=e.target.value;refresh();};
 $("#fa").onchange=e=>{P.area=e.target.value;P.estilos=[];chipsUI();refresh();};
@@ -5443,6 +5555,8 @@ $("#pSalvarConta").onclick=()=>{
   toast("Perfil salvo na sua conta");head();};
 $$("#acTipo button").forEach(b=>b.onclick=()=>$$("#acTipo button").forEach(x=>x.classList.toggle("on",x===b)));
 document.addEventListener("click",e=>{if(!e.target.closest("#acctPop")&&!e.target.closest("#acctBtn"))$("#acctPop").classList.remove("on");});
+/* modo dono por último: depende dos const declarados acima */
+donoUI();venderInit();
 })();
 </script>
 </body>
