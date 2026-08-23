@@ -1282,7 +1282,7 @@
             <div class="lp-pl-v">R$ 0 <small>para sempre</small></div>
             <ul>
               <li>30% dos editais e festivais, os mais urgentes primeiro</li>
-              <li>Os 27 Sesc com o canal conferido</li>
+              <li>3 Sesc para começar — o do seu estado primeiro</li>
               <li>E-mail de proposta pronto para cada contato</li>
               <li>Press kit com link próprio</li>
             </ul>
@@ -1294,6 +1294,7 @@
             <div class="lp-pl-v">R$ 9,90 <small>por mês · ou R$ 99 por ano</small></div>
             <ul>
               <li>Todos os editais e festivais, sem corte</li>
+              <li>Os 27 Sesc com o canal conferido</li>
               <li>Projeto escrito nos moldes da Lei Rouanet — os 8 campos do SALIC</li>
               <li>Assistente para editais estaduais e municipais</li>
               <li>Exportar dossiê, projeto e lista de contatos</li>
@@ -1514,6 +1515,7 @@
           <div class="pp">para sempre</div>
           <ul class="pl2">
             <li class="s">30% dos editais e festivais — os mais urgentes primeiro</li>
+            <li class="s">3 Sesc — o do seu estado primeiro</li>
             <li class="s">Filtros e busca por perfil</li>
             <li class="s">Estrutura dos formulários oficiais</li>
             <li class="s">Avisos de prazo no navegador</li>
@@ -1529,6 +1531,7 @@
           <ul class="pl2">
             <li class="s">Tudo do plano grátis</li>
             <li class="s"><b>Todos os editais e festivais</b>, sem corte</li>
+            <li class="s"><b>Os 27 Sesc</b> com o canal conferido — e-mail, WhatsApp ou formulário</li>
             <li class="s"><b>Assistente da Lei Rouanet</b> — escreve os 8 campos do SALIC com você, dentro dos limites da norma</li>
             <li class="s">Assistente para editais estaduais e municipais</li>
             <li class="s">Exportar dossiê, projeto e lista de contatos</li>
@@ -3195,9 +3198,18 @@ function sescRender(){
     if(/cursos e oficinas/i.test(x.rot||""))return 2;
     return 1;
   };
-  const lista=SESC.filter(x=>!q||(x.n+" "+x.d).toLowerCase().includes(q))
-    .slice().sort((a,b)=>peso(b)-peso(a)||(b.ed||0)-(a.ed||0)||(b.site?1:0)-(a.site?1:0));
-  $("#fcnt").textContent=lista.length;
+  const todos=SESC.slice().sort((a,b)=>peso(b)-peso(a)||(b.ed||0)-(a.ed||0)||(b.site?1:0)-(a.site?1:0));
+  /* Plano grátis: 3 regionais, o do estado da pessoa primeiro. O conjunto
+     livre é fixo e a busca filtra só dentro dele — se a busca rodasse antes
+     do corte, bastava digitar cada estado para ver os 27 sem pagar. */
+  let base=todos, ocultos=0;
+  if(!ehPro()){
+    const meu=todos.find(x=>x.uf===(P.uf||contaLer().uf));
+    base=[...(meu?[meu]:[]),...todos.filter(x=>x!==meu)].slice(0,SESC_LIVRE);
+    ocultos=todos.length-base.length;
+  }
+  const lista=base.filter(x=>!q||(x.n+" "+x.d).toLowerCase().includes(q));
+  $("#fcnt").textContent=ehPro()?String(lista.length):`${lista.length} de ${todos.length}`;
   $("#fttl").textContent="Sesc — onde e como enviar seu material";
   const fl=$("#fcntL");if(fl)fl.textContent=lista.length===1?"regional":"regionais";
   const el=$("#ffeed");
@@ -3219,7 +3231,7 @@ function sescRender(){
         ${x.site?`<a href="${x.site}" target="_blank" rel="noopener"><span class="ic2">↗</span>${x.site.replace(/^https?:\/\//,"").replace(/\/$/,"").slice(0,44)}</a>`:""}
       </div>
       ${(x.mail||x.form||x.wa)?`<button class="btn pri sm escrbtn" data-escr="${esc(x.n)}">✎ Escrever para o Sesc</button>`:""}
-    </article>`).join("");
+    </article>`).join("")+bannerPro(ocultos,"Sesc",`O plano grátis mostra ${SESC_LIVRE} — o do seu estado primeiro. O Pro abre os 27 regionais e o Sesc Nacional, com o canal conferido.`);
   $$("#ffeed [data-escr]").forEach(b=>b.onclick=()=>abrirContato(b.dataset.escr));
 }
 function fInit(){
@@ -3326,6 +3338,7 @@ const PRO_KEY="pauta.pro.v1";
    consegue ler este código no navegador. No produto, quem valida é o servidor. */
 const CUPONS={"EUGENIOFIM2026":{tipo:"vitalicio",nome:"acesso completo"}};
 const LIVRE=0.30;   // fração das oportunidades no plano grátis
+const SESC_LIVRE=3; // regionais do Sesc visíveis no plano grátis
 
 function ehPro(){try{return JSON.parse(localStorage.getItem(PRO_KEY))?.ativo===true;}catch(e){return false;}}
 function proInfo(){try{return JSON.parse(localStorage.getItem(PRO_KEY))||{};}catch(e){return {};}}
@@ -3349,12 +3362,12 @@ function limitar(lista){
   const n=Math.max(3,Math.ceil(lista.length*LIVRE));
   return {lista:lista.slice(0,n),ocultos:Math.max(0,lista.length-n)};
 }
-function bannerPro(ocultos,oque){
+function bannerPro(ocultos,oque,nota){
   if(!ocultos)return "";
   return `<div class="prolock">
     <div class="pl-i">🔒</div>
     <div class="pl-t"><b>+${ocultos} ${oque} no Pauta Pro</b>
-      <small>O plano grátis mostra 30% das oportunidades. O Pro abre todas — e escreve o projeto com você.</small></div>
+      <small>${nota||"O plano grátis mostra 30% das oportunidades. O Pro abre todas — e escreve o projeto com você."}</small></div>
     <button class="btn pri" data-go="plano">Ver o Pro</button>
   </div>`;
 }
