@@ -4098,7 +4098,20 @@ async function aplicarCupomAsync(codigo){
       const c=contaLer();
       const j=await apiFetch("/cupom",{method:"POST",headers:{"Content-Type":"application/json"},
         body:JSON.stringify({codigo:cod,email:c.mail||""})});
-      if(j&&j.ok&&j.pro){ativarPro("cupom-servidor:"+cod);return {ok:true,msg:j.msg||"Cupom aplicado."};}
+      if(j&&j.ok&&j.pro){
+        /* com e-mail na conta, o cupom vira assinatura de R$ 0 no Stripe —
+           é o que faz o Pro aparecer sozinho nos outros aparelhos */
+        if(c.mail&&/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(c.mail)){
+          try{
+            const cv=await apiFetch("/convite",{method:"POST",headers:{"Content-Type":"application/json"},
+              body:JSON.stringify({codigo:cod,email:c.mail})});
+            if(cv&&cv.ok&&cv.url){location.href=cv.url;return {ok:true,msg:"Confirmando seu acesso — rápido e sem cartão."};}
+            if(cv&&cv.jaTem){ativarPro("cupom-servidor:"+cod);return {ok:true,msg:"Este e-mail já tem acesso — liberado aqui também."};}
+          }catch(e){/* sem rede no meio: cai para o modo local */}
+        }
+        ativarPro("cupom-servidor:"+cod);
+        return {ok:true,msg:(j.msg||"Cupom aplicado.")+(c.mail?"":" Vale neste aparelho — preencha seu e-mail na conta e aplique de novo para valer em todos.")};
+      }
       if(j&&j.ok&&j.convite){
         /* convite de 7 dias: precisa do e-mail da conta — é ele que fica
            marcado no Stripe e impede usar o convite duas vezes */

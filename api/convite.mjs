@@ -6,10 +6,10 @@
  * por lá, sem mexer em código). O servidor confere duas coisas antes de
  * abrir o checkout:
  *
- *  1. O código existe, está ativo e NÃO é o cupom vitalício (100% forever —
- *     esse segue no fluxo antigo de cupom).
- *  2. O e-mail nunca teve assinatura nem teste. Quem já usou não usa de
- *     novo: o histórico de assinaturas do cliente no Stripe é a memória.
+ *  1. O código existe e está ativo. Cupom vitalício (100% forever) também
+ *     entra aqui: vira assinatura de R$ 0 para sempre, amarrada ao e-mail.
+ *  2. O e-mail nunca teve assinatura nem teste (para o teste de 7 dias).
+ *     O histórico de assinaturas do cliente no Stripe é a memória.
  *
  * O checkout sai com 7 dias de teste e SEM pedir cartão. No oitavo dia, sem
  * cartão cadastrado, o próprio Stripe cancela a assinatura — a pessoa volta
@@ -58,36 +58,48 @@ export default async (req) => {
       c = rc.ok ? await rc.json() : {};
     }
     c = c || {};
-    if (c.percent_off === 100 && c.duration === "forever")
-      return Response.json({ ok: false, vitalicio: true, msg: "Este código é de acesso completo — use o campo de cupom." }, { headers: semCache });
+    /* vitalício (100% para sempre) TAMBÉM passa por aqui, mas sem teste de
+       7 dias: vira uma assinatura de R$ 0 no Stripe, amarrada ao e-mail.
+       É isso que faz o Pro do cupom valer em qualquer aparelho — antes ele
+       morava só no localStorage de onde foi digitado. */
+    const vitalicio = c.percent_off === 100 && c.duration === "forever";
 
     /* 2. este e-mail já teve assinatura ou teste? */
     const rcli = await stripe(`customers?email=${encodeURIComponent(email)}&limit=10`);
     const jcli = await rcli.json();
     if (!rcli.ok) { console.error("convite clientes:", jcli?.error?.message);
       return Response.json({ ok: false, msg: "Não consegui conferir seu e-mail agora." }, { status: 502, headers: semCache }); }
+    const ATIVAS = new Set(["active", "trialing", "past_due"]);
     for (const cli of jcli.data || []) {
-      const rs = await stripe(`subscriptions?customer=${cli.id}&status=all&limit=1`);
+      const rs = await stripe(`subscriptions?customer=${cli.id}&status=all&limit=10`);
       const js = await rs.json();
-      if (rs.ok && (js.data || []).length)
+      if (!rs.ok) continue;
+      const subs = js.data || [];
+      if (subs.some(x => ATIVAS.has(x.status)))
+        return Response.json({ ok: false, jaTem: true, msg: "Este e-mail já tem acesso ativo — é só usar o mesmo e-mail no aparelho novo." }, { headers: semCache });
+      /* histórico morto só bloqueia o teste de 7 dias; o vitalício é do dono
+         do app para quem ele quiser, inclusive quem já testou */
+      if (!vitalicio && subs.length)
         return Response.json({ ok: false, msg: "Este e-mail já usou um teste ou assinatura. Para continuar no Pro, assine na aba Plano." }, { headers: semCache });
     }
 
-    /* 3. checkout com 7 dias de teste, sem cartão */
+    /* 3. checkout sem cartão: teste de 7 dias, ou R$ 0 para sempre no vitalício */
     const corpo = {
       mode: "subscription",
       "line_items[0][price]": PRICE, "line_items[0][quantity]": "1",
       locale: "pt-BR",
       customer_email: email,
       payment_method_collection: "if_required",
-      "subscription_data[trial_period_days]": "7",
-      "subscription_data[trial_settings][end_behavior][missing_payment_method]": "cancel",
       "subscription_data[metadata][produto]": "pauta_pro",
-      "subscription_data[metadata][origem]": "convite:" + codigo.toUpperCase(),
+      "subscription_data[metadata][origem]": (vitalicio ? "cupom:" : "convite:") + codigo.toUpperCase(),
       "discounts[0][promotion_code]": promo.id,
       success_url: `${SITE}/?assinatura=ok&sessao={CHECKOUT_SESSION_ID}`,
       cancel_url: `${SITE}/?assinatura=cancelada`,
     };
+    if (!vitalicio) {
+      corpo["subscription_data[trial_period_days]"] = "7";
+      corpo["subscription_data[trial_settings][end_behavior][missing_payment_method]"] = "cancel";
+    }
     const r = await stripe("checkout/sessions", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -96,7 +108,8 @@ export default async (req) => {
     const j = await r.json();
     if (!r.ok) { console.error("convite checkout:", j?.error?.message);
       return Response.json({ ok: false, msg: "Não foi possível abrir a confirmação do convite." }, { status: 502, headers: semCache }); }
-    return Response.json({ ok: true, url: j.url, msg: "Convite válido — confirme para começar seus 7 dias." }, { headers: semCache });
+    return Response.json({ ok: true, url: j.url,
+      msg: vitalicio ? "Cupom válido — confirme para amarrar o acesso ao seu e-mail." : "Convite válido — confirme para começar seus 7 dias." }, { headers: semCache });
   } catch (e) {
     console.error("convite:", e.message);
     return Response.json({ ok: false, msg: "Erro ao falar com o Stripe." }, { status: 502, headers: semCache });
