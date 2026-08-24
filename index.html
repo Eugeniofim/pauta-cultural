@@ -4768,11 +4768,15 @@ function abrirContato(nome,opts){
       <textarea id="mbCorpo" spellcheck="true">${esc(mailAtual.corpo)}</textarea>
       <div class="mb-acoes">
         ${f.mail?`<button class="btn pri" id="mbEnviar">Abrir rascunho no meu e-mail</button>
-                  <button class="btn ghost" id="mbGmail">Abrir rascunho no Gmail</button>`:""}
+                  <button class="btn ghost" id="mbGmail">Abrir rascunho no Gmail</button>`
+                :`<button class="btn pri" id="mbEnviar">Abrir no e-mail — você põe o destinatário</button>
+                  <button class="btn ghost" id="mbGmail">No Gmail, sem destinatário</button>`}
         <button class="btn ghost" id="mbCopiar">Copiar texto</button>
         <button class="btn ghost" id="mbRefazer">Refazer</button>
       </div>
-      <p class="mb-nota">O rascunho abre <b>no seu Gmail ou no programa de e-mail do computador</b>, já preenchido e endereçado. Você revisa e envia de lá. A Pauta não envia nada por você e nunca pede sua senha.</p>
+      <p class="mb-nota">${f.mail
+        ?"O rascunho abre <b>no seu Gmail ou no programa de e-mail do computador</b>, já preenchido e endereçado. Você revisa e envia de lá. A Pauta não envia nada por você e nunca pede sua senha."
+        :"Este festival <b>não publica e-mail</b>, então o rascunho abre <b>sem destinatário</b> — cole o endereço se você o tiver, ou copie o texto e envie pelo formulário, site ou direct. A Pauta não inventa contato e nunca pede sua senha."}</p>
     </div>`;
   $("#mailMask").classList.add("on");
   const sync=()=>{mailAtual.assunto=$("#mbAssunto").value;mailAtual.corpo=$("#mbCorpo").value;
@@ -4794,14 +4798,14 @@ function abrirContato(nome,opts){
     setTimeout(()=>{$("#mailMask").classList.remove("on");submissoes();},900);};
   const e1=$("#mbEnviar");
   if(e1)e1.onclick=()=>{
-    const u=`mailto:${encodeURIComponent(f.mail)}?subject=${encodeURIComponent(mailAtual.assunto)}&body=${encodeURIComponent(mailAtual.corpo)}`;
+    const u=`mailto:${encodeURIComponent(f.mail||"")}?subject=${encodeURIComponent(mailAtual.assunto)}&body=${encodeURIComponent(mailAtual.corpo)}`;
     if(u.length>1900){copy(mailAtual.corpo,"Mensagem");toast("Mensagem longa — copiei o texto; cole no seu e-mail");}
     else location.href=u;
     marcar();
   };
   const e2=$("#mbGmail");
   if(e2)e2.onclick=()=>{
-    window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(f.mail)}&su=${encodeURIComponent(mailAtual.assunto)}&body=${encodeURIComponent(mailAtual.corpo)}`,"_blank","noopener");
+    window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(f.mail||"")}&su=${encodeURIComponent(mailAtual.assunto)}&body=${encodeURIComponent(mailAtual.corpo)}`,"_blank","noopener");
     marcar();
   };
 }
