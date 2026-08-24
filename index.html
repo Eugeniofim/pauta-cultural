@@ -3771,17 +3771,24 @@ function videoEmbed(u){
   if(m)return "https://player.vimeo.com/video/"+m[1];
   return null;
 }
-function epkDados(){
-  const c=contaLer(), k=c.kit||{};
+function epkDados(pf){
+  /* sem argumento: a conta ativa. Com um perfil do selo: a página daquele
+     artista, sem precisar ativá-lo — cada projeto tem seu EPK. */
+  const conta=contaLer();
+  const c=pf?Object.assign({},conta,{nome:pf.nome,projeto:pf.projeto||"",uf:pf.uf||conta.uf,area:pf.area||conta.area,kit:pf.kit||{}}):conta;
+  const est=pf?((pf.estilos&&pf.estilos.length)?pf.estilos.join(", "):(pf.kit&&pf.kit.estilo)||""):null;
+  const k=c.kit||{};
   const ft=String(k.fotos||"").split(/[,\n]/).map(x=>x.trim()).filter(Boolean).slice(0,3);
-  return {v:1,pj:c.projeto||"",ft,n:c.nome||P.nome||"",a:P.area||c.area||"",uf:c.uf||P.uf||"",
+  const base={v:1,pj:c.projeto||"",ft,n:c.nome||P.nome||"",a:(pf?c.area:(P.area||c.area))||"",uf:c.uf||P.uf||"",
     e:k.estilo||((P.estilos||[]).join(", ")),p:k.pitch||"",r:k.reltxt||"",
     vi:k.video||"",st:k.stream||"",re:k.release||"",ri:k.rider||"",si:k.site||"",
     ig:k.insta||"",tel:k.tel||"",m:c.mail||"",d:k.dur||"",pe:k.pessoas||"",
     ou:k.ouvintes||"",sh:k.shows||"",im:k.imprensa||""};
+  if(est!==null)base.e=est||base.e;
+  return base;
 }
-async function epkLink(){
-  return location.origin+"/#epk="+await epkCodificar(epkDados());
+async function epkLink(pf){
+  return location.origin+"/#epk="+await epkCodificar(epkDados(pf));
 }
 const urlOk=u=>/^https?:\/\//i.test(u)?u:"https://"+u.replace(/^\/+/,"");
 function epkRender(d){
@@ -5633,6 +5640,8 @@ function seloRender(){
       <span style="flex:1;min-width:0;font-size:13.4px;${i===j.ativo?"font-weight:700":""}">
         ${i===j.ativo?"● ":""}${esc(pf.nome||"—")}${pf.projeto?` <span style="color:var(--accent-ink)">“${esc(pf.projeto)}”</span>`:""}
       </span>
+      <button class="btn ghost sm" data-selo-epk="${i}" title="Ver a página (press kit) deste artista">🔗</button>
+      <button class="btn ghost sm" data-selo-epkc="${i}" title="Copiar o link da página deste artista">Copiar link</button>
       ${i===j.ativo?'<span class="pl fs">ativo</span>'
         :`<button class="btn ghost sm" data-selo-usar="${i}">Usar</button>
           ${i>0?`<button class="btn ghost sm" data-selo-x="${i}" title="Excluir este perfil">✕</button>`:""}`}
@@ -5645,6 +5654,11 @@ function seloRender(){
     refresh();venderPreencher(venderGancho);seloRender();
     toast("Agora o app trabalha para: "+(j2.perfis[para].nome||"perfil "+para));
   });
+  const perfilDe=i=>{const j2=seloLer();const pf=j2.perfis[i];
+    /* o ativo pode ter edições recentes na conta: fotografa antes de gerar */
+    return i===j2.ativo?Object.assign({},pf,seloFoto()):pf;};
+  $$("#seloLista [data-selo-epk]").forEach(b=>b.onclick=async()=>{window.open(await epkLink(perfilDe(+b.dataset.seloEpk)),"_blank");});
+  $$("#seloLista [data-selo-epkc]").forEach(b=>b.onclick=async()=>{copy(await epkLink(perfilDe(+b.dataset.seloEpkc)),"Link da página");});
   $$("#seloLista [data-selo-x]").forEach(b=>b.onclick=()=>{
     const j2=seloLer();const i=+b.dataset.seloX;
     if(i===j2.ativo){toast("Ative outro perfil antes de excluir este.");return;}
