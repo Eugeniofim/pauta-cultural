@@ -780,7 +780,25 @@
   .epk-mk{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700}
   .epk h1{font-size:34px;letter-spacing:-.03em;line-height:1.1;margin:0 0 8px}
   .epk-sub{color:var(--ink-soft);font-size:14.5px;margin:0 0 20px}
+  .epk-proj{font-size:19px;font-weight:650;letter-spacing:-.02em;margin:2px 0 10px;
+    background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .epk-chips{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 18px}
+  .epk-chip{font-size:12px;font-weight:620;padding:5px 12px;border-radius:999px;background:var(--surface);border:1px solid var(--line-strong);color:var(--ink-soft)}
   .epk-p{font-size:17px;line-height:1.55;margin:0 0 24px}
+  .epk-video{position:relative;width:100%;aspect-ratio:16/9;border-radius:16px;overflow:hidden;margin:0 0 22px;
+    box-shadow:var(--shadow-lg);background:#000}
+  .epk-video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+  .epk-fotos{display:grid;gap:10px;margin:0 0 22px}
+  .epk-fotos.f1{grid-template-columns:1fr}
+  .epk-fotos.f2{grid-template-columns:1fr 1fr}
+  .epk-fotos.f3{grid-template-columns:1fr 1fr 1fr}
+  .epk-fotos img{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:14px;box-shadow:var(--shadow)}
+  .epk-fotos.f1 img{aspect-ratio:16/10}
+  @media (max-width:520px){.epk-fotos.f3{grid-template-columns:1fr 1fr}.epk-fotos.f3 img:first-child{grid-column:1/-1;aspect-ratio:16/10}}
+  .epk-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:0 0 12px}
+  .epk-st{background:var(--surface);border:1px solid var(--line-strong);border-radius:13px;padding:12px 14px}
+  .epk-st small{display:block;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:4px}
+  .epk-st b{font-size:13.8px;line-height:1.35;font-weight:650}
   .epk-ls{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px}
   .epk-l{display:flex;align-items:center;gap:10px;padding:13px 15px;border-radius:13px;background:var(--surface);
     border:1px solid var(--line-strong);color:var(--ink);text-decoration:none;font-weight:620;font-size:13.6px}
@@ -1427,6 +1445,8 @@
         <textarea id="kRelTxt" rows="4" placeholder="O texto completo do seu release. Não entra no e-mail, que precisa ser curto — fica guardado para você copiar quando o formulário pedir."></textarea>
         <label>Vídeo ao vivo</label><input type="text" id="kVideo" placeholder="youtube.com/... ou drive.google.com/...">
         <label>Streaming</label><input type="text" id="kStream" placeholder="Spotify, Bandcamp, SoundCloud">
+        <label>Fotos para o press kit <small style="font-weight:400;color:var(--muted)">— até 3 links diretos de imagem, separados por vírgula</small></label>
+        <input type="text" id="kFotos" placeholder="link da foto 1, link da foto 2…">
         <label>Release e fotos</label><input type="text" id="kRelease" placeholder="pasta no Drive, Dropbox ou site">
         <label>Rider técnico</label><input type="text" id="kRider" placeholder="PDF no Drive ou no seu site">
         <label>Seu site ou portfólio</label><input type="text" id="kSite" placeholder="seusite.com.br">
@@ -3622,6 +3642,7 @@ function kitPreencher(){
   {const el=$("#kPitch");if(el)el.value=k.pitch||"";}
   {const el=$("#kEstilo");if(el)el.value=k.estilo||"";}
   {const el=$("#kRelTxt");if(el)el.value=k.reltxt||"";}
+  {const el=$("#kFotos");if(el)el.value=k.fotos||"";}
   {const el=$("#kVideo");if(el)el.value=k.video||"";}
   {const el=$("#kStream");if(el)el.value=k.stream||"";}
   {const el=$("#kRelease");if(el)el.value=k.release||"";}
@@ -3703,9 +3724,27 @@ async function epkDecodificar(txt){
   }
   return JSON.parse(new TextDecoder().decode(bytes));
 }
+/* imagem por link direto: Drive e Dropbox precisam de ajuste de URL para
+   servir a imagem crua; quem falhar no carregamento é escondida na página */
+function fotoURL(u){
+  u=String(u||"").trim();if(!u)return null;
+  let m=u.match(/drive\.google\.com\/file\/d\/([\w-]+)/)||u.match(/drive\.google\.com\/open\?id=([\w-]+)/);
+  if(m)return "https://drive.google.com/uc?export=view&id="+m[1];
+  if(/dropbox\.com/.test(u))return u.replace(/([?&])dl=0/,"$1raw=1").replace(/\?$/,"")+(/[?&](raw|dl)=/.test(u)?"":"?raw=1");
+  return /^https?:\/\//.test(u)?u:"https://"+u;
+}
+function videoEmbed(u){
+  u=String(u||"");
+  let m=u.match(/(?:youtube\.com\/(?:watch\?[^#\s]*v=|shorts\/|embed\/|live\/)|youtu\.be\/)([\w-]{6,})/);
+  if(m)return "https://www.youtube-nocookie.com/embed/"+m[1];
+  m=u.match(/vimeo\.com\/(\d+)/);
+  if(m)return "https://player.vimeo.com/video/"+m[1];
+  return null;
+}
 function epkDados(){
   const c=contaLer(), k=c.kit||{};
-  return {v:1,n:c.nome||P.nome||"",a:P.area||c.area||"",uf:c.uf||P.uf||"",
+  const ft=String(k.fotos||"").split(/[,\n]/).map(x=>x.trim()).filter(Boolean).slice(0,3);
+  return {v:1,pj:c.projeto||"",ft,n:c.nome||P.nome||"",a:P.area||c.area||"",uf:c.uf||P.uf||"",
     e:k.estilo||((P.estilos||[]).join(", ")),p:k.pitch||"",r:k.reltxt||"",
     vi:k.video||"",st:k.stream||"",re:k.release||"",ri:k.rider||"",si:k.site||"",
     ig:k.insta||"",tel:k.tel||"",m:c.mail||"",d:k.dur||"",pe:k.pessoas||"",
@@ -3725,20 +3764,29 @@ function epkRender(d){
      dígitos recebe o 55 do Brasil; com +, ou já com 55, fica como está. */
   const ig=d.ig?"https://instagram.com/"+d.ig.replace(/^@/,"").replace(/^.*instagram\.com\//i,"").replace(/[\/?].*$/,""):"";
   let wa="";if(d.tel){let dg=String(d.tel).replace(/\D/g,"");if(dg&&!/^\+/.test(String(d.tel).trim())&&(dg.length===10||dg.length===11))dg="55"+dg;if(dg.length>=12)wa="https://wa.me/"+dg;}
-  const links=[["▶","Vídeo ao vivo",d.vi],["♫","Streaming",d.st],["◎","Instagram",ig],["↗","Site",d.si],["✦","Release e fotos",d.re],["⚙","Rider técnico",d.ri],["✆","WhatsApp",wa]]
+  const links=[["▶","Vídeo ao vivo",videoEmbed(d.vi)?null:d.vi],["♫","Streaming",d.st],["◎","Instagram",ig],["↗","Site",d.si],["✦","Release e fotos",d.re],["⚙","Rider técnico",d.ri],["✆","WhatsApp",wa]]
     .filter(([,,u])=>u).map(([ic,r,u])=>`<a class="epk-l" href="${esc2(urlOk(u))}" target="_blank" rel="noopener"><span>${ic}</span>${esc2(r)}</a>`).join("");
   const nums=[d.ou,d.sh,d.im].filter(Boolean).map(x=>`<li>${esc2(x)}</li>`).join("");
   const fmt=[d.d,d.pe&&(d.pe+" em palco")].filter(Boolean).join(" · ");
+  /* vídeo embutido quando o link é YouTube/Vimeo; senão, vira botão como antes */
+  const emb=videoEmbed(d.vi);
+  const fotos=(d.ft||[]).map(fotoURL).filter(Boolean);
+  const chips=[d.a,d.e,UF[d.uf]||d.uf].filter(Boolean).map(x=>`<span class="epk-chip">${esc2(x)}</span>`).join("");
   const el=document.createElement("div"); el.id="epkView"; el.className="epk";
   el.innerHTML=`
     <div class="epk-in">
       <div class="epk-top"><a class="epk-brand" href="${location.origin}/"><div class="mark"><span>P</span></div><div><b>Pauta</b><small>cultural</small></div></a><span class="epk-mk">press kit</span></div>
       <h1>${esc2(d.n||"Artista")}</h1>
-      <p class="epk-sub">${[d.a,d.e,UF[d.uf]||d.uf].filter(Boolean).map(esc2).join(" · ")}</p>
+      ${d.pj?`<div class="epk-proj">“${esc2(d.pj)}”</div>`:""}
+      ${chips?`<div class="epk-chips">${chips}</div>`:""}
       ${d.p?`<p class="epk-p">${esc2(d.p)}</p>`:""}
+      ${emb?`<div class="epk-video"><iframe src="${esc2(emb)}" title="Vídeo ao vivo" loading="lazy" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>`:""}
+      ${fotos.length?`<div class="epk-fotos f${fotos.length}">${fotos.map(u=>`<img src="${esc2(u)}" alt="Foto de ${esc2(d.n||"divulgação")}" loading="lazy" onerror="this.remove()">`).join("")}</div>`:""}
       ${links?`<div class="epk-ls">${links}</div>`:""}
-      ${fmt?`<div class="epk-b"><small>Formato</small><b>${esc2(fmt)}</b></div>`:""}
-      ${nums?`<div class="epk-b"><small>Em números</small><ul>${nums}</ul></div>`:""}
+      ${(fmt||nums)?`<div class="epk-stats">
+        ${fmt?`<div class="epk-st"><small>Formato</small><b>${esc2(fmt)}</b></div>`:""}
+        ${[d.ou,d.sh,d.im].filter(Boolean).map(x=>`<div class="epk-st"><small>Em números</small><b>${esc2(x)}</b></div>`).join("")}
+      </div>`:""}
       ${d.r?`<div class="epk-b"><small>Release</small><p class="epk-r">${esc2(d.r)}</p></div>`:""}
       <div class="epk-b epk-ct"><small>Contato</small>
         ${d.m?`<a href="mailto:${esc2(d.m)}">${esc2(d.m)}</a>`:""}
@@ -3815,6 +3863,7 @@ function contaSalvar(){
   {const el=$("#kVideo");if(el)c.kit.video=el.value.trim();}
   {const el=$("#kStream");if(el)c.kit.stream=el.value.trim();}
   {const el=$("#kRelease");if(el)c.kit.release=el.value.trim();}
+  {const el=$("#kFotos");if(el)c.kit.fotos=el.value.trim();}
   {const el=$("#kRider");if(el)c.kit.rider=el.value.trim();}
   {const el=$("#kSite");if(el)c.kit.site=el.value.trim();}
   {const el=$("#kInsta");if(el)c.kit.insta=el.value.trim();}
