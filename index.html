@@ -2215,8 +2215,11 @@ function initSel(){
   $("#fa").innerHTML=AREAS.map(a=>`<option${a===P.area?" selected":""}>${a}</option>`).join("");
   $("#fu").innerHTML=Object.keys(UF).map(u=>`<option value="${u}"${u===P.uf?" selected":""}>${UF[u]}</option>`).join("");
   filtrosOpcoes();
+  /* o estado do usuário abre a lista — é o filtro que ele mais usa */
+  const meuUF=P.uf;
   const ufsED=[...new Set(ED.map(e=>e.reg).filter(u=>u!=="BR"))].sort((a,b)=>(UF[a]||a).localeCompare(UF[b]||b,"pt-BR"));
-  $("#quf").innerHTML='<option value="">Todos os estados</option>'+ufsED.map(u=>`<option value="${u}">${UF[u]||u}</option>`).join("");
+  const ordUF=[...ufsED.filter(u=>u===meuUF),...ufsED.filter(u=>u!==meuUF)];
+  $("#quf").innerHTML='<option value="">Todos os estados</option>'+ordUF.map(u=>`<option value="${u}">${UF[u]||u}${u===meuUF?" — seu estado":""}</option>`).join("");
   atualizaCidades();
 }
 function tipoUI(){
@@ -3476,8 +3479,11 @@ function sescRender(){
 }
 function fInit(){
   const comD=new Set(fUFs());
-  $("#fuf").innerHTML='<option value="">Todos os estados</option>'+Object.keys(UF).sort((a,b)=>UF[a].localeCompare(UF[b],"pt-BR"))
-    .map(u=>`<option value="${u}">${UF[u]}${comD.has(u)?"":" — em breve"}</option>`).join("");
+  {const meu=P.uf;
+   const todosUF=Object.keys(UF).sort((a,b)=>UF[a].localeCompare(UF[b],"pt-BR"));
+   const ordem=[...todosUF.filter(u=>u===meu),...todosUF.filter(u=>u!==meu)];
+   $("#fuf").innerHTML='<option value="">Todos os estados</option>'+ordem
+     .map(u=>`<option value="${u}">${UF[u]}${u===meu?" — seu estado":""}${comD.has(u)?"":" — em breve"}</option>`).join("");}
   ["#fqs","#fuf","#fct","#flg","#fpt"].forEach(x=>{const e=$(x);e.oninput=fRender;e.onchange=fRender;});
   $("#fskip").onclick=()=>{fQuiz.feito=true;fQuizRender();};
   $$("#fsub .stb").forEach(b=>b.onclick=()=>{
