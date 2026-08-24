@@ -1616,7 +1616,9 @@
         </div>
         <div class="card">
           <h3 style="margin:0 0 6px">Textos prontos</h3>
-          <p class="note" style="margin:0 0 12px">Edite à vontade antes de copiar — o link com seu código já vai dentro.</p>
+          <p class="note" style="margin:0 0 10px">Edite à vontade antes de copiar — o link com seu código já vai dentro.</p>
+          <div id="vGancho" style="margin:0 0 10px"></div>
+          <button class="btn ghost sm" id="vVariar" style="margin:0 0 12px">↻ Variar texto</button>
           <label>WhatsApp / direct</label>
           <textarea id="vTxtZap" rows="6" spellcheck="true"></textarea>
           <button class="btn ghost sm" data-vcopy="vTxtZap" style="margin:6px 0 14px">Copiar</button>
@@ -2419,6 +2421,7 @@ function openD(id){
       <button class="btn ghost" id="segB">${segue(e.id)?"★ Acompanhando":"☆ Acompanhar prazo"}</button>
       <button class="btn ghost" id="dsB">Dossiê</button>
       <button class="btn ghost" id="dvB" title="Mandar este edital para um grupo ou amigo">📤 Divulgar</button>
+      ${ehDono()?`<button class="btn ghost" id="dvVender" title="Gerar texto de venda da Pauta com este edital como gancho">📣</button>`:""}
       <button class="btn pri" id="wrB" ${b?"disabled":""}>Escrever projeto</button>
     </div>`;
   $("#dt").classList.add("on");$("#scrim").classList.add("on");$("#dt").setAttribute("aria-hidden","false");
@@ -2429,6 +2432,7 @@ function openD(id){
      querySelector devolvia aquele — o Divulgar ficava sem clique e o Copiar
      tudo passava a divulgar o último edital aberto. Um id, dois botões. */
   $("#dt #dvB").onclick=()=>divulgar(e);
+  {const b=$("#dt #dvVender");if(b)b.onclick=()=>{closeD();venderGancho={n:e.t.length>60?e.t.slice(0,57)+"…":e.t,tipo:"edital",pz:e.pz};nav("vender");venderPreencher(venderGancho);toast("Textos prontos com o gancho do edital");};}
   const w=$("#wrB");if(w&&!b)w.onclick=()=>{closeD();nav("escrever");startMode(e.rouanet?"rouanet":"edital",e);};
 }
 /* Mensagem de divulgação montada na hora, dos dados do próprio edital.
@@ -5429,17 +5433,38 @@ function donoUI(){const b=$("#nvVender");if(b)b.hidden=!ehDono();}
 const VCUPOM_KEY="pauta.dono.cupom";
 const vCupom=()=>{try{return (localStorage.getItem(VCUPOM_KEY)||"PAUTA7").toUpperCase();}catch(e){return "PAUTA7";}}
 const vLink=()=>"https://pauta-cultural.vercel.app/?cupom="+encodeURIComponent(vCupom());
-function textosVenda(gancho){
-  const L=vLink(), C=vCupom();
-  const abre=gancho
-    ? (gancho.sesc
-        ? `Quer levar teu show pro ${gancho.n}? A Pauta tem o canal conferido de cada Sesc do país e escreve a proposta contigo.`
-        : `Vai mandar material pro ${gancho.n}? Na Pauta o e-mail de proposta sai pronto — e teu press kit vira um link.`)
-    : `Tu vive caçando edital e mandando material no braço? A Pauta junta tudo: editais com prazo real, festivais com contato conferido, os 27 Sesc — e escreve teu projeto da Lei Rouanet em 36 perguntas.`;
+let venderVar=0;
+function textosVenda(g){
+  const L=vLink(), C=vCupom(), v=venderVar;
+  /* aberturas variam por clique no "Variar" — deterministicas, sempre verdadeiras */
+  const ABRE_GERAL=[
+    `Tu vive caçando edital e mandando material no braço? A Pauta junta tudo: editais com prazo real, festivais com contato conferido, os 27 Sesc — e escreve teu projeto da Lei Rouanet em 36 perguntas.`,
+    `Quantas abas tu abre pra achar edital e contato de festival? A Pauta resolve numa: prazo real, canal conferido dos 27 Sesc, e o projeto da Rouanet escrito em 36 perguntas.`,
+    `Pra quem vive de show: a Pauta encontra o edital, entrega o contato conferido do festival e do Sesc, escreve o e-mail de proposta e monta teu press kit com link próprio.`];
+  const CONVITE=[
+    `Te consegui 7 dias de Pro, sem cartão: ${L}`,
+    `Toma 7 dias de Pro pra testar, sem cartão: ${L}`,
+    `Testa 7 dias de graça, sem cartão: ${L}`];
+  let abre;
+  if(!g) abre=ABRE_GERAL[v%3];
+  else if(g.tipo==="edital"){
+    const prazo=(g.pz!=null)?(g.pz===0?"encerra HOJE":g.pz===1?"encerra amanhã":`fecha em ${g.pz} dias`):"está na Pauta, com link oficial";
+    abre=[`O edital ${g.n} ${prazo}. Na Pauta tu vê o prazo real, o link oficial e escreve o projeto em 36 perguntas.`,
+          `Viu que o ${g.n} ${prazo}? Na Pauta o prazo é real, o link é oficial e o projeto sai escrito em 36 perguntas.`,
+          `${g.n}: ${prazo}. É o tipo de coisa que a Pauta te avisa — e ainda escreve o projeto contigo.`][v%3];
+  }else if(g.tipo==="sesc"){
+    abre=[`Quer levar teu show pro ${g.n}? A Pauta tem o canal conferido de cada Sesc do país e escreve a proposta contigo.`,
+          `O caminho pro ${g.n} está na Pauta: canal conferido, e-mail de proposta pronto e teu press kit num link.`,
+          `Vender show pro ${g.n} sem saber a porta de entrada? A Pauta mostra o canal conferido e escreve a proposta.`][v%3];
+  }else{
+    abre=[`Vai mandar material pro ${g.n}? Na Pauta o e-mail de proposta sai pronto — e teu press kit vira um link.`,
+          `De olho no ${g.n}? A Pauta te dá o contato conferido e escreve o e-mail de proposta contigo.`,
+          `${g.n} na mira? Contato conferido, proposta escrita e press kit num link — é a Pauta.`][v%3];
+  }
   const zap=`${abre}
-Te consegui 7 dias de Pro, sem cartão: ${L}
+${CONVITE[v%3]}
 Depois é R$ 9,90/mês (ou R$ 99/ano) — um cachê paga anos.`;
-  const insta=`${gancho?`Mandando material pro ${gancho.n}? 👇`:`Pra quem vive de arte e cansou de caçar edital em vinte abas: 👇`}
+  const insta=`${g?(g.tipo==="edital"?`${g.n}${g.pz!=null?` — faltam ${g.pz} dias`:""} 👇`:`Mandando material pro ${g.n}? 👇`):[`Pra quem vive de arte e cansou de caçar edital em vinte abas: 👇`,`Edital, festival, Sesc, projeto, press kit — num app só: 👇`,`O corre do artista, organizado: 👇`][v%3]}
 
 A Pauta Cultural junta num lugar só:
 ✓ Editais com prazo real e link oficial
@@ -5450,13 +5475,13 @@ A Pauta Cultural junta num lugar só:
 
 7 dias de Pro grátis com o código ${C} 🎟️
 Link na bio → depois R$ 9,90/mês ou R$ 99/ano.`;
-  const mail=`Assunto: 7 dias de Pauta Pro pra você
+  const mail=`Assunto: ${g&&g.tipo==="edital"?`${g.n} — e 7 dias de Pauta Pro`:`7 dias de Pauta Pro pra você`}
 
-Oi! Lembrei de você${gancho?` por causa do ${gancho.n}`:""}.
+Oi! Lembrei de você${g?` por causa d${g.tipo==="edital"?"o edital":"o"} ${g.n}`:""}.
 
 Estou usando a Pauta Cultural pra prospectar: editais com prazo real, festivais com contato conferido, os 27 Sesc com o canal certo, e o projeto da Lei Rouanet escrito em 36 perguntas — o e-mail de proposta sai pronto.
 
-Te consegui 7 dias de Pro, sem cartão: ${L}
+${CONVITE[v%3]}
 Depois, se valer (pra mim valeu), é R$ 9,90/mês ou R$ 99/ano.
 
 Abraço!`;
@@ -5468,6 +5493,11 @@ function venderPreencher(gancho){
   if(z)z.value=t.zap; if(i)i.value=t.insta; if(m)m.value=t.mail;
   const c=$("#vCupom"),l=$("#vLink");
   if(c&&!c.value)c.value=vCupom(); if(l)l.value=vLink();
+  const gb=$("#vGancho");
+  if(gb)gb.innerHTML=gancho
+    ?`<span class="pl pv">Gancho: ${esc(gancho.n.slice(0,46))} <b id="vGanchoX" style="cursor:pointer;margin-left:6px">✕</b></span>`
+    :'<span class="pl">Sem gancho — texto geral. Use o 📣 num edital, festival ou Sesc para gerar com contexto.</span>';
+  const x=$("#vGanchoX");if(x)x.onclick=()=>{venderGancho=null;venderPreencher(null);};
 }
 function venderInit(){
   const c=$("#vCupom");if(!c)return;
@@ -5476,6 +5506,7 @@ function venderInit(){
   $("#vLinkCopiar").onclick=()=>copy(vLink(),"Link de convite");
   $("#vZap").onclick=()=>window.open("https://wa.me/?text="+encodeURIComponent($("#vTxtZap").value),"_blank","noopener");
   $$("#s-vender [data-vcopy]").forEach(b=>b.onclick=()=>copy($("#"+b.dataset.vcopy).value,"Texto"));
+  {const b=$("#vVariar");if(b)b.onclick=()=>{venderVar++;venderPreencher(venderGancho);toast("Nova variação");};}
   venderPreencher(null);seloRender();
 }
 /* ── SELO: vários artistas na mesma conta do dono ──
@@ -5549,7 +5580,7 @@ function venderCom(nome){
   /* usa o festival/Sesc como gancho e cai na aba Vender com tudo preenchido */
   let f=FESTIVAIS_TODOS.find(x=>x.n===nome), sesc=false;
   if(!f){const y=SESC.find(x=>x.n===nome);if(y){f=y;sesc=true;}}
-  venderGancho=f?{n:f.n,sesc}:null;
+  venderGancho=f?{n:f.n,tipo:sesc?"sesc":"festival"}:null;
   nav("vender");venderPreencher(venderGancho);
   toast(f?("Textos prontos com o gancho: "+f.n):"Textos prontos");
 }
