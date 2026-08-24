@@ -2207,7 +2207,7 @@ function motivos(e){
 function initSel(){
   $("#fa").innerHTML=AREAS.map(a=>`<option${a===P.area?" selected":""}>${a}</option>`).join("");
   $("#fu").innerHTML=Object.keys(UF).map(u=>`<option value="${u}"${u===P.uf?" selected":""}>${UF[u]}</option>`).join("");
-  $("#qa").innerHTML='<option value="">Todas</option>'+AREAS.map(a=>`<option>${a}</option>`).join("");
+  filtrosOpcoes();
   const ufsED=[...new Set(ED.map(e=>e.reg).filter(u=>u!=="BR"))].sort((a,b)=>(UF[a]||a).localeCompare(UF[b]||b,"pt-BR"));
   $("#quf").innerHTML='<option value="">Todos os estados</option>'+ufsED.map(u=>`<option value="${u}">${UF[u]||u}</option>`).join("");
   atualizaCidades();
@@ -2250,6 +2250,19 @@ function sidePanel(){
   $("#ttl").textContent=`${abertos} editais abertos e ${prog} programas permanentes`;
 }
 
+/* Os menus de Área, Esfera e Tipo nascem DOS DADOS, não de lista fixa.
+   Lista escrita à mão dessincroniza: a busca ao vivo trouxe "Chamamento",
+   "Ciclo" e "Sistema S", e nenhum filtro alcançava — enquanto opções mortas
+   ("Festival") filtravam o nada. Recalculado a cada refresh, preservando a
+   escolha atual. */
+function filtrosOpcoes(){
+  const monta=(sel,opts,vazio)=>{const el=$(sel);if(!el)return;const cur=el.value;
+    el.innerHTML=`<option value="">${vazio}</option>`+opts.map(o=>`<option${o===cur?" selected":""}>${esc(o)}</option>`).join("");};
+  const cats=[...new Set(ED.map(e=>e.cat).filter(c=>c&&c!=="Todas"))];
+  monta("#qa",[...AREAS.filter(a=>cats.includes(a)),...cats.filter(c=>!AREAS.includes(c)).sort((a,b)=>a.localeCompare(b,"pt-BR"))],"Todas");
+  monta("#qe",[...new Set(ED.map(e=>e.esf).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"pt-BR")),"Todas");
+  monta("#qt",[...new Set(ED.map(e=>e.tp).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"pt-BR")),"Todos");
+}
 function atualizaCidades(){
   const uf=$("#quf").value;
   const cids=[...new Set(ED.filter(e=>e.cid&&(!uf||e.reg===uf)).map(e=>e.cid))].sort((a,b)=>a.localeCompare(b,"pt-BR"));
@@ -5584,7 +5597,7 @@ function venderCom(nome){
   nav("vender");venderPreencher(venderGancho);
   toast(f?("Textos prontos com o gancho: "+f.n):"Textos prontos");
 }
-function refresh(){head();tipoUI();sidePanel();feed();donoUI();}
+function refresh(){head();tipoUI();sidePanel();filtrosOpcoes();feed();donoUI();}
 $$("#ft button").forEach(b=>b.onclick=()=>{P.tipo=b.dataset.t;refresh();});
 $("#fn").oninput=e=>{P.nome=e.target.value;refresh();};
 $("#fa").onchange=e=>{P.area=e.target.value;P.estilos=[];chipsUI();refresh();};
