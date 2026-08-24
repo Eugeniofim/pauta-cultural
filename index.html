@@ -1442,6 +1442,7 @@
         <textarea id="kPitch" rows="3" placeholder="Ex: Cantora e compositora de Curitiba. Meu show mistura MPB e música do interior do Paraná, com voz, violão e viola caipira. Lancei o disco Marés em 2026."></textarea>
         <label>Estilo ou linguagem</label><input type="text" id="kEstilo" placeholder="MPB, samba, jazz, teatro de rua…">
         <label>Release completo <small style="font-weight:400;color:var(--muted)">— opcional, para colar em formulário</small></label>
+        <button type="button" class="btn ghost sm" id="relGerarAbre" style="margin:0 0 8px">✍️ Gerar release respondendo 6 perguntas</button>
         <textarea id="kRelTxt" rows="4" placeholder="O texto completo do seu release. Não entra no e-mail, que precisa ser curto — fica guardado para você copiar quando o formulário pedir."></textarea>
         <label>Vídeo ao vivo</label><input type="text" id="kVideo" placeholder="youtube.com/... ou drive.google.com/...">
         <label>Streaming</label><input type="text" id="kStream" placeholder="Spotify, Bandcamp, SoundCloud">
@@ -1452,6 +1453,11 @@
         <label>Seu site ou portfólio</label><input type="text" id="kSite" placeholder="seusite.com.br">
         <label>Instagram</label><input type="text" id="kInsta" placeholder="@seuperfil">
         <label>Telefone / WhatsApp</label><input type="text" id="kTel" placeholder="(41) 90000-0000">
+        <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+          <button type="button" class="btn pri sm" id="kitVer2">🔗 Ver minha página</button>
+          <button type="button" class="btn ghost sm" id="kitCopiar2">Copiar link</button>
+        </div>
+        <p class="kitnota" style="margin-top:8px">Sua página (press kit com link próprio) é montada com o que está preenchido aqui — vídeo vira player, fotos viram galeria.</p>
         <label>Formato do show</label>
         <div class="kit2"><input type="text" id="kDur" placeholder="duração — ex: 60 min">
         <input type="text" id="kPessoas" placeholder="pessoas em palco — ex: 4"></div>
@@ -1799,6 +1805,7 @@
   <aside class="dt" id="dt" aria-hidden="true"></aside>
   <div class="mailmask" id="cfgMask"><div class="mailbox" id="cfgBox"></div></div>
   <div class="mailmask" id="mailMask"><div class="mailbox" id="mailBox"></div></div>
+  <div class="mailmask" id="relMask"><div class="mailbox" id="relBox"></div></div>
   <div class="modal" id="modal"><div class="mb">
     <div class="mh"><b id="mT">Copiar</b><button class="btn ghost sm" id="mC">Fechar</button></div>
     <textarea id="mX" readonly></textarea>
@@ -3699,9 +3706,9 @@ function kitResumo(){
       <span style="color:${k[c]&&String(k[c]).trim()?"var(--ink)":"var(--muted)"}">${r}</span></div>`).join("")}
     <p style="font-size:12.2px;color:var(--ink-soft);line-height:1.5;margin:12px 0 0">Com o kit preenchido você ganha três coisas: <b>o e-mail de proposta sai pronto</b>, o <b>kit copiável</b> para formulário e direct, e <b>sua página com link próprio</b> — press kit para o contratante, link na bio para o público.</p>
     <button class="btn pri sm" style="width:100%;justify-content:center;margin-top:12px" id="kitIr">${ok?"Editar kit de mídia":"Preencher meu kit"}</button>
-    ${k.pitch?`<button class="btn ghost sm" style="width:100%;justify-content:center;margin-top:7px" id="epkCopiar">Copiar link da minha página</button>
-    <button class="btn ghost sm" style="width:100%;justify-content:center;margin-top:7px" id="epkVer">Ver minha página</button>`
-    :`<p style="font-size:11.8px;color:var(--muted);margin:8px 0 0">Escreva quem você é (2–3 linhas) e sua página ganha um link aqui.</p>`}`;
+    <button class="btn ghost sm" style="width:100%;justify-content:center;margin-top:7px" id="epkVer">🔗 Ver minha página (press kit)</button>
+    <button class="btn ghost sm" style="width:100%;justify-content:center;margin-top:7px" id="epkCopiar">Copiar link da minha página</button>
+    ${k.pitch?"":`<p style="font-size:11.8px;color:var(--muted);margin:8px 0 0">Sua página já existe — ela fica completa quando você escreve quem você é (2–3 linhas) no kit.</p>`}`;
   const ec=$("#epkCopiar");if(ec)ec.onclick=async()=>{copy(await epkLink(),"Link da sua página");};
   const ev=$("#epkVer");if(ev)ev.onclick=async()=>{window.open(await epkLink(),"_blank");};
   /* o clique precisa parar aqui: o fecha-ao-clicar-fora do popover mora no
@@ -3853,11 +3860,68 @@ function kitTexto(){
   if(ct){L.push("");L.push(ct);}
   return L.join("\n").trim();
 }
+/* ── Gerador de release: 6 perguntas viram texto em terceira pessoa ──
+   Mesmo princípio do escritor de projeto: modelo determinístico, nada de
+   inventar fato. Pergunta sem resposta simplesmente não vira frase. As
+   respostas ficam no kit (relq) para regenerar sem redigitar. */
+const RELQ=[
+ ["som","1. Seu trabalho numa frase","Ex.: canção brasileira com viola caipira e sintetizadores"],
+ ["origem","2. De onde você é e quando começou","Ex.: Curitiba, na estrada desde 2015"],
+ ["feitos","3. O que já lançou ou realizou de mais importante","Ex.: os discos Maré (2022) e Sal (2024); trilha do espetáculo X"],
+ ["circuito","4. Por onde já circulou","Ex.: unidades do Sesc PR, Festival de Curitiba, casas de SP"],
+ ["dizem","5. O que já disseram sobre você (opcional)","Ex.: \"uma das vozes da nova MPB\" — Jornal Y"],
+ ["agora","6. O que vem agora","Ex.: turnê do novo show, com estreia em março"]];
+function relAbrir(){
+  const c=contaLer(), k=c.kit||{}, r=k.relq||{};
+  $("#relBox").innerHTML=`
+    <div class="mb-h"><div><b>Gerar release</b><small>responda o que souber — pergunta vazia não vira frase</small></div>
+      <button class="btn ghost sm" id="relX">Fechar</button></div>
+    <div class="mb-b">
+      ${RELQ.map(([q,rot,ph])=>`<label>${rot}</label><input type="text" data-relq="${q}" value="${esc(r[q]||"").replace(/"/g,"&quot;")}" placeholder="${ph}">`).join("")}
+      <div class="mb-acoes" style="margin-top:14px">
+        <button class="btn pri" id="relGerar">Gerar release</button>
+      </div>
+      <p class="mb-nota">O texto cai no campo Release completo, em terceira pessoa, para você revisar e ajustar. Nada é inventado: só entra o que você respondeu.</p>
+    </div>`;
+  $("#relMask").classList.add("on");
+  $("#relX").onclick=()=>$("#relMask").classList.remove("on");
+  $("#relGerar").onclick=()=>{
+    const resp={};$$("#relBox [data-relq]").forEach(i=>resp[i.dataset.relq]=i.value.trim());
+    const c2=contaLer();c2.kit=c2.kit||{};c2.kit.relq=resp;
+    const nome=c2.nome||P.nome||"O artista";
+    const proj=c2.projeto||"";
+    const L=[];
+    {const f=[];
+     if(resp.som)f.push(`${nome} faz ${resp.som}`);else f.push(`${nome}`);
+     if(resp.origem)f.push(resp.som?`É de ${resp.origem}`:`é de ${resp.origem}`);
+     if(f.length)L.push(f.join(". ")+".");}
+    if(resp.feitos)L.push(`Entre os trabalhos já realizados estão ${resp.feitos}.`);
+    if(resp.circuito)L.push(`Já se apresentou em ${resp.circuito}.`);
+    if(resp.dizem)L.push(`Sobre o trabalho, já se disse: ${resp.dizem}.`);
+    {const f=[];
+     if(resp.agora)f.push(`Agora, apresenta ${resp.agora}`);
+     if(proj&&!String(resp.agora||"").toLowerCase().includes(proj.toLowerCase()))f.push(resp.agora?`com o projeto “${proj}”`:`Apresenta o projeto “${proj}”`);
+     const fmt=[c2.kit.dur,c2.kit.pessoas&&c2.kit.pessoas+" em palco"].filter(Boolean).join(", ");
+     if(fmt)f.push(f.length?`em formato de ${fmt}`:`O show tem formato de ${fmt}`);
+     if(f.length)L.push(f.join(", ")+".");}
+    const txt=L.join("\n\n");
+    if(!txt){toast("Responda pelo menos uma pergunta.");return;}
+    c2.kit.reltxt=txt;
+    try{localStorage.setItem(CONTA_KEY,JSON.stringify(c2));}catch(e){}
+    const ta=$("#kRelTxt");if(ta)ta.value=txt;
+    kitResumo();
+    $("#relMask").classList.remove("on");
+    toast("Release gerado — revise e ajuste no campo.");
+  };
+}
 function contaAbrir(){
   const c=contaLer();
   kitPreencher();
   $("#acNome").value=c.nome||P.nome||"";
   $("#acMail").value=c.mail||"";
+  {const g=$("#relGerarAbre");if(g)g.onclick=ev=>{ev.stopPropagation();relAbrir();};}
+  {const v=$("#kitVer2");if(v)v.onclick=async ev=>{ev.stopPropagation();window.open(await epkLink(),"_blank");};}
+  {const c2=$("#kitCopiar2");if(c2)c2.onclick=async ev=>{ev.stopPropagation();copy(await epkLink(),"Link da sua página");};}
   $("#acUf").innerHTML=Object.keys(UF).sort((a,b)=>UF[a].localeCompare(UF[b],"pt-BR"))
     .map(u=>`<option value="${u}"${(c.uf||P.uf)===u?" selected":""}>${UF[u]}</option>`).join("");
   $("#acArea").innerHTML=AREAS.map(a=>`<option${(c.area||P.area)===a?" selected":""}>${a}</option>`).join("");
