@@ -900,6 +900,22 @@
   .lp-ben li::before{content:"✓";position:absolute;left:0;top:0;color:var(--ok-ink);font-weight:800}
   @media (max-width:560px){.lp-ben{grid-template-columns:1fr}}
   .gbtnbox{display:flex;justify-content:center;margin:0 0 6px;min-height:44px}
+  /* grid não pode herdar largura do conteúdo (a URL longa do link mágico
+     esticava o cartão 180px para fora da tela no celular) */
+  .grid2>*{min-width:0}
+  #s-vender input,#s-vender textarea{width:100%;min-width:0;box-sizing:border-box}
+  /* aba Vender no celular: nome do artista numa linha, ações na de baixo */
+  .selo-l{display:flex;align-items:center;gap:9px;padding:10px 0;border-bottom:1px dashed var(--line-strong);flex-wrap:wrap}
+  .selo-n{flex:1;min-width:0;font-size:13.4px;line-height:1.4}
+  .selo-a{display:flex;gap:6px;flex-wrap:wrap;align-items:center;flex:none}
+  @media (max-width:600px){
+    .selo-n{flex-basis:100%}
+    .selo-a{width:100%;justify-content:flex-start}
+    #s-vender textarea{font-size:14px}
+    #s-vender .mb-acoes{flex-wrap:wrap}
+  }
+  .selo-add{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+  @media (max-width:480px){.selo-add{grid-template-columns:1fr}}
   .lp-cta{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
   .lp-big{font-size:16px;padding:16px 30px;border-radius:15px}
   .lp-nota{font-size:13px;color:var(--ink-soft)}
@@ -1602,7 +1618,7 @@
           <h3 style="margin:0 0 6px">Artistas do selo</h3>
           <p class="note" style="margin:0 0 12px">Ative um artista e o app inteiro passa a trabalhar para ele: e-mail de proposta, WhatsApp, press kit e afinidade. O kit de mídia dele você preenche no lugar de sempre (sua conta → Kit de mídia). Seu e-mail e seu Pro não mudam.</p>
           <div id="seloLista"></div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+          <div class="selo-add">
             <input type="text" id="seloNome" placeholder="Nome do artista">
             <input type="text" id="seloProj" placeholder="Projeto/show (ex.: Eh Coisarada)">
           </div>
@@ -5636,15 +5652,17 @@ function seloRender(){
   const box=$("#seloLista");if(!box)return;
   const j=seloInit();if(!j){box.innerHTML="";return;}
   box.innerHTML=j.perfis.map((pf,i)=>`
-    <div style="display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px dashed var(--line-strong)">
-      <span style="flex:1;min-width:0;font-size:13.4px;${i===j.ativo?"font-weight:700":""}">
+    <div class="selo-l">
+      <span class="selo-n" style="${i===j.ativo?"font-weight:700":""}">
         ${i===j.ativo?"● ":""}${esc(pf.nome||"—")}${pf.projeto?` <span style="color:var(--accent-ink)">“${esc(pf.projeto)}”</span>`:""}
       </span>
-      <button class="btn ghost sm" data-selo-epk="${i}" title="Ver a página (press kit) deste artista">🔗</button>
-      <button class="btn ghost sm" data-selo-epkc="${i}" title="Copiar o link da página deste artista">Copiar link</button>
-      ${i===j.ativo?'<span class="pl fs">ativo</span>'
-        :`<button class="btn ghost sm" data-selo-usar="${i}">Usar</button>
-          ${i>0?`<button class="btn ghost sm" data-selo-x="${i}" title="Excluir este perfil">✕</button>`:""}`}
+      <span class="selo-a">
+        <button class="btn ghost sm" data-selo-epk="${i}" title="Ver a página (press kit) deste artista">🔗 Página</button>
+        <button class="btn ghost sm" data-selo-epkc="${i}" title="Copiar o link da página deste artista">Copiar link</button>
+        ${i===j.ativo?'<span class="pl fs">ativo</span>'
+          :`<button class="btn ghost sm" data-selo-usar="${i}">Usar</button>
+            ${i>0?`<button class="btn ghost sm" data-selo-x="${i}" title="Excluir este perfil">✕</button>`:""}`}
+      </span>
     </div>`).join("");
   $$("#seloLista [data-selo-usar]").forEach(b=>b.onclick=()=>{
     const j2=seloLer();const de=j2.ativo,para=+b.dataset.seloUsar;
