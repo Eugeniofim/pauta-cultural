@@ -1573,6 +1573,16 @@
       <p class="lead">Textos prontos com seu código de convite. Nos <b>festivais e no Sesc</b>, o botão 📣 de cada cartão gera o texto usando aquele festival como gancho.</p>
       <div class="grid2" style="margin-top:24px">
         <div class="card">
+          <h3 style="margin:0 0 6px">Artistas do selo</h3>
+          <p class="note" style="margin:0 0 12px">Ative um artista e o app inteiro passa a trabalhar para ele: e-mail de proposta, WhatsApp, press kit e afinidade. O kit de mídia dele você preenche no lugar de sempre (sua conta → Kit de mídia). Seu e-mail e seu Pro não mudam.</p>
+          <div id="seloLista"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+            <input type="text" id="seloNome" placeholder="Nome do artista">
+            <input type="text" id="seloProj" placeholder="Projeto/show (ex.: Eh Coisarada)">
+          </div>
+          <button class="btn ghost sm" id="seloAdd" style="margin-top:8px">+ Adicionar artista</button>
+        </div>
+        <div class="card">
           <h3 style="margin:0 0 6px">Seu código de convite</h3>
           <p class="note" style="margin:0 0 12px">7 dias de Pro, sem cartão, um por e-mail. Crie e gerencie códigos no painel do Stripe.</p>
           <label>Código</label>
@@ -4500,6 +4510,7 @@ async function textoWhats(destino,tipo){
      iOS < 16.4 e derruba a página inteira na carga, não só esta função */
   const pitch=k.pitch?((k.pitch.match(/^[^.!?]*[.!?]?/)||[k.pitch])[0].trim()||k.pitch):"[uma frase sobre o seu trabalho]";
   const fmt=[k.dur,k.pessoas&&(k.pessoas+" em palco")].filter(Boolean).join(", ");
+  const proj=c.projeto?`O projeto: “${c.projeto}”.`:"";
   const video=k.video?`Vídeo ao vivo: ${k.video}`:"";
   let pagina="";
   if(k.pitch){try{pagina="Meu press kit: "+await epkLink();}catch(e){}}
@@ -4507,6 +4518,7 @@ async function textoWhats(destino,tipo){
   const L=[
     `Olá! Sou ${nome}, ${estilo}, ${uf}.`,
     pitch,
+    proj,
     fmt?`Show de ${fmt}.`:"",
     video, pagina,
     tipo==="sesc"
@@ -4526,6 +4538,8 @@ async function abrirWhats(num,destino,tipo){
 }
 function gerarEmail(f){
   const c=contaLer(), nome=c.nome||P.nome||"[seu nome]";
+  /* modo selo: quando há um projeto ativo, ele dá nome à proposta */
+  const proj=c.projeto?` — “${c.projeto}”`:"";
   /* O que estiver no kit entra pronto; o que faltar continua como colchete,
      para a pessoa ver o que ainda precisa preencher em vez de mandar um
      e-mail com buraco silencioso. */
@@ -4556,13 +4570,13 @@ function gerarEmail(f){
     /* Sesc programa por critério social e formativo, não só artístico —
        está no estatuto dele. Por isso contrapartida e público vêm antes
        do release. */
-    return {assunto:`Proposta de pauta — ${nome} (${area})`,
+    return {assunto:`Proposta de pauta — ${nome}${proj} (${area})`,
       corpo:`Olá, equipe do ${f.n}.\n\nMeu nome é ${nome}, sou artista de ${area} ${deCidade}, com trabalho em ${estilos}. Escrevo para apresentar uma proposta de pauta e saber qual o caminho certo de inscrição.\n\nA PROPOSTA\n${sobre("Descreva em 3 linhas o show ou a atividade")}\n\nCONTRAPARTIDA\n[O que você oferece além do show: oficina, bate-papo com o público, ensaio aberto, aula. O Sesc valoriza a dimensão formativa.]\n\nPÚBLICO\n[Para quem é: faixa etária, se é livre, se funciona em praça ou teatro.]\n\nFORMATO\nApresentação de ${kv("dur","duração")} com ${kv("pessoas","número")} pessoas em palco.${pj?"\nPosso emitir nota como pessoa jurídica.":""}\n\n${material}\n\nSe houver edital ou cadastro de proponentes em aberto, agradeço a orientação sobre como me inscrever.${assina}`};
   }
   if(tipo==="grande"){
     /* festival grande recebe centenas de propostas: número e prova social
        primeiro, senão nem chega no release */
-    return {assunto:`${nome} — proposta para o ${f.n}`,
+    return {assunto:`${nome}${proj} — proposta para o ${f.n}`,
       corpo:`Olá, equipe do ${f.n}.\n\nSou ${nome}, artista de ${area} ${deCidade}, trabalhando com ${estilos}. Escrevo para apresentar meu show${quando}.\n\nEM NÚMEROS\n• ${kv("ouvintes","ouvintes mensais / visualizações")}\n• ${kv("shows","shows no último ano e principais cidades")}\n• ${kv("imprensa","imprensa: veículo e link")}\n\nO SHOW\n${sobre("Duas linhas sobre o que o público vê no palco")}\n\n${material}\n\nFORMATO\nShow de ${kv("dur","duração")} com ${kv("pessoas","número")} músicos. Disponibilidade em [meses].\n\nFico à disposição.${assina}`};
   }
   if(tipo==="internacional"){
@@ -4570,7 +4584,7 @@ function gerarEmail(f){
       corpo:`Olá, equipe do ${f.n}.\n\nSou ${nome}, artista de ${area} do Brasil (${cidade}), com trabalho em ${estilos}. Escrevo para apresentar meu trabalho${quando}.\n\nO TRABALHO\n${sobre("Três linhas sobre o que você faz")}\n\n${material}\n\nLOGÍSTICA\nGrupo de ${kv("pessoas","número")} pessoas. Passaporte válido e disponibilidade para [período].\n\nUse o botão de tradução desta tela para enviar no idioma do país.${assina}`};
   }
   /* pequeno e médio porte: quem lê acumula funções e decide rápido */
-  return {assunto:`Proposta de show — ${nome}`,
+  return {assunto:`Proposta de show — ${nome}${proj}`,
     corpo:`Olá, equipe do ${f.n}.\n\nSou ${nome}, artista de ${area} ${deCidade}, com trabalho em ${estilos}. Gostaria de me apresentar${quando}.\n\nO SHOW\n${sobre("Duas ou três linhas sobre o que você toca")}\n\n${material}\n\nFORMATO\nShow de ${kv("dur","duração")} com ${kv("pessoas","número")} pessoas em palco. Tenho flexibilidade de formato e cachê conforme a estrutura de vocês.${pj?"\nPosso emitir nota como pessoa jurídica.":""}\n\nSe não for o momento, agradeço se puder me indicar quando abre a próxima seleção.${assina}`};
 }
 
@@ -5413,7 +5427,73 @@ function venderInit(){
   $("#vLinkCopiar").onclick=()=>copy(vLink(),"Link de convite");
   $("#vZap").onclick=()=>window.open("https://wa.me/?text="+encodeURIComponent($("#vTxtZap").value),"_blank","noopener");
   $$("#s-vender [data-vcopy]").forEach(b=>b.onclick=()=>copy($("#"+b.dataset.vcopy).value,"Texto"));
-  venderPreencher(null);
+  venderPreencher(null);seloRender();
+}
+/* ── SELO: vários artistas na mesma conta do dono ──
+   Cada perfil guarda nome, projeto, uf, área, estilos e o kit completo.
+   Ativar = fotografar o estado atual da conta no perfil ativo e carregar o
+   escolhido por cima. O e-mail NUNCA troca: é ele que amarra o Pro do dono. */
+const SELO_KEY="pauta.selo.v1";
+function seloLer(){try{const j=JSON.parse(localStorage.getItem(SELO_KEY));return j&&Array.isArray(j.perfis)?j:null;}catch(e){return null;}}
+function seloSalvar(j){try{localStorage.setItem(SELO_KEY,JSON.stringify(j));}catch(e){}}
+function seloFoto(){const c=contaLer();
+  return {nome:c.nome||"",projeto:c.projeto||"",uf:c.uf||P.uf,area:c.area||P.area,areas:c.areas||[],estilos:P.estilos||[],kit:c.kit||{}};}
+function seloAplicar(pf){const c=contaLer();
+  Object.assign(c,{nome:pf.nome,projeto:pf.projeto||"",uf:pf.uf||c.uf,area:pf.area||c.area,areas:pf.areas||c.areas,kit:pf.kit||{}});
+  try{localStorage.setItem(CONTA_KEY,JSON.stringify(c));}catch(e){}
+  P.estilos=pf.estilos||[];contaAplicar();}
+function seloInit(){
+  if(!ehDono())return null;
+  let j=seloLer();
+  if(!j){
+    /* primeira vez: o perfil 0 é a própria conta; os projetos do dono entram
+       como sementes, com kit vazio para preencher */
+    j={ativo:0,perfis:[
+      Object.assign(seloFoto(),{rotulo:"Conta principal"}),
+      {rotulo:"Eugenio Fim — Eh Coisarada",nome:"Eugenio Fim",projeto:"Eh Coisarada",uf:"PR",area:"Música",areas:["Música"],estilos:[],kit:{}},
+      {rotulo:"Eugenio Fim — A I O",nome:"Eugenio Fim",projeto:"A I O",uf:"PR",area:"Música",areas:["Música"],estilos:[],kit:{}},
+      {rotulo:"Leticia Sabatella convida Juliano Holanda — PORTICA DA TERRA EM CRISE",nome:"Leticia Sabatella convida Juliano Holanda",projeto:"PORTICA DA TERRA EM CRISE",uf:"PR",area:"Música",areas:["Música"],estilos:[],kit:{}},
+    ]};
+    seloSalvar(j);
+  }
+  return j;
+}
+function seloRender(){
+  const box=$("#seloLista");if(!box)return;
+  const j=seloInit();if(!j){box.innerHTML="";return;}
+  box.innerHTML=j.perfis.map((pf,i)=>`
+    <div style="display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px dashed var(--line-strong)">
+      <span style="flex:1;min-width:0;font-size:13.4px;${i===j.ativo?"font-weight:700":""}">
+        ${i===j.ativo?"● ":""}${esc(pf.nome||"—")}${pf.projeto?` <span style="color:var(--accent-ink)">“${esc(pf.projeto)}”</span>`:""}
+      </span>
+      ${i===j.ativo?'<span class="pl fs">ativo</span>'
+        :`<button class="btn ghost sm" data-selo-usar="${i}">Usar</button>
+          ${i>0?`<button class="btn ghost sm" data-selo-x="${i}" title="Excluir este perfil">✕</button>`:""}`}
+    </div>`).join("");
+  $$("#seloLista [data-selo-usar]").forEach(b=>b.onclick=()=>{
+    const j2=seloLer();const de=j2.ativo,para=+b.dataset.seloUsar;
+    j2.perfis[de]=Object.assign({},j2.perfis[de],seloFoto());   /* fotografa o atual */
+    j2.ativo=para;seloSalvar(j2);
+    seloAplicar(j2.perfis[para]);
+    refresh();venderPreencher(venderGancho);seloRender();
+    toast("Agora o app trabalha para: "+(j2.perfis[para].nome||"perfil "+para));
+  });
+  $$("#seloLista [data-selo-x]").forEach(b=>b.onclick=()=>{
+    const j2=seloLer();const i=+b.dataset.seloX;
+    if(i===j2.ativo){toast("Ative outro perfil antes de excluir este.");return;}
+    const nome=j2.perfis[i].nome;
+    j2.perfis.splice(i,1);if(j2.ativo>i)j2.ativo--;
+    seloSalvar(j2);seloRender();toast("Excluído: "+nome);
+  });
+  const add=$("#seloAdd");
+  if(add)add.onclick=()=>{
+    const n=$("#seloNome").value.trim(), pr=$("#seloProj").value.trim();
+    if(!n){toast("Dê um nome ao artista.");return;}
+    const j2=seloLer();
+    j2.perfis.push({rotulo:n+(pr?" — "+pr:""),nome:n,projeto:pr,uf:contaLer().uf||P.uf,area:"Música",areas:["Música"],estilos:[],kit:{}});
+    seloSalvar(j2);$("#seloNome").value="";$("#seloProj").value="";seloRender();
+    toast("Adicionado: "+n);
+  };
 }
 let venderGancho=null;
 function venderCom(nome){
